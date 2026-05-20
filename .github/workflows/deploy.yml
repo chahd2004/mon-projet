@@ -1,0 +1,38 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build-backend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Java 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+      - name: Build Backend
+        run: |
+          cd backend
+          mvn package -DskipTests
+      - name: Build Docker image
+        run: docker build -t facturation-backend ./backend
+
+  build-frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+      - name: Build Frontend
+        run: |
+          cd frontend
+          npm install --legacy-peer-deps
+          npm run build --configuration=production
+      - name: Build Docker image
+        run: docker build -t facturation-frontend ./frontend

@@ -1,5 +1,8 @@
 {
-  "buildCommand": "npm install --legacy-peer-deps && npm run build --configuration=production",
-  "outputDirectory": "dist/mon-frontend",
-  "framework": "angular"
+  "buildCommand": "npm run build --configuration=production",
+  "outputDirectory": "dist/mon-frontend/browser",
+  "framework": "angular",
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/index.html" }
+  ]
 }

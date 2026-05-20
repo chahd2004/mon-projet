@@ -1,0 +1,841 @@
+{
+  "FACTURATION": "Facturation",
+  "CHATBOT": {
+    "TITLE": "Assistant de Facturation",
+    "WELCOME": "Bonjour ! Je suis votre assistant. Comment puis-je vous aider ?",
+    "THINKING": "L'IA réfléchit...",
+    "PLACEHOLDER": "Posez votre question...",
+    "ERROR": "Désolé, une erreur est survenue lors de la communication avec l'assistant. Veuillez vérifier votre connexion ou réessayer plus tard."
+  },
+  "DASHBOARD": {
+    "TITLE": "Tableau de bord",
+    "SUBTITLE": "Bienvenue sur votre espace de gestion",
+    "HOME": "Accueil",
+    "REFRESH": "Actualiser",
+    "TOTAL_FACTURES": "Total Factures",
+    "TOTAL_CLIENTS": "Total Clients",
+    "COLLABORATEURS": "Collaborateurs",
+    "REVENUE": "Chiffre d'affaires",
+    "UNPAID_INVOICES": "Factures impayées",
+    "REFRESH_SUCCESS": "Données mises à jour",
+    "REGIONS": {
+      "TUNIS": "Tunis",
+      "ARIANA": "Ariana",
+      "BEN_AROUS": "Ben Arous",
+      "MANOUBA": "Manouba",
+      "NABEUL": "Nabeul",
+      "ZAGHOUAN": "Zaghouan",
+      "BIZERTE": "Bizerte",
+      "BEJA": "Béja",
+      "JENDOUBA": "Jendouba",
+      "KEF": "Kef",
+      "SILIANA": "Siliana",
+      "SOUSSE": "Sousse",
+      "MONASTIR": "Monastir",
+      "MAHDIA": "Mahdia",
+      "SFAX": "Sfax",
+      "KAIROUAN": "Kairouan",
+      "KASSERINE": "Kasserine",
+      "SIDI_BOUZID": "Sidi Bouzid",
+      "GABES": "Gabès",
+      "MEDENINE": "Médenine",
+      "TATAOUINE": "Tataouine",
+      "GAFSA": "Gafsa",
+      "TOZEUR": "Tozeur",
+      "KEBILI": "Kébili"
+    },
+    "CHART_TITLE": "Évolution mensuelle",
+    "CHART_DISTRIBUTION": "Répartition des factures",
+    "CHART_SALES": "Ventes par produit / mois",
+    "LATE_INVOICES_TITLE": "Factures en retard",
+    "LATE_INVOICES_SUBTITLE": "Nombre de factures impayées dépassant l'échéance",
+    "DAYS_LATE": "+{{days}} jours",
+    "NO_DATA": "Aucune donnée disponible"
+  },
+  "FACTURES": {
+    "TITLE": "Gestion des factures",
+    "NEW": "Nouvelle facture",
+    "ALL_STATUSES": "Tous les statuts",
+    "FILTER_STATUS": "Filtrer par statut",
+    "SEARCH_PLACEHOLDER": "Rechercher par N° facture ou client...",
+    "TABLE": {
+      "NUM": "N° Facture",
+      "CLIENT": "Client",
+      "DATE_EMISSION": "Date d'émission",
+      "DATE_ECHEANCE": "Échéance",
+      "STATUS": "Statut",
+      "ACTIONS": "Actions",
+      "NOT_DEFINED": "Non défini"
+    },
+    "ACTIONS": {
+      "VIEW": "Voir",
+      "SIGN": "Signer",
+      "EDIT": "Modifier",
+      "DELETE": "Supprimer",
+      "EMIT": "Émettre",
+      "PAY": "Payer",
+      "REJECT": "Rejeter",
+      "CANCEL": "Annuler",
+      "BACK_TO_DRAFT": "Retour au brouillon",
+      "DOWNLOAD_XML": "Télécharger XML"
+    },
+    "EMPTY": {
+      "TITLE": "Aucune facture trouvée",
+      "SUBTITLE": "Commencez par créer votre première facture.",
+      "BUTTON": "Créer une facture"
+    },
+    "CHART_HEADER": "Évolution des factures",
+    "MSGS": {
+      "DELETE_CONFIRM": "Êtes-vous sûr de vouloir supprimer cette facture ?",
+      "DELETE_SUCCESS": "Facture supprimée avec succès",
+      "DELETE_ERROR": "Impossible de supprimer la facture",
+      "SAVE_SUCCESS_ADD": "Facture ajoutée avec succès",
+      "SAVE_SUCCESS_EDIT": "Facture modifiée avec succès",
+      "EMIT_SUCCESS": "Facture émise et envoyée",
+      "PAY_SUCCESS": "Facture marquée comme payée",
+      "REJECT_REASON_REQ": "La raison du rejet est obligatoire",
+      "REJECT_SUCCESS": "Facture rejetée",
+      "CANCEL_CONFIRM": "Êtes-vous sûr de vouloir annuler cette facture ? Cela générera un avoir.",
+      "CANCEL_SUCCESS": "Facture annulée",
+      "DRAFT_SUCCESS": "Facture retournée en brouillon",
+      "DOWNLOAD_SUCCESS": "Téléchargement lancé",
+      "DOWNLOAD_ERROR": "Impossible de télécharger le XML"
+    },
+    "HINTS": {
+      "DRAFT": "Commande en brouillon, vous pouvez modifier avant confirmation.",
+      "CONFIRMED": "Commande confirmée, prête à démarrer la production.",
+      "IN_PROGRESS": "Production en cours, suivez l'avancement ci-dessus.",
+      "DELIVERED": "Commande livrée, prête pour facturation.",
+      "CANCELLED": "Commande annulée.",
+      "NOT_DEFINED": "Aucune information de statut."
+    }
+  },
+  "FACTURE": {
+    "TITLE": "Facture",
+    "INVOICE_INFO": "INFORMATIONS DE LA FACTURE",
+    "INVOICE_LINES": "Lignes de facture",
+    "ADD_LINE": "Ajouter une ligne",
+    "UNIT_PRICE": "Prix Unitaire",
+    "VENDOR": "Vendeur",
+    "CLIENT": "Client",
+    "NUMBER": "Facture N°",
+    "DATE": "Date",
+    "AMOUNT_HT": "Montant HT",
+    "AMOUNT_TTC": "Montant TTC",
+    "ACTIONS": "Actions",
+    "SAVE": "Enregistrer",
+    "SUBMIT": "Soumettre",
+    "CANCEL": "Annuler",
+    "ADDRESS": "Adresse :",
+    "PHONE": "Téléphone :",
+    "CODE_RC": "Code / RC :",
+    "EMAIL": "Email :",
+    "ISSUE_DATE": "Date d'émission",
+    "PAYMENT_DATE": "Date de paiement",
+    "PAYMENT_METHOD": "Mode de paiement",
+    "PAYMENT_METHODS": {
+      "VIREMENT": "Virement bancaire",
+      "CHEQUE": "Chèque",
+      "ESPECES": "Espèces",
+      "CARTE": "Carte bancaire"
+    },
+    "BUYER_TYPES": {
+      "CLIENT": "Client",
+      "EMETTEUR": "Émetteur"
+    },
+    "BUYER": "ACHETEUR",
+    "BUYER_TYPE": "Type d'acheteur",
+    "SELECT_BUYER": "Sélectionner l'acheteur",
+    "PRODUCT": "Produit",
+    "QUANTITY": "Quantité",
+    "ADD": "Ajouter",
+    "SELECT_BUYER_HINT": "Sélectionnez l'acheteur ci-dessus, puis ajoutez des lignes",
+    "TOTAL_GENERAL": "TOTAL GÉNÉRAL",
+    "TOTAL_HT": "Total H.T.",
+    "VAT": "TVA",
+    "STAMP_DUTY": "Droit de Timbre",
+    "NOT_DEFINED": "Non défini",
+    "NOT_PROVIDED": "Non renseigné",
+    "TOTAL_TTC": "Total TTC",
+    "DESIGNATION": "Désignation",
+    "SCAN_QR": "Scanner pour consulter le statut en temps réel",
+    "MF": "MF"
+  },
+  "STATUS": {
+    "DRAFT": "Brouillon",
+    "SENT": "Émise",
+    "PAID": "Payée",
+    "PARTIAL": "Partielle",
+    "CANCELLED": "Annulée",
+    "VALIDATED": "Validée",
+    "SIGNED": "Signée",
+    "CONFIRMED": "Confirmée",
+    "CONVERTED": "Convertie",
+    "IN_PROGRESS": "En cours",
+    "ACCEPTED": "Accepté",
+    "REJECTED": "Rejeté",
+    "DETAIL_HINT": "Cette page est prête pour afficher les informations complètes de la demande.",
+    "EXPIRED": "Expiré",
+    "PENDING": "En attente",
+    "EN_ATTENTE": "En attente",
+    "EN_RETARD": "En retard",
+    "UNPAID": "Impayée",
+    "APPROVED": "Approuvée",
+    "DELIVERED": "Livrée",
+    "CLOSED": "Clôturée",
+    "DISPUTE": "En Litige",
+    "SIGNED_CLIENT": "Signé Client",
+    "ACTIVE": "Actif",
+    "DISABLED": "Bloqué"
+  },
+  "ROLES": {
+    "SUPER_ADMIN": "Super Admin",
+    "ENTREPRISE_ADMIN": "Administrateur",
+    "ENTREPRISE_MANAGER": "Manager",
+    "ENTREPRISE_VIEWER": "Consultant",
+    "COLLABORATOR": "Collaborateur",
+    "CLIENT": "Client",
+    "EMETTEUR": "Émetteur"
+  },
+  "DEVIS": {
+    "TITLE": "Gestion des devis",
+    "NEW": "Nouveau devis",
+    "EDIT": "Modifier le devis",
+    "CREATE": "Créer un devis",
+    "GENERAL_INFO": "Informations générales",
+    "SELECT_CLIENT": "Rechercher client",
+    "NEW_CLIENT": "Nouveau client",
+    "PRODUCT_LINES": "Lignes de devis",
+    "SEARCH_PRODUCT": "Rechercher produit",
+    "SUMMARY": "Récapitulatif",
+    "NOTES": "Notes (optionnel)",
+    "NOTES_PLACEHOLDER": "Ajouter des conditions, remarques, etc.",
+    "SAVE_DRAFT": "Enregistrer brouillon",
+    "UPDATE_DRAFT": "Mettre à jour brouillon",
+    "CREATE_SEND": "Créer et envoyer",
+    "UPDATE_SEND": "Mettre à jour et envoyer",
+    "TOTAL_TTC": "TOTAL TTC",
+    "TOTAL_HT": "Total H.T.",
+    "VALIDITY_DATE": "Date de Validité",
+    "ACTIONS": {
+      "NEW": "Nouveau devis",
+      "STATS": "Statistiques",
+      "GENERATE_INVOICE": "Générer Facture",
+      "APPROVE": "Accepter le Devis",
+      "REJECT": "Rejeter le Devis"
+    },
+    "FILTER_STATUS": "Filtrer par statut",
+    "TABLE": {
+      "NUM": "N° Devis",
+      "CLIENT": "Client",
+      "DATE": "Date",
+      "TOTAL": "Total",
+      "STATUS": "Statut",
+      "ACTIONS": "Actions"
+    },
+    "EMPTY": "Aucun devis trouvé",
+    "STATS_TITLE": "Répartition par statut",
+    "LOADING": "Chargement des devis...",
+    "MSGS": {
+      "LOADING_ERROR": "Impossible de charger les devis.",
+      "ACCEPT_ERROR": "Erreur lors de l'acceptation du devis {{id}}.",
+      "REJECT_REASON_PROMPT": "Saisir la raison du rejet :",
+      "REJECT_ERROR": "Erreur lors du rejet du devis {{id}}.",
+      "CONVERT_ERROR": "Erreur lors de la conversion du devis {{id}}.",
+      "SEND_ERROR": "Erreur lors de l'envoi du devis {{id}}.",
+      "CONVERT_FACT_SUCCESS": "Facture générée avec succès.",
+      "CONVERT_FACT_ERROR": "Erreur lors de la génération de la facture."
+    },
+    "CONVERT_MODAL": {
+      "TITLE": "Générer une facture",
+      "SUBTITLE": "Veuillez renseigner les détails du paiement pour la conversion.",
+      "DATE_DOC": "Date de la facture",
+      "MODE_PAIEMENT": "Mode de paiement",
+      "DATE_PAIEMENT": "Date de paiement",
+      "CANCEL": "Annuler",
+      "SUBMIT": "Générer la facture"
+    }
+  },
+  "BC": {
+    "TITLE": "Bons de Commande",
+    "ACTIONS": {
+      "FROM_QUOTE": "Depuis Devis",
+      "STATS": "Statistiques"
+    },
+    "FILTER_STATUS": "Filtrer par statut",
+    "TABLE": {
+      "NUM": "N° Bon Commande",
+      "CLIENT": "Client",
+      "DATE": "Date",
+      "TOTAL": "Total TTC",
+      "STATUS": "Statut",
+      "ACTIONS": "Actions"
+    },
+    "EMPTY": "Aucun bon de commande trouvé",
+    "LOADING": "Chargement...",
+    "CONVERT_MODAL": {
+      "TITLE": "Générer un Bon de Commande",
+      "SUBTITLE": "Sélectionnez un devis ACCEPTE pour le convertir en bon de commande.",
+      "SEARCH_PLACEHOLDER": "Rechercher par numéro ou client...",
+      "EMPTY": "Aucun devis accepté trouvé.",
+      "LOADING": "Chargement des devis...",
+      "NOTES_LABEL": "Notes / Observations",
+      "NOTES_PLACEHOLDER": "Ajouter des notes à ce bon de commande...",
+      "BTN_CANCEL": "Annuler",
+      "CONVERTING": "Conversion...",
+      "BTN_CONVERT": "Convertir en BC",
+      "LOAD_ERROR": "Impossible de charger les devis acceptés.",
+      "SELECT_REQUIRED": "Veuillez sélectionner un devis.",
+      "SUCCESS": "Bon de commande généré avec succès.",
+      "ERROR": "Erreur lors de la conversion du devis."
+    },
+    "MSGS": {
+      "SEND_SUCCESS": "Bon de commande envoyé avec succès.",
+      "SEND_ERROR": "Erreur lors de l'envoi du bon de commande.",
+      "CONFIRM_SUCCESS": "Bon de commande confirmé avec succès.",
+      "CONFIRM_ERROR": "Erreur lors de la confirmation du bon de commande.",
+      "CANCEL_REASON_PROMPT": "Saisir la raison de l'annulation :",
+      "CANCEL_SUCCESS": "Bon de commande annulé avec succès.",
+      "CANCEL_ERROR": "Erreur lors de l'annulation du bon de commande.",
+      "LOADING_ERROR": "Impossible de charger les bons de commande."
+    }
+  },
+  "BL": {
+    "TITLE": "Bons de Livraison",
+    "ACTIONS": {
+      "FROM_ORDER": "Depuis Commande",
+      "STATS": "Statistiques"
+    },
+    "FILTER_STATUS": "Filtrer par statut",
+    "TABLE": {
+      "NUM": "N° BL",
+      "ORDER_LINK": "Commande liée",
+      "CLIENT": "Client",
+      "DATE": "Date",
+      "STATUS": "Statut",
+      "TOTAL": "Total TTC",
+      "ACTIONS": "Actions"
+    },
+    "EMPTY": "Aucun bon de livraison trouvé",
+    "STATS_TITLE": "Répartition des livraisons",
+    "DISPUTES_TITLE": "Litiges en cours",
+    "DISPUTE_REASON_LABEL": "Raison :",
+    "DISPUTE_REASON_UNKNOWN": "Raison non précisée",
+    "LOADING": "Chargement...",
+    "CONVERT_MODAL": {
+      "TITLE": "Générer un Bon de Livraison",
+      "SUBTITLE": "Sélectionnez une commande CONFIRMEE pour générer le BL.",
+      "SEARCH_PLACEHOLDER": "Rechercher par numéro ou client...",
+      "EMPTY": "Aucune commande confirmée trouvée.",
+      "LOADING": "Chargement des commandes...",
+      "NOTES_LABEL": "Notes de livraison",
+      "NOTES_PLACEHOLDER": "Instructions de livraison...",
+      "BTN_CANCEL": "Annuler",
+      "CONVERTING": "Génération...",
+      "BTN_CONVERT": "Générer BL",
+      "LOAD_ERROR": "Impossible de charger les commandes livrées.",
+      "SELECT_REQUIRED": "Veuillez sélectionner une commande.",
+      "SUCCESS": "Bon de livraison généré avec succès.",
+      "ERROR": "Erreur lors de la génération du bon de livraison.",
+      "NOT_FOUND": "Commande introuvable.",
+      "NO_LINES": "La commande sélectionnée n'a pas de produits."
+    },
+    "MSGS": {
+      "DELIVER_SUCCESS": "Bon de livraison marqué livré.",
+      "DELIVER_ERROR": "Erreur lors du marquage comme livré.",
+      "CLOSE_SUCCESS": "Bon de livraison clôturé avec succès.",
+      "CLOSE_ERROR": "Erreur lors de la clôture du bon de livraison.",
+      "DELETE_SUCCESS": "Bon de livraison supprimé avec succès.",
+      "DELETE_ERROR": "Erreur lors de la suppression du bon de livraison.",
+      "RESOLVE_SUCCESS": "Litige résolu avec succès.",
+      "RESOLVE_ERROR": "Erreur lors de la résolution du litige.",
+      "DISPUTE_PROMPT": "Saisir le motif du litige :",
+      "DISPUTE_SUCCESS": "Litige signalé avec succès.",
+      "DISPUTE_ERROR": "Erreur lors de l'ajout du motif de litige.",
+      "LOADING_ERROR": "Impossible de charger les bons de livraison."
+    }
+  },
+  "COMMANDES": {
+    "TITLE": "Gestion des Commandes",
+    "ACTIONS": {
+      "FROM_BC": "Depuis BC",
+      "STATS": "Statistiques"
+    },
+    "FILTER_STATUS": "Filtrer par statut",
+    "TABLE": {
+      "NUM": "N° Commande",
+      "CLIENT": "Client",
+      "DATE": "Date",
+      "TOTAL": "Total TTC",
+      "STATUS": "Statut",
+      "ACTIONS": "Actions"
+    },
+    "EMPTY": "Aucune commande trouvée",
+    "STATS_TITLE": "Suivi des commandes",
+    "LOADING": "Chargement...",
+    "CONVERT_MODAL": {
+      "TITLE": "Générer une Commande",
+      "SUBTITLE": "Sélectionnez un bon de commande CONFIRMÉ pour le convertir.",
+      "SEARCH_PLACEHOLDER": "Rechercher par numéro ou client...",
+      "EMPTY": "Aucun bon de commande confirmé trouvé.",
+      "NOTES_LABEL": "Notes / Instructions",
+      "NOTES_PLACEHOLDER": "Ajouter des instructions à cette commande...",
+      "BTN_CANCEL": "Annuler",
+      "CONVERTING": "Conversion...",
+      "BTN_CONVERT": "Convertir en Commande",
+      "LOAD_ERROR": "Impossible de charger les bons de commande.",
+      "SELECT_REQUIRED": "Veuillez sélectionner un bon de commande.",
+      "SUCCESS": "Commande générée avec succès.",
+      "ERROR": "Erreur lors de la génération de la commande."
+    },
+    "MSGS": {
+      "LOADING_ERROR": "Erreur lors du chargement des commandes.",
+      "CONFIRM_SUCCESS": "Commande {{id}} confirmée.",
+      "CONFIRM_ERROR": "Erreur lors de la confirmation de la commande {{id}}.",
+      "START_PROD_SUCCESS": "Production démarrée pour {{id}}.",
+      "START_PROD_ERROR": "Erreur démarrage production pour {{id}}.",
+      "DELIVER_SUCCESS": "Commande {{id}} marquée comme livrée.",
+      "DELIVER_ERROR": "Erreur lors du marquage comme livré pour {{id}}.",
+      "CANCEL_REASON_PROMPT": "Raison de l'annulation :",
+      "CANCEL_SUCCESS": "Commande {{id}} annulée.",
+      "CANCEL_ERROR": "Erreur lors de l'annulation de la commande {{id}}."
+    }
+  },
+  "CLIENTS": {
+    "TITLE": "Liste des clients",
+    "NEW": "Nouveau client",
+    "SEARCH_PLACEHOLDER": "Rechercher par raison sociale, email...",
+    "TABLE": {
+      "RAISON_SOCIALE": "Raison Sociale",
+      "EMAIL": "Email",
+      "TELEPHONE": "Téléphone",
+      "ADRESSE": "Adresse",
+      "PAYS": "Pays",
+      "REGION": "Région",
+      "ACTIONS": "Actions"
+    },
+    "ACTIONS": {
+      "EDIT_TOOLTIP": "Modifier ce client",
+      "DELETE_TOOLTIP": "Supprimer ce client"
+    },
+    "EMPTY": {
+      "MESSAGE": "Aucun client",
+      "SUBTITLE_ADD": "Commencez par ajouter votre premier client via le bouton \"Nouveau client\".",
+      "SUBTITLE_VIEW": "Aucun client disponible pour le moment."
+    },
+    "DIALOG": {
+      "ADD_TITLE": "Nouveau client",
+      "EDIT_TITLE": "Modifier le client"
+    },
+    "FORM": {
+      "RAISON_SOCIALE": "Raison sociale",
+      "EMAIL": "Email",
+      "TELEPHONE": "Téléphone",
+      "ADRESSE": "Adresse",
+      "PAYS": "Pays",
+      "REGION": "Région",
+      "PLACEHOLDERS": {
+        "RAISON_SOCIALE": "Nom de l'entreprise",
+        "EMAIL": "exemple@email.com",
+        "TELEPHONE": "71 234 567",
+        "ADRESSE": "Rue, ville, code postal",
+        "PAYS": "TUNISIE",
+        "REGION_SELECT": "Sélectionner"
+      }
+    },
+    "MSGS": {
+      "LOAD_ERROR": "Impossible de charger les clients",
+      "SAVE_SUCCESS_ADD": "Client ajouté",
+      "SAVE_SUCCESS_EDIT": "Client modifié",
+      "SAVE_ERROR_ADD": "Impossible d'ajouter le client",
+      "SAVE_ERROR_EDIT": "Impossible de modifier le client",
+      "DELETE_CONFIRM": "Supprimer ce client ?",
+      "DELETE_SUCCESS": "Client supprimé",
+      "DELETE_ERROR": "Impossible de supprimer",
+      "VALIDATION_REQUIRED": "Champs obligatoires: Raison sociale, Email, Téléphone (8 chiffres)",
+      "VALIDATION_PHONE": "Le téléphone doit contenir exactement 8 chiffres",
+      "VALIDATION_ADDRESS": "L'adresse est obligatoire",
+      "VALIDATION_REGION": "La région est obligatoire"
+    }
+  },
+  "PRODUITS": {
+    "TITLE": "Gestion des produits",
+    "NEW": "Nouveau produit",
+    "SEARCH_PLACEHOLDER": "Rechercher par référence ou désignation...",
+    "TABLE": {
+      "REF": "Référence",
+      "DESIGNATION": "Désignation",
+      "PRIX_HT": "Prix unitaire HT",
+      "TVA": "TVA %",
+      "PRIX_TTC": "Prix TTC",
+      "STOCK": "Stock",
+      "STATUS": "Statut",
+      "ACTIONS": "Actions"
+    },
+    "ACTIONS": {
+      "EDIT_TOOLTIP": "Modifier ce produit",
+      "DELETE_TOOLTIP": "Supprimer ce produit"
+    },
+    "EMPTY": {
+      "TITLE": "Aucun produit trouvé",
+      "SUBTITLE_ADD": "Commencez par ajouter votre premier produit.",
+      "SUBTITLE_VIEW": "Aucun produit disponible pour le moment."
+    },
+    "DIALOG": {
+      "ADD_TITLE": "Nouveau produit",
+      "EDIT_TITLE": "Modifier le produit"
+    },
+    "FORM": {
+      "REF": "Référence",
+      "DESIGNATION": "Désignation",
+      "PRIX_HT": "Prix unitaire HT",
+      "TVA": "TVA %",
+      "STOCK_TITLE": "Gestion du stock",
+      "STOCK_UNLIMITED": "Stock illimité (services / produits numériques)",
+      "STOCK_QTY": "Quantité en stock",
+      "STOCK_ALERT": "Seuil d'alerte",
+      "STOCK_PREVIEW": "Statut prévu :",
+      "EMETTEUR_ID": "ID Émetteur",
+      "PREVIEW_TITLE": "Aperçu prix",
+      "PREVIEW_HT": "Prix HT",
+      "PREVIEW_VAT": "Montant TVA",
+      "PREVIEW_TTC": "Prix TTC"
+    },
+    "STOCK_STATUS": {
+      "AVAILABLE": "Disponible",
+      "LOW": "Stock faible",
+      "OUT": "Rupture",
+      "UNLIMITED": "Illimité"
+    },
+    "MSGS": {
+      "LOAD_ERROR": "Impossible de charger les produits",
+      "SAVE_SUCCESS_ADD": "Produit ajouté avec succès",
+      "SAVE_SUCCESS_EDIT": "Produit mis à jour avec succès",
+      "SAVE_ERROR": "Erreur lors de l'enregistrement du produit",
+      "DELETE_CONFIRM": "Supprimer ce produit ?",
+      "DELETE_SUCCESS": "Produit supprimé",
+      "DELETE_ERROR": "Impossible de supprimer le produit",
+      "VALIDATION_REQUIRED": "Veuillez remplir tous les champs obligatoires",
+      "REF_EXISTS": "Cette référence existe déjà"
+    }
+  },
+  "AVOIRS": {
+    "TITLE": "Avoirs",
+    "SUBTITLE": "Notes de crédit",
+    "DOC_COUNT": "{{count}} document",
+    "DOC_COUNT_PLURAL": "{{count}} documents",
+    "TYPE_TOTAL_TITLE": "TOTAL",
+    "TYPE_TOTAL_DESC": "Annulation complète",
+    "TYPE_TOTAL_DETAIL": "Toutes les lignes",
+    "TYPE_PARTIEL_TITLE": "PARTIEL",
+    "TYPE_PARTIEL_DESC": "Correction partielle",
+    "TYPE_PARTIEL_DETAIL": "Lignes ajustables",
+    "SEARCH_PLACEHOLDER": "Rechercher par numéro, client ou facture...",
+    "STATUS": {
+      "ALL": "Tous les avoirs",
+      "APPLIED": "Appliqué"
+    },
+    "LINKED_INVOICE": "Facture",
+    "TABLE": {
+      "NUM": "N° Avoir",
+      "LINKED": "Facture liée",
+      "CLIENT": "Client",
+      "TYPE": "Type",
+      "DATE": "Date",
+      "TOTAL": "Total TTC",
+      "STATUS": "Statut",
+      "ACTIONS": "Actions"
+    },
+    "TYPE": {
+      "ALL": "Tous les types",
+      "TOTAL": "Total",
+      "PARTIEL": "Partiel"
+    },
+    "EMPTY_MESSAGE": "Aucun avoir trouvé.",
+    "LOADING_MESSAGE": "Chargement des avoirs...",
+    "MSGS": {
+      "LOAD_ERROR": "Impossible de charger les avoirs",
+      "VALIDATE_SUCCESS": "Avoir validé avec succès.",
+      "VALIDATE_ERROR": "Erreur lors de la validation de l'avoir.",
+      "SEND_SUCCESS": "Avoir envoyé au client avec succès.",
+      "SEND_ERROR": "Erreur lors de l'envoi de l'avoir.",
+      "APPLY_SUCCESS": "Avoir appliqué avec succès.",
+      "APPLY_ERROR": "Erreur lors de l'application de l'avoir."
+    }
+  },
+  "PARAMETRES": {
+    "TITLE": "Paramètres",
+    "PROFIL": "Profil",
+    "PREFERENCES": "Préférences",
+    "LANGUE": "Langue",
+    "THEME": "Thème",
+    "SAVE_SUCCESS": "Préférences enregistrées",
+    "MON_PROFIL": {
+      "TITLE": "MON PROFIL",
+      "EMAIL": "Email",
+      "PRENOM": "Prénom",
+      "NOM": "Nom",
+      "PLACEHOLDER_PRENOM": "Votre prénom",
+      "PLACEHOLDER_NOM": "Votre nom",
+      "BTN_SAVE": "Sauvegarder",
+      "BTN_UPDATE": "Mettre à jour"
+    },
+    "PASSWORD": {
+      "TITLE": "MOT DE PASSE",
+      "ACTUEL": "Actuel",
+      "NOUVEAU": "Nouveau",
+      "CONFIRMER": "Confirmer",
+      "BTN_CHANGE": "Changer"
+    },
+    "SOCIETE": {
+      "TITLE": "ENTREPRISE",
+      "RAISON": "Raison sociale",
+      "TEL": "Téléphone",
+      "ADRESSE": "Adresse",
+      "IBAN": "IBAN",
+      "BTN_SAVE": "Sauvegarder",
+      "MF": "Matricule fiscal"
+    },
+    "PREFS": {
+      "LANG_HINT": "Appliquée immédiatement",
+      "LANG_FR_DESC": "🇫🇷 Interface en Français — direction gauche → droite",
+      "LANG_EN_DESC": "🇬🇧 Interface in English — left to right direction"
+    },
+    "MSGS": {
+      "PROFILE_SUCCESS": "Profil mis à jour",
+      "PWD_SUCCESS": "Mot de passe changé",
+      "SOCIETE_SUCCESS": "Informations entreprise mises à jour",
+      "ERROR": "Une erreur est survenue",
+      "SAVING": "Enregistrement...",
+      "VALIDATION_REQUIRED": "Veuillez remplir tous les champs obligatoires",
+      "PWD_MISMATCH": "Les nouveaux mots de passe ne correspondent pas",
+      "PWD_MIN_LENGTH": "Le nouveau mot de passe doit contenir au moins 8 caractères"
+    }
+  },
+  "COMMON": {
+    "SAVE": "Enregistrer",
+    "CANCEL": "Annuler",
+    "DELETE": "Supprimer",
+    "EDIT": "Modifier",
+    "BACK": "Retour",
+    "BACK_TO_LIST": "Retour à la liste",
+    "PDF": "PDF"
+  },
+  "TOAST": {
+    "SUCCESS": "Succès",
+    "ERROR": "Erreur",
+    "WARN": "Attention",
+    "INFO": "Info",
+    "CONFIRMATION": "Confirmation"
+  },
+  "SIDEBAR": {
+    "LOGO": "GESTION",
+    "VIEW_MODE": "Mode consultation: vous êtes en lecture seule (pas de boutons Ajouter/Modifier).",
+    "GENERAL": "GÉNÉRAL",
+    "DASHBOARD": "Tableau de bord",
+    "CLIENTS": "Clients",
+    "PRODUITS": "Produits",
+    "DEMANDES": "Demandes",
+    "UTILISATEURS": "Utilisateurs",
+    "COLLABORATEURS": "Collaborateurs",
+    "PROFIL": "Mon profil",
+    "FACTURATION": "FACTURATION",
+    "FACTURES": "Factures",
+    "DEVIS": "Devis",
+    "BON_COMMANDES": "Bons de commande",
+    "COMMANDES": "Commandes",
+    "BON_LIVRAISON": "Bons de livraison",
+    "AVOIRS": "Avoirs",
+    "PARAMETRES": "Paramètres",
+    "LOGOUT": "Déconnexion"
+  },
+  "SIGNATURE": {
+    "TITLE": "SIGNATURE ÉLECTRONIQUE",
+    "FILE_LABEL": "Fichier .p12 :",
+    "PASSWORD_LABEL": "Mot de passe :",
+    "BROWSE": "Parcourir",
+    "BTN_SIGN": "SIGNER",
+    "BTN_CANCEL": "ANNULER",
+    "SUCCESS_TITLE": "SIGNATURE RÉUSSIE !",
+    "SUCCESS_MSG": "Facture signée avec succès (XAdES-B, conforme ETSI).",
+    "ERROR_MSG": "Veuillez sélectionner un fichier .p12 et entrer le mot de passe."
+  },
+  "PUBLIC_SIGNATURE": {
+    "BC_TITLE": "SIGNATURE BON DE COMMANDE",
+    "BL_TITLE": "SIGNATURE BON DE LIVRAISON",
+    "BTN_CLOSE": "Fermer",
+    "BTN_SIGN_BL": "SIGNER LE BL",
+    "LOADING_BC": "Chargement du bon de commande...",
+    "LOADING_BL": "Chargement du bon de livraison...",
+    "NOT_FOUND_TITLE": "Document introuvable",
+    "NOT_FOUND_BC": "Bon de commande introuvable.",
+    "NOT_FOUND_BL": "Bon de livraison introuvable.",
+    "BC_LABEL": "Bon de commande N°",
+    "BL_LABEL": "Bon de livraison N°",
+    "AMOUNT_LABEL": "Montant TTC",
+    "INVOICE_LABEL": "Facture liée",
+    "ALREADY_SIGNED_TITLE": "DOCUMENT DÉJÀ SIGNÉ",
+    "BC_ALREADY_SIGNED": "Ce bon de commande ({{ref}}) a déjà été signé par le client.",
+    "BL_ALREADY_SIGNED": "Ce bon de livraison ({{ref}}) a déjà été signé par le client.",
+    "SUCCESS_BC": "Bon de commande {{ref}} signé avec succès.",
+    "SUCCESS_BL": "Bon de livraison {{ref}} signé avec succès."
+  },
+  "COLLABORATEURS": {
+    "TITLE": "Liste des collaborateurs",
+    "ADD_BTN": "Nouveau collaborateur",
+    "SEARCH_PLACEHOLDER": "Rechercher par nom ou email...",
+    "TABLE": {
+      "FIRSTNAME": "Prénom",
+      "LASTNAME": "Nom",
+      "EMAIL": "Email",
+      "ROLE": "Rôle",
+      "DATE_ADDED": "Date d'Ajout",
+      "ACTIONS": "Actions"
+    },
+    "EMPTY": {
+      "TITLE": "Aucun collaborateur trouvé",
+      "SUBTITLE": "Ajoutez des collaborateurs pour les voir apparaître ici."
+    },
+    "CONFIRM": {
+      "DELETE_TITLE": "Confirmation",
+      "DELETE_MSG": "Voulez-vous vraiment désactiver ce collaborateur ?",
+      "DELETE_SUCCESS": "Collaborateur désactivé avec succès.",
+      "DELETE_ERROR": "Impossible de désactiver ce collaborateur."
+    },
+    "FORM": {
+      "TITLE": "Inviter un nouveau collaborateur",
+      "EMAIL": "Email Professionnel",
+      "PRENOM": "Prénom",
+      "NOM": "Nom",
+      "ROLE": "Rôle attribué",
+      "ROLE_MANAGER": "Manager",
+      "ROLE_VIEWER": "Consultant",
+      "FONCTION": "Fonction / Poste",
+      "TEL": "Téléphone",
+      "INFO": "Le collaborateur recevra une invitation par email pour configurer son accès.",
+      "BTN_CANCEL": "Annuler",
+      "BTN_CREATE": "Créer le compte"
+    }
+  },
+  "SUPER_ADMIN": {
+    "DASHBOARD": {
+      "WELCOME": "Bienvenue",
+      "TITLE": "SUPER ADMIN - Tableau de bord",
+      "USERS": "UTILISATEURS",
+      "INVOICES": "FACTURES",
+      "COMPANIES": "ENTREPRISES",
+      "INVOICE_BREAKDOWN": "Répartition des factures par entreprise"
+    },
+    "REQUESTS": {
+      "TITLE": "Gestion des demandes d'inscription",
+      "SUBTITLE": "Approuvez ou rejetez les demandes d'entreprise",
+      "SEARCH_PLACEHOLDER": "Rechercher par entreprise ou email...",
+      "FILTER_STATUS": "Filtrer par statut",
+      "STATUS_ALL": "Toutes les demandes",
+      "TABLE": {
+        "COMPANY": "Entreprise",
+        "EMAIL": "Email",
+        "REGION": "Région",
+        "STATUS": "Statut",
+        "DATE": "Date",
+        "ACTIONS": "Actions"
+      },
+      "EMPTY": "Aucune demande trouvée",
+      "DETAIL": {
+        "TITLE": "Détail de la demande",
+        "BACK": "Retour à la liste",
+        "LOADING": "Chargement des détails...",
+        "CURRENT_STATUS": "Statut actuel :",
+        "SUBMITTED_ON": "Soumise le {{date}}",
+        "COMPANY_INFO": "Informations entreprise",
+        "CODE": "Code",
+        "BUSINESS_NAME": "Raison Sociale",
+        "TAX_ID": "Matricule Fiscal",
+        "LEGAL_FORM": "Forme Juridique",
+        "ADDRESS": "Adresse",
+        "REGION": "Région",
+        "PHONE": "Téléphone",
+        "WEBSITE": "Site Web",
+        "BANK": "Banque",
+        "IBAN": "IBAN",
+        "RESPONSIBLE": "Responsable",
+        "FIRST_NAME": "Prénom",
+        "LAST_NAME": "Nom",
+        "FUNCTION": "Fonction",
+        "REJECTION_COMMENT": "Commentaire de traitement",
+        "REJECT_REASON_TITLE": "Raison du rejet",
+        "REJECT_REASON_PLACEHOLDER": "Expliquez la raison du rejet (obligatoire)...",
+        "CONFIRM_REJECT": "Confirmer le rejet",
+        "APPROVE": "Approuver",
+        "REJECT": "Rejeter"
+      },
+      "CONFIRMATIONS": {
+        "APPROVE_HEADER": "Confirmation d'approbation",
+        "APPROVE_MESSAGE": "Approuver la demande de \"{{company}}\" ? Un email avec les identifiants sera envoyé automatiquement.",
+        "APPROVE_SUCCESS_TITLE": "Demande approuvée",
+        "APPROVE_SUCCESS_DETAIL": "Le compte a été créé et un email envoyé au responsable.",
+        "REJECT_SUCCESS_TITLE": "Demande rejetée",
+        "REJECT_SUCCESS_DETAIL": "La demande a été rejetée et un email a été envoyé.",
+        "REJECT_WARN_TITLE": "Validation",
+        "REJECT_WARN_DETAIL": "Veuillez entrer une raison de rejet."
+      }
+    },
+    "USERS": {
+      "TITLE": "Gestion des utilisateurs",
+      "SUBTITLE": "Gérez tous les utilisateurs de la plateforme",
+      "CREATE_BTN": "Créer Super Admin",
+      "SEARCH_PLACEHOLDER": "Rechercher par nom, prénom ou email...",
+      "TABLE": {
+        "NAME": "Nom",
+        "EMAIL": "Email",
+        "ROLE": "Rôle",
+        "COMPANY": "Entreprise",
+        "STATUS": "Statut",
+        "ACTIONS": "Actions"
+      },
+      "EMPTY": "Aucun utilisateur trouvé",
+      "ACTIONS": {
+        "ACTIVATE": "Activer",
+        "BLOCK": "Bloquer"
+      },
+      "FORM": {
+        "CREATE_TITLE": "Créer un Super Admin",
+        "EDIT_TITLE": "Modifier utilisateur",
+        "NEW_TITLE": "Nouvel utilisateur",
+        "FIRST_NAME": "Prénom *",
+        "LAST_NAME": "Nom *",
+        "EMAIL": "Email *",
+        "PHONE": "Téléphone *",
+        "PASSWORD": "Mot de passe *",
+        "CONFIRM_PASSWORD": "Confirmer le mot de passe *",
+        "ROLE": "Rôle *",
+        "PLACEHOLDERS": {
+          "FIRST_NAME": "Prénom",
+          "LAST_NAME": "Nom",
+          "EMAIL": "email@exemple.com",
+          "PHONE": "+216 XX XXX XXX",
+          "PASSWORD": "Entrez le mot de passe",
+          "CONFIRM_PASSWORD": "Confirmez le mot de passe",
+          "ROLE_SELECT": "Sélectionnez un rôle"
+        },
+        "VALIDATIONS": {
+          "FIRST_NAME_REQ": "Prénom requis (min 2 caractères)",
+          "LAST_NAME_REQ": "Nom requis (min 2 caractères)",
+          "EMAIL_VALID": "Email valide requis",
+          "PHONE_REQ": "Téléphone requis (min 8 caractères)",
+          "PASSWORD_REQ": "Mot de passe requis (min 8 caractères)",
+          "CONFIRM_REQ": "Confirmation du mot de passe requise",
+          "MISMATCH": "Les mots de passe ne correspondent pas",
+          "ROLE_REQ": "Rôle requis"
+        },
+        "INFO_BOX": "Veuillez entrer un mot de passe sécurisé (minimum 8 caractères) pour ce Super Admin.",
+        "ACTIONS": {
+          "CANCEL": "Annuler",
+          "CREATE": "Créer le Super Admin",
+          "SAVE": "Sauvegarder",
+          "NEW": "Créer"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,90 @@
+@startuml
+title Diagramme de séquence — Statistiques du Tableau de Bord
+
+skinparam backgroundColor #FFFFFF
+skinparam sequenceArrowThickness 1.5
+skinparam roundcorner 5
+skinparam LifeLineBorderColor #333333
+skinparam SequenceGroupBorderColor #888888
+
+actor "Super Admin" as SA
+actor "Manager / Admin / Consultant" as User
+boundary "Interface (Angular)" as UI
+control "DashboardService" as DS
+control "API Backend" as API
+database "Base de Données" as DB
+
+== Tableau de Bord Global — Statistiques globales (Super Admin) ==
+SA -> UI : Accéder au Tableau de Bord Global
+activate UI
+UI -> DS : getSuperAdminStatistics()
+activate DS
+DS -> API : GET /api/super-admin/statistiques\n[SuperAdminController]
+activate API
+API -> DB : COUNT(users, clients, emetteurs, factures)
+DB -> API : Résultats
+API -> DS : DashboardStatsDTO
+deactivate API
+DS -> UI : SuperAdminStats
+deactivate DS
+UI -> SA : Affichage des statistiques globales
+deactivate UI
+
+== Tableau de Bord Entreprise — Indicateurs de performance ==
+User -> UI : Accéder au Tableau de Bord Entreprise
+activate UI
+UI -> DS : getDashboard()
+activate DS
+DS -> API : GET /api/entreprise-admin/dashboard\n[EntrepriseAdminController]
+activate API
+API -> DB : Données agrégées (factures, clients, CA...)
+DB -> API : EmetteurDashboardDTO
+deactivate API
+DS -> DS : calculerStats(...)
+note right of DS : Calcul côté frontend :\nCA, KPI, tendances...
+DS -> UI : DashboardStats
+deactivate DS
+UI -> User : Affichage des indicateurs de performance
+deactivate UI
+
+== Tableau de Bord Entreprise — Visualiser des graphiques ==
+User -> UI : Accéder au Tableau de Bord Entreprise (graphiques)
+activate UI
+note over UI : Aucun appel backend.\nGraphiques construits côté Angular\nà partir des données déjà chargées.
+UI -> UI : construireGraphiques(dashboardStats)
+UI -> User : Affichage des graphiques
+deactivate UI
+
+== Tableau de Bord Entreprise — Rafraîchir le TdB ==
+User -> UI : Cliquer sur Rafraîchir
+activate UI
+UI -> DS : refreshStats()
+activate DS
+DS -> API : GET /api/factures\nGET /api/clients\nGET /api/entreprise-admin/collaborateurs
+activate API
+API -> DB : Récupération des données fraîches
+DB -> API : Données mises à jour
+deactivate API
+DS -> DS : recalculerStats(...)
+DS -> UI : DashboardStats (mis à jour)
+deactivate DS
+UI -> User : Affichage mis à jour
+deactivate UI
+
+== Tableau de Bord Entreprise — Factures en retard ==
+User -> UI : Accéder au Tableau de Bord Entreprise (factures en retard)
+activate UI
+UI -> DS : getFacturesEnRetard()
+activate DS
+DS -> API : GET /api/factures\n[FactureController]
+activate API
+API -> DB : SELECT * WHERE statut = 'SENT'
+DB -> API : Liste des factures impayées
+deactivate API
+DS -> DS : filtrerFacturesEnRetard(statut = SENT)
+DS -> UI : FacturesEnRetard[]
+deactivate DS
+UI -> User : Affichage des factures en retard
+deactivate UI
+
+@enduml

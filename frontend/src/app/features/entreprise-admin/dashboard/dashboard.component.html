@@ -1,0 +1,66 @@
+<div class="dashboard-container">
+  <div class="dashboard-header">
+    <div>
+      <h2 class="enterprise-name">{{ enterpriseName || 'Entreprise' }}</h2>
+      <h1>Tableau de Bord</h1>
+      <p class="subtitle">Bienvenue sur votre espace d'administration</p>
+    </div>
+  </div>
+
+  <div class="kpi-section">
+    <div class="kpi-grid">
+      <app-stat-card *ngFor="let kpi of kpiData" [data]="kpi"></app-stat-card>
+    </div>
+  </div>
+
+  <div class="charts-section">
+    <div class="chart-card">
+      <h3>Chiffre d'Affaires vs Encaissements</h3>
+      <p-chart type="line" [data]="chartData" [options]="chartOptions" [style]="{'height': '400px'}"></p-chart>
+    </div>
+  </div>
+
+  <div class="summary-section">
+    <div class="summary-grid">
+      <div class="summary-item">
+        <div class="summary-icon">
+          <i class="pi pi-file-o"></i>
+        </div>
+        <div class="summary-content">
+          <p class="summary-label">Factures en Attente</p>
+          <p class="summary-value">12</p>
+        </div>
+      </div>
+
+      <div class="summary-item">
+        <div class="summary-icon">
+          <i class="pi pi-clock"></i>
+        </div>
+        <div class="summary-content">
+          <p class="summary-label">Tâches Assignées</p>
+          <p class="summary-value">5</p>
+        </div>
+      </div>
+
+      <div class="summary-item">
+        <div class="summary-icon">
+          <i class="pi pi-check-circle"></i>
+        </div>
+        <div class="summary-content">
+          <p class="summary-label">Factures Validées</p>
+          <p class="summary-value">234</p>
+        </div>
+      </div>
+
+      <div class="summary-item">
+        <div class="summary-icon">
+          <i class="pi pi-exclamation-triangle"></i>
+        </div>
+        <div class="summary-content">
+          <p class="summary-label">Alertes Actives</p>
+          <p class="summary-value">2</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

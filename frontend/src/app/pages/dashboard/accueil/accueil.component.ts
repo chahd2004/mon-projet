@@ -1,237 +1,100 @@
-import { Component, OnInit, inject } from '@angular/core';
+// src/app/pages/dashboard/accueil/accueil.component.ts
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
+import { RouterModule } from '@angular/router';
 
-// PrimeNG Modules
-import { CardModule } from 'primeng/card';
 import { ButtonModule } from 'primeng/button';
-import { ChartModule } from 'primeng/chart';
-import { TableModule } from 'primeng/table';
-import { TagModule } from 'primeng/tag';
-import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { TooltipModule } from 'primeng/tooltip';
 import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
 
-// Services
 import { FactureService } from '../../../core/services/facture.service';
-import { ClientService } from '../../../core/services/client.service';
-import { DashboardService } from '../../../core/services/dashboard.service';
-import { getHttpErrorMessage } from '../../../core/utils/http-error.util';
+import { AuthService } from '../../../core/services/auth.service';
+import { EmetteurService } from '../../../core/services/emetteur.service';
+import { UserRole } from '../../../models/enums';
+import { signal, effect } from '@angular/core';
+
+import { TranslateModule } from '@ngx-translate/core';
+
+import { ChatWidgetComponent } from '../../../shared/components/chat-widget/chat-widget.component';
 
 @Component({
   selector: 'app-accueil',
   standalone: true,
-  imports: [
-    CommonModule,
-    CardModule,
-    ButtonModule,
-    ChartModule,
-    TableModule,
-    TagModule,
-    ProgressSpinnerModule,
-    TooltipModule,
-    ToastModule
-  ],
+  imports: [CommonModule, RouterModule, ButtonModule, TooltipModule, ToastModule, TranslateModule, ChatWidgetComponent],
   providers: [MessageService],
   templateUrl: './accueil.component.html',
   styleUrls: ['./accueil.component.scss']
 })
-export class AccueilComponent implements OnInit {
+export class AccueilComponent {
   private factureService = inject(FactureService);
-  private clientService = inject(ClientService);
-  private dashboardService = inject(DashboardService);
-  private router = inject(Router);
+  private authService    = inject(AuthService);
+  private emetteurService = inject(EmetteurService);
   private messageService = inject(MessageService);
 
-  // Stats principales
   totalFactures: number = 0;
-  totalClients: number = 0;
-  chiffreAffaires: number = 0;
-  facturesImpayees: number = 0;
-  loading: boolean = true;
+  pendingDemandes: number = 3;
+  raisonSociale = signal<string | null>(null);
 
-  // Dernières factures
-  dernieresFactures: any[] = [];
-
-  // Données du graphique
-  chartData: any = {
-    labels: ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Jun', 'Jul', 'Aoû', 'Sep', 'Oct', 'Nov', 'Déc'],
-    datasets: [
-      {
-        label: 'Chiffre d\'affaires (TND)',
-        data: [],
-        borderColor: '#3b82f6',
-        backgroundColor: 'rgba(59, 130, 246, 0.1)',
-        tension: 0.4,
-        fill: true
-      },
-      {
-        label: 'Factures payées',
-        data: [],
-        borderColor: '#10b981',
-        backgroundColor: 'rgba(16, 185, 129, 0.1)',
-        tension: 0.4
-      }
-    ]
-  };
-
-  chartOptions: any;
-
-  // Stats supplémentaires
-  stats: any = {
-    evolution: 0,
-    exercice: new Date().getFullYear().toString(),
-    annees: []
-  };
-
-  ngOnInit(): void {
-    this.initChartOptions();
-    this.loadData();
+  get role(): UserRole | null {
+    return this.authService.currentUser()?.role ?? null;
   }
 
-  initChartOptions(): void {
-    this.chartOptions = {
-      plugins: {
-        legend: { 
-          labels: { color: '#495057' } 
-        },
-        tooltip: {
-          callbacks: {
-            label: (context: any) => {
-              let label = context.dataset.label || '';
-              if (label) label += ': ';
-              if (context.parsed.y !== null) {
-                label += this.formatMontant(context.parsed.y);
-              }
-              return label;
-            }
-          }
-        }
-      },
-      scales: {
-        x: { 
-          ticks: { color: '#495057' }, 
-          grid: { color: '#ebedef' } 
-        },
-        y: { 
-          ticks: { 
-            color: '#495057',
-            callback: (value: any) => this.formatMontant(value, true)
-          },
-          grid: { color: '#ebedef' }
-        }
-      },
-      responsive: true,
-      maintainAspectRatio: false
+  hasRole(role: UserRole): boolean {
+    return this.authService.hasRole(role);
+  }
+
+  hasAnyRole(roles: readonly UserRole[]): boolean {
+    return this.authService.hasAnyRole(roles);
+  }
+
+  get isViewer(): boolean {
+    return this.hasRole('ENTREPRISE_VIEWER');
+  }
+
+  get userLabel(): string {
+    const user = this.authService.currentUser();
+    if (!user) return 'Utilisateur';
+    return `${user.prenom ?? ''} ${user.nom ?? ''}`.trim() || user.email;
+  }
+
+  get roleLabel(): string {
+    const map: Record<UserRole, string> = {
+      SUPER_ADMIN: 'Super Admin',
+      ENTREPRISE_ADMIN: 'Entreprise Admin',
+      ENTREPRISE_MANAGER: 'Manager',
+      ENTREPRISE_VIEWER: 'Consultant',
+      CLIENT: 'Client',
+      EMETTEUR: 'Emetteur'
     };
+
+    return this.role ? map[this.role] : 'Utilisateur';
   }
 
-  loadData(): void {
-    this.loading = true;
-
-    // Récupérer les statistiques
-    this.dashboardService.getStats().subscribe({
-      next: (data: any) => {
-        this.totalFactures = data.factures?.total || 0;
-        this.totalClients = data.clients?.total || 0;
-        this.chiffreAffaires = data.chiffreAffaires?.actuel || 0;
-        this.facturesImpayees = data.factures?.enRetard || 0;
-        
-        this.stats.evolution = data.chiffreAffaires?.evolution || 0;
-        this.stats.annees = data.chiffreAffaires?.parAnnee || [];
-        
-        if (data.graphiques?.caMensuel) {
-          this.chartData.datasets[0].data = data.graphiques.caMensuel.valeurs || [];
-        }
-        
-        this.loading = false;
-      },
-      error: (error: unknown) => {
-        console.error('Erreur chargement stats:', error);
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Erreur',
-          detail: getHttpErrorMessage(error, 'Impossible de charger les statistiques')
+  constructor() {
+    this.loadTotalFactures();
+    effect(() => {
+      const user = this.authService.currentUser();
+      if (user?.emetteurId) {
+        this.emetteurService.getEmetteurById(user.emetteurId).subscribe({
+          next: (emetteur) => this.raisonSociale.set(emetteur?.raisonSociale || null),
+          error: () => this.raisonSociale.set(null)
         });
-        this.loading = false;
-      }
-    });
-
-    // Récupérer les dernières factures
-    this.dashboardService.getDernieresFactures(5).subscribe({
-      next: (factures: any[]) => {
-        this.dernieresFactures = factures || [];
-      },
-      error: (error: any) => {
-        console.error('Erreur chargement factures:', error);
-        this.dernieresFactures = [];
-      }
-    });
-
-    // Récupérer le total des clients
-    this.clientService.getClients().subscribe({
-      next: (clients) => {
-        this.totalClients = clients.length;
-      },
-      error: (error: any) => {
-        console.error('Erreur chargement clients:', error);
+      } else {
+        this.raisonSociale.set(null);
       }
     });
   }
 
-  formatMontant(montant: number, abrege: boolean = false): string {
-    if (!montant && montant !== 0) return '0 TND';
-    
-    if (abrege && montant >= 1000000) {
-      return (montant / 1000000).toFixed(1) + ' M TND';
-    }
-    return new Intl.NumberFormat('fr-TN', {
-      minimumFractionDigits: 3,
-      maximumFractionDigits: 3
-    }).format(montant) + ' TND';
-  }
-
-  getStatutSeverity(statut: string): 'success' | 'info' | 'warning' | 'danger' | 'secondary' {
-    switch (statut) {
-      case 'PAYEE': return 'success';
-      case 'EN_ATTENTE': return 'warning';
-      case 'EN_RETARD': return 'danger';
-      case 'ANNULEE': return 'secondary';
-      case 'BROUILLON': return 'info';
-      default: return 'info';
-    }
-  }
-
-  formatStatut(statut: string): string {
-    switch (statut) {
-      case 'PAYEE': return 'Payée';
-      case 'EN_ATTENTE': return 'En attente';
-      case 'EN_RETARD': return 'En retard';
-      case 'ANNULEE': return 'Annulée';
-      case 'BROUILLON': return 'Brouillon';
-      default: return statut;
-    }
-  }
-
-  naviguerVersFactures(): void {
-    this.router.navigate(['/factures']);
-  }
-
-  naviguerVersClients(): void {
-    this.router.navigate(['/clients']);
-  }
-
-  voirFacture(id: number): void {
-    this.router.navigate(['/facture', id]);
-  }
-
-  rafraichir(): void {
-    this.loadData();
-    this.messageService.add({
-      severity: 'info',
-      summary: 'Rafraîchi',
-      detail: 'Données mises à jour'
+  loadTotalFactures(): void {
+    this.factureService.getFactures(1, 1).subscribe({
+      next: (response: any) => { this.totalFactures = response.total || 0; },
+      error: () => { this.totalFactures = 0; }
     });
+  }
+
+  logout(): void {
+    this.messageService.add({ severity: 'info', summary: 'Déconnexion', detail: 'Vous êtes déconnecté' });
+    this.authService.logout();
   }
 }

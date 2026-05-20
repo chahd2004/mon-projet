@@ -121,7 +121,8 @@ export class RegisterComponent {
       prenom: this.prenom.trim(),
       email: this.email.trim(),
       password: this.password,
-      typeUser: 'CLIENT',
+      role: 'SUPER_ADMIN',
+      typeUser: null,
       telephone: undefined
     }).subscribe({
       next: (response) => {
@@ -134,8 +135,16 @@ export class RegisterComponent {
       },
       error: (err) => {
         this.loading = false;
-        const msg = err?.error?.message ?? err?.error?.error ?? (typeof err?.error === 'string' ? err.error : null) ?? err?.message;
+        const payload = err?.error;
+        const msg = payload?.message ?? payload?.error ?? (typeof payload === 'string' ? payload : null) ?? err?.message;
+        
         this.errorMessage = msg || 'Erreur lors de l\'inscription. Veuillez réessayer.';
+        
+        // Si c'est l'erreur d'email déjà utilisé, on peut aussi l'indiquer plus spécifiquement si besoin
+        if (this.errorMessage.includes('déjà utilisé')) {
+          // On pourrait ajouter une propriété emailError si on voulait l'afficher sous le champ
+        }
+
         this.messageService.add({
           severity: 'error',
           summary: 'Erreur d\'inscription',
@@ -153,5 +162,12 @@ export class RegisterComponent {
    */
   goToLogin(): void {
     this.router.navigate(['/login']);
+  }
+
+  /**
+   * Redirection vers le formulaire de demande d'émetteur
+   */
+  navigateToDemande(): void {
+    this.router.navigate(['/demande']);
   }
 }

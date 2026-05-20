@@ -1,0 +1,148 @@
+<div class="create-super-admin-container" [class.loading]="isLoading">
+  <p-toast></p-toast>
+
+  <div class="page-header">
+    <h1>{{ 'SUPER_ADMIN.USERS.FORM.CREATE_TITLE' | translate }}</h1>
+  </div>
+
+  <p-card class="create-card">
+    <form [formGroup]="createForm">
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="prenom">{{ 'SUPER_ADMIN.USERS.FORM.FIRST_NAME' | translate }} *</label>
+          <span class="p-input-icon-left w-full">
+            <i class="pi pi-user"></i>
+            <input
+              pInputText
+              id="prenom"
+              formControlName="prenom"
+              [placeholder]="'SUPER_ADMIN.USERS.FORM.FIRST_NAME' | translate"
+              [class.ng-invalid]="createForm.get('prenom')?.invalid && createForm.get('prenom')?.touched"
+            />
+          </span>
+          <small *ngIf="createForm.get('prenom')?.invalid && createForm.get('prenom')?.touched" class="error">
+            {{ 'SUPER_ADMIN.USERS.FORM.MIN_LENGTH' | translate:{min: 2} }}
+          </small>
+        </div>
+
+        <div class="form-group">
+          <label for="nom">{{ 'SUPER_ADMIN.USERS.FORM.LAST_NAME' | translate }} *</label>
+          <span class="p-input-icon-left w-full">
+            <i class="pi pi-user"></i>
+            <input
+              pInputText
+              id="nom"
+              formControlName="nom"
+              [placeholder]="'SUPER_ADMIN.USERS.FORM.LAST_NAME' | translate"
+              [class.ng-invalid]="createForm.get('nom')?.invalid && createForm.get('nom')?.touched"
+            />
+          </span>
+          <small *ngIf="createForm.get('nom')?.invalid && createForm.get('nom')?.touched" class="error">
+            {{ 'SUPER_ADMIN.USERS.FORM.MIN_LENGTH' | translate:{min: 2} }}
+          </small>
+        </div>
+
+        <div class="form-group">
+          <label for="email">{{ 'SUPER_ADMIN.USERS.FORM.EMAIL' | translate }} *</label>
+          <span class="p-input-icon-left w-full">
+            <i class="pi pi-envelope"></i>
+            <input
+              pInputText
+              id="email"
+              type="email"
+              formControlName="email"
+              placeholder="email@exemple.com"
+              [class.ng-invalid]="createForm.get('email')?.invalid && createForm.get('email')?.touched"
+            />
+          </span>
+          <small *ngIf="createForm.get('email')?.invalid && createForm.get('email')?.touched" class="error">
+            {{ 'SUPER_ADMIN.USERS.FORM.INVALID_EMAIL' | translate }}
+          </small>
+        </div>
+
+        <div class="form-group">
+          <label for="telephone">{{ 'SUPER_ADMIN.USERS.FORM.PHONE' | translate }} *</label>
+          <span class="p-input-icon-left w-full">
+            <i class="pi pi-phone"></i>
+            <input
+              pInputText
+              id="telephone"
+              formControlName="telephone"
+              placeholder="+216 XX XXX XXX"
+              [class.ng-invalid]="createForm.get('telephone')?.invalid && createForm.get('telephone')?.touched"
+            />
+          </span>
+          <small *ngIf="createForm.get('telephone')?.invalid && createForm.get('telephone')?.touched" class="error">
+            {{ 'SUPER_ADMIN.USERS.FORM.MIN_LENGTH' | translate:{min: 8} }}
+          </small>
+        </div>
+
+        <div class="form-group">
+          <label for="motDePasse">{{ 'SUPER_ADMIN.USERS.FORM.PASSWORD' | translate }} *</label>
+          <span class="p-input-icon-left w-full">
+            <i class="pi pi-lock"></i>
+            <input
+              pInputText
+              id="motDePasse"
+              type="password"
+              formControlName="motDePasse"
+              [placeholder]="'SUPER_ADMIN.USERS.FORM.PASSWORD' | translate"
+              [class.ng-invalid]="createForm.get('motDePasse')?.invalid && createForm.get('motDePasse')?.touched"
+            />
+          </span>
+          <small *ngIf="createForm.get('motDePasse')?.invalid && createForm.get('motDePasse')?.touched" class="error">
+            {{ 'SUPER_ADMIN.USERS.FORM.MIN_LENGTH' | translate:{min: 8} }}
+          </small>
+        </div>
+
+        <div class="form-group">
+          <label for="confirmationMotDePasse">{{ 'SUPER_ADMIN.USERS.FORM.CONFIRM_PASSWORD' | translate }} *</label>
+          <span class="p-input-icon-left w-full">
+            <i class="pi pi-lock"></i>
+            <input
+              pInputText
+              id="confirmationMotDePasse"
+              type="password"
+              formControlName="confirmationMotDePasse"
+              [placeholder]="'SUPER_ADMIN.USERS.FORM.CONFIRM_PASSWORD' | translate"
+              [class.ng-invalid]="(createForm.get('confirmationMotDePasse')?.invalid || (createForm.errors?.['passwordMismatch'] && createForm.get('confirmationMotDePasse')?.touched)) && createForm.get('confirmationMotDePasse')?.touched"
+            />
+          </span>
+          <small *ngIf="createForm.get('confirmationMotDePasse')?.invalid && createForm.get('confirmationMotDePasse')?.touched" class="error">
+             {{ 'SUPER_ADMIN.USERS.FORM.INVALID' | translate }}
+          </small>
+          <small *ngIf="createForm.errors?.['passwordMismatch'] && createForm.get('confirmationMotDePasse')?.touched" class="error">
+            {{ 'SUPER_ADMIN.USERS.FORM.PASSWORD_MISMATCH' | translate }}
+          </small>
+        </div>
+      </div>
+
+      <div class="info-box">
+        <i class="pi pi-info-circle"></i>
+        <span>{{ 'SUPER_ADMIN.USERS.FORM.MIN_LENGTH' | translate:{min: 8} }}</span>
+      </div>
+
+      <div class="form-actions">
+        <button
+          pButton
+          type="button"
+          [label]="'COMMON.CANCEL' | translate"
+          icon="pi pi-times"
+          class="p-button-text"
+          (click)="cancel()"
+          [disabled]="isLoading"
+        ></button>
+        <button
+          pButton
+          type="button"
+          [label]="'SUPER_ADMIN.USERS.CREATE_BTN' | translate"
+          icon="pi pi-check"
+          class="p-button-success"
+          (click)="save()"
+          [loading]="isLoading"
+          [disabled]="!createForm.valid || isLoading"
+        ></button>
+      </div>
+    </form>
+  </p-card>
+</div>

@@ -1,4 +1,6 @@
 // src/app/models/facture.model.ts - Aligné avec le backend (camelCase)
+import { BuyerRole } from './role.model';
+
 export interface Facture {
   id: number;
   numFact: string;
@@ -12,7 +14,7 @@ export interface Facture {
   montantTVA: number;
   acheteurId: number;
   acheteurNom: string;
-  typeAcheteur: 'CLIENT' | 'EMETTEUR';
+  typeAcheteur: BuyerRole;
   vendeurId: number;
   vendeurNom: string;
   lignes?: LigneFacture[];
@@ -20,6 +22,8 @@ export interface Facture {
   periode_au?: string;
   reference_unique?: string;
   reference_ttn?: string;
+  dateEcheance?: string;
+  previousStatut?: string;
 }
 
 export interface LigneFacture {
@@ -33,7 +37,7 @@ export interface FactureRequest {
   dateEmission: string;
   datePaiement: string;
   acheteurId: number;
-  typeAcheteur: 'CLIENT' | 'EMETTEUR';
+  typeAcheteur: BuyerRole;
   vendeurId: number;
   modePaiement: string;
   statut?: string;
@@ -41,17 +45,22 @@ export interface FactureRequest {
 }
 
 export enum StatutFacture {
-  BROUILLON = 'BROUILLON',
-  EN_ATTENTE = 'EN_ATTENTE',
-  PAYEE = 'PAYEE',
-  ANNULEE = 'ANNULEE',
-  EN_RETARD = 'EN_RETARD'
+  DRAFT = 'DRAFT',
+  SIGNED = 'SIGNED',
+  SENT = 'SENT',
+  PAID = 'PAID',
+  REJECTED = 'REJECTED',
+  CANCELLED = 'CANCELLED',
+  EN_RETARD = 'EN_RETARD',
+  UNPAID = 'UNPAID'
 }
 
+// StatutFactureLabel removed - used translations instead
+
+/** Aligné avec le backend (ModePaiement.java) */
 export enum ModePaiement {
   ESPECES = 'ESPECES',
-  CHEQUE = 'CHEQUE',
+  CARTE = 'CARTE',
   VIREMENT = 'VIREMENT',
-  CCP = 'CCP',
-  CARTE_BANCAIRE = 'CARTE_BANCAIRE'
+  CHEQUE = 'CHEQUE'
 }

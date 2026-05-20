@@ -1,0 +1,70 @@
+<div class="facture-card" [class.loading]="isLoading">
+  <div class="card-header">
+    <div class="facture-number">
+      <span class="label">Facture</span>
+      <span class="number">#{{ facture.numero }}</span>
+    </div>
+    <p-tag 
+      [value]="((facture.statut || 'DRAFT') | statusBadge)?.label" 
+      [severity]="((facture.statut || 'DRAFT') | statusBadge)?.severity" 
+      [icon]="((facture.statut || 'DRAFT') | statusBadge)?.icon"
+    ></p-tag>
+  </div>
+
+  <div class="card-body">
+    <div class="facture-info">
+      <div class="info-row">
+        <span class="label">Client:</span>
+        <span class="value">{{ facture.clientNom }}</span>
+      </div>
+      <div class="info-row">
+        <span class="label">Date:</span>
+        <span class="value">{{ formatDate(facture.dateFacture) }}</span>
+      </div>
+      <div class="info-row">
+        <span class="label">Échéance:</span>
+        <span class="value">{{ formatDate(facture.dateEcheance) }}</span>
+      </div>
+    </div>
+
+    <div class="facture-amount">
+      <div class="amount-row">
+        <span class="label">Montant HT</span>
+        <span class="value">{{ formatCurrency(facture.montantHT) }}</span>
+      </div>
+      <div class="amount-row">
+        <span class="label">TVA (19%)</span>
+        <span class="value">{{ formatCurrency(facture.montantTVA) }}</span>
+      </div>
+      <div class="amount-row total">
+        <span class="label">Total TTC</span>
+        <span class="value">{{ formatCurrency(facture.montantTTC) }}</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="card-footer">
+    <button
+      pButton
+      type="button"
+      label="Voir détails"
+      text
+      icon="pi pi-eye"
+      (click)="onViewDetails()"
+      class="action-btn"
+    ></button>
+    <button
+      pButton
+      type="button"
+      label="Télécharger"
+      text
+      icon="pi pi-download"
+      (click)="onDownload()"
+      class="action-btn"
+    ></button>
+  </div>
+
+  <div *ngIf="isLoading" class="loading-overlay">
+    <div class="spinner"></div>
+  </div>
+</div>

@@ -1,0 +1,81 @@
+@startuml "Diagramme de Séquence - Administration (ECB)"
+
+skinparam style strictuml
+skinparam maxMessageSize 150
+skinparam sequence {
+    ParticipantPadding 30
+    MessageAlign center
+}
+
+actor "Entreprise" as Entreprise
+actor "SuperAdmin" as SuperAdmin
+
+boundary "Interface\n<<Boundary>>" as Interface
+control "PublicDemandeController\n<<Control>>" as PublicController
+control "SuperAdminDemandeController\n<<Control>>" as AdminDemandeController
+control "SuperAdminController\n<<Control>>" as AdminUserController
+control "DemandeEmetteurService\n<<Control>>" as DemandeService
+control "EmailService\n<<Utility>>" as EmailService
+entity "Demande" as Demande <<Entity>>
+entity "User" as User <<Entity>>
+
+== Soumettre une demande (Entreprise) ==
+
+Entreprise -> Interface : Remplir le formulaire
+activate Interface
+Interface -> PublicController : POST /api/public/demandes/emetteur
+activate PublicController
+PublicController -> DemandeService : soumettreDemande()
+activate DemandeService
+DemandeService -> Demande : save() / REQUESTED
+activate Demande
+Demande --> DemandeService : void
+deactivate Demande
+DemandeService -> EmailService : sendAcknowledgment()
+activate EmailService
+EmailService --> DemandeService : void
+deactivate EmailService
+DemandeService --> PublicController : 200 OK
+deactivate DemandeService
+PublicController --> Interface : Confirmation
+deactivate PublicController
+Interface --> Entreprise : Accusé de réception
+deactivate Interface
+
+== Gestion et Approbation (SuperAdmin) ==
+
+SA -> Interface : Consulter les demandes
+activate Interface
+Interface -> AdminDemandeController : GET /api/super-admin/demandes
+activate AdminDemandeController
+AdminDemandeController -> DemandeService : getAllDemandes()
+activate DemandeService
+DemandeService -> Demande : findAll()
+activate Demande
+Demande --> DemandeService : List<Demande>
+deactivate Demande
+DemandeService --> AdminDemandeController : List
+deactivate DemandeService
+AdminDemandeController --> Interface : Affichage liste
+
+SA -> Interface : Approuver / Rejeter
+Interface -> AdminDemandeController : POST /{id}/approuver
+activate AdminDemandeController
+AdminDemandeController -> DemandeService : approuverDemande(id)
+activate DemandeService
+DemandeService -> Demande : updateStatus(APPROVED)
+activate Demande
+Demande --> DemandeService : void
+deactivate Demande
+DemandeService -> EmailService : sendAccountCreated()
+activate EmailService
+EmailService --> DemandeService : void
+deactivate EmailService
+DemandeService --> AdminDemandeController : Status Update
+deactivate DemandeService
+AdminDemandeController --> Interface : 200 OK
+deactivate AdminDemandeController
+Interface --> SA : Message de succès
+deactivate Interface
+
+@enduml

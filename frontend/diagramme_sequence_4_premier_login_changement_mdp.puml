@@ -1,0 +1,87 @@
+@startuml
+title Diagramme de séquence — Premier login & Changement de mot de passe
+
+<style>
+sequenceDiagram {
+  ParticipantPadding 20
+}
+</style>
+
+skinparam backgroundColor #FFFFFF
+skinparam sequenceArrowThickness 1.5
+skinparam roundcorner 5
+skinparam LifeLineBorderColor #333333
+
+actor "Utilisateur" as U
+boundary "Interface\nLogin" as UI <<Boundary>>
+boundary "Page Changer\nMot de Passe" as PMdP <<Boundary>>
+control "AuthController" as AC <<Control>>
+control "AuthService" as AS <<Control>>
+entity "User" as UE <<Entity>>
+control "JwtService" as JS <<Control>>
+
+== Login ==
+
+U -> UI : Saisir email + mot de passe temporaire
+activate U
+activate UI
+UI -> AC : POST /api/auth/login
+activate AC
+AC -> AS : authenticate(request)
+activate AS
+AS -> UE : findByEmail()
+activate UE
+UE --> AS : User (firstLogin=true)
+deactivate UE
+AS -> UE : save() — setLastLoginDate
+activate UE
+UE --> AS : void
+deactivate UE
+AS -> JS : generateToken()
+activate JS
+JS --> AS : JWT token
+deactivate JS
+AS --> AC : AuthResponse (requirePasswordChange=true)
+deactivate AS
+AC --> UI : 200 OK
+deactivate AC
+UI --> U : Rediriger vers "Changer mot de passe"
+deactivate UI
+deactivate U
+
+== Changer mot de passe ==
+
+U -> PMdP : Saisir ancien + nouveau mot de passe
+activate U
+activate PMdP
+PMdP -> AC : POST /api/auth/change-password + JWT
+activate AC
+AC -> AS : changePassword()
+activate AS
+AS -> UE : findByEmail()
+activate UE
+UE --> AS : User
+deactivate UE
+
+alt Incorrect
+  AS --> AC : BadCredentialsException
+  activate AC
+  AC --> PMdP : 401 — Erreur : Ancien mot de passe incorrect
+  deactivate AC
+  PMdP --> U : Afficher erreur
+else Correct
+  AS -> AS : encode(newPassword)\nsetFirstLogin(false)\nsetStatus(ACTIVE)
+  AS -> UE : save()
+  activate UE
+  UE --> AS : void
+  deactivate UE
+  AS --> AC : 200 OK
+  deactivate AS
+  AC --> PMdP : Succès : Mot de passe changé
+  deactivate AC
+  PMdP --> U : Rediriger vers tableau de bord
+end
+deactivate PMdP
+deactivate U
+
+@enduml

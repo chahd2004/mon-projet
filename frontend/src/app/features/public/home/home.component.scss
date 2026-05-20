@@ -1,0 +1,148 @@
+.home-container {
+  min-height: 100vh;
+  background: var(--brand-gradient-diagonal);
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  .hero-section {
+    text-align: center;
+    color: white;
+    margin-bottom: 3rem;
+
+    .content {
+      h1 {
+        font-size: 3.5rem;
+        font-weight: bold;
+        margin-bottom: 1rem;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+      }
+
+      .subtitle {
+        font-size: 1.25rem;
+        margin-bottom: 1rem;
+        opacity: 0.95;
+      }
+
+      .description {
+        font-size: 1rem;
+        opacity: 0.85;
+        max-width: 600px;
+        margin: 0 auto;
+      }
+    }
+  }
+
+  .cta-section {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2rem;
+    margin-bottom: 3rem;
+    width: 100%;
+    max-width: 1000px;
+
+    .card {
+      background: white;
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 12px 28px rgba(11, 22, 63, 0.28);
+      text-align: center;
+      transition: transform 0.3s ease;
+
+      &:hover {
+        transform: translateY(-5px);
+      }
+
+      h2 {
+        color: #333;
+        font-size: 1.5rem;
+        margin-bottom: 0.5rem;
+      }
+
+      p {
+        color: #666;
+        margin-bottom: 1.5rem;
+      }
+
+      ::ng-deep p-button {
+        width: 100%;
+
+        .p-button {
+          background: var(--brand-primary);
+          border-color: var(--brand-primary);
+        }
+
+        .p-button:hover {
+          background: #102452;
+          border-color: #102452;
+        }
+      }
+    }
+  }
+
+  .features-section {
+    width: 100%;
+    max-width: 1000px;
+    margin-bottom: 3rem;
+    color: white;
+    text-align: center;
+
+    h2 {
+      font-size: 2rem;
+      margin-bottom: 2rem;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1.5rem;
+
+      .feature {
+        background: rgba(255, 255, 255, 0.1);
+        padding: 1.5rem;
+        border-radius: 12px;
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+
+        .icon {
+          font-size: 2.5rem;
+          margin-bottom: 1rem;
+        }
+
+        h3 {
+          font-size: 1.2rem;
+          margin-bottom: 0.5rem;
+        }
+
+        p {
+          font-size: 0.9rem;
+          opacity: 0.8;
+        }
+      }
+    }
+  }
+
+  .footer-section {
+    color: rgba(255, 255, 255, 0.7);
+    text-align: center;
+    margin-top: auto;
+    padding-top: 2rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .home-container {
+    .hero-section .content h1 {
+      font-size: 2rem;
+    }
+
+    .cta-section {
+      grid-template-columns: 1fr;
+    }
+
+    .features-section h2 {
+      font-size: 1.5rem;
+    }
+  }
+}

@@ -1,4 +1,5 @@
 export const environment = {
   production: true,
-  apiUrl: 'https://votre-domaine.com/api'
+  apiUrl: 'https://mon-app.com/api',
+  qrBaseUrl: 'https://mon-app.com'
 };

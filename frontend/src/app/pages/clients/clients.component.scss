@@ -1,40 +1,5 @@
-@use "sass:color";
-$primary-blue: #3b82f6;
-$success: #10b981;
-$warning: #f59e0b;
-$danger: #ef4444;
-$dark-blue: #1e293b;
-$gray-light: #f8fafc;
-$gray-text: #64748b;
-$border-color: #e2e8f0;
+@use 'sass:color';
 
-// Dialog footer buttons
-.dialog-footer-btn {
-  background: $primary-blue;
-  color: white;
-  border: none;
-  padding: 0.7rem 1.5rem;
-  border-radius: 8px;
-  font-weight: 600;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  cursor: pointer;
-  transition: all 0.2s;
-  margin-right: 0.5rem;
-  box-shadow: 0 2px 8px rgba($primary-blue, 0.15);
-
-  &:hover {
-    background: #2563eb;
-    transform: scale(1.05);
-  }
-}
-
-.dialog-footer-btn.cancel {
-  background: $danger;
-  color: white;
-  &:hover { background: #dc2626; }
-}
 $primary-blue: #3b82f6;
 $success: #10b981;
 $warning: #f59e0b;
@@ -45,136 +10,164 @@ $gray-text: #64748b;
 $border-color: #e2e8f0;
 
 .clients-container {
-  padding: 2rem;
+  max-width: 1450px;
+  margin: 0 auto;
+  padding: 0.5rem 1rem;
   min-height: 100vh;
-  background: #f8fafc;
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  box-sizing: border-box;
+  overflow-x: hidden;
+  width: 100%;
 }
 
+// ===== EN-TÊTE =====
 .header-section {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 2rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+  gap: 0.75rem;
 
-  h2 {
-    color: $dark-blue;
-    font-weight: 700;
-    font-size: 1.8rem;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    margin: 0;
-    i { color: $primary-blue; }
-  }
-
-  .header-actions {
+  .header-left {
     display: flex;
     align-items: center;
     gap: 1rem;
-  }
-}
 
-.search-box {
-  position: relative;
-  display: flex;
-  align-items: center;
 
-  > i {
-    position: absolute;
-    left: 0.9rem;
-    color: $gray-text;
-    font-size: 0.9rem;
-    pointer-events: none;
-  }
-
-  input {
-    padding: 0.65rem 2.5rem 0.65rem 2.4rem;
-    width: 260px;
-    border: 2px solid $border-color;
-    border-radius: 8px;
-    font-size: 0.95rem;
-    transition: border-color 0.2s;
-
-    &:focus {
-      border-color: $primary-blue;
-      outline: none;
-      box-shadow: 0 0 0 3px rgba($primary-blue, 0.1);
+    h2 {
+      color: $dark-blue;
+      font-weight: 700;
+      font-size: 1.4rem;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      i { color: $primary-blue; }
     }
   }
+}
 
-  .clear-search {
-    position: absolute;
-    right: 0.6rem;
-    background: none;
-    border: none;
-    color: $gray-text;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    padding: 0.2rem;
-    border-radius: 4px;
-    &:hover { color: $danger; }
+// ===== FILTRES =====
+.filters-section {
+  background: white;
+  border-radius: 12px;
+  padding: 1rem 1.5rem;
+  margin-bottom: 1rem;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+
+  .search-box {
+    position: relative;
+    max-width: 420px;
+
+    i {
+      position: absolute;
+      left: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: $gray-text;
+      font-size: 1rem;
+      z-index: 1;
+    }
+
+    input {
+      width: 100%;
+      padding: 0.75rem 1rem 0.75rem 2.5rem;
+      border: 2px solid $border-color;
+      border-radius: 10px;
+      font-size: 0.95rem;
+      transition: all 0.2s;
+
+      &:focus {
+        border-color: $primary-blue;
+        outline: none;
+        box-shadow: 0 0 0 3px rgba($primary-blue, 0.1);
+      }
+    }
+
+    .clear-search {
+      position: absolute;
+      right: 0.5rem;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      color: $gray-text;
+      cursor: pointer;
+      width: 30px; height: 30px;
+      display: flex; align-items: center; justify-content: center;
+      border-radius: 50%;
+      transition: all 0.2s;
+
+      i { position: static; font-size: 0.9rem; }
+
+      &:hover { background: rgba($danger, 0.1); color: $danger; }
+    }
   }
 }
 
+// ===== BOUTON NOUVEAU CLIENT =====
 .add-btn {
   background: $success;
   color: white;
   border: none;
-  padding: 0.68rem 1.4rem;
+  padding: 0.65rem 1.4rem;
   border-radius: 8px;
-  font-weight: 600;
+  font-weight: 700;
   font-size: 0.95rem;
-  display: flex;
+  display: inline-flex;
   align-items: center;
   gap: 0.5rem;
   cursor: pointer;
-  transition: background 0.2s, transform 0.2s;
+  transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
   white-space: nowrap;
+  flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba($success, 0.35);
 
   &:hover {
     background: #059669;
     transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba($success, 0.4);
   }
 }
 
-::ng-deep .p-card {
+// ===== TABLEAU (Design moderne unifié) =====
+.clients-table {
+  background: white;
   border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  border: 1px solid #e2e8f0;
   overflow: hidden;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
-  .p-card-body { padding: 0; }
-  .p-card-content { padding: 0; }
+  margin-bottom: 2rem;
 }
 
 ::ng-deep .p-datatable {
   .p-datatable-thead > tr > th {
     background: $dark-blue;
     color: white;
-    padding: 1rem 1.2rem;
+    padding: 0.75rem 1rem;
     font-weight: 600;
-    font-size: 0.9rem;
+    font-size: 0.85rem;
+    white-space: nowrap;
     border: none;
   }
 
   .p-datatable-tbody > tr {
     background: white;
-    transition: background 0.15s;
-
     td {
-      padding: 0.9rem 1.2rem;
-      border-bottom: 1px solid $border-color;
-      font-size: 0.95rem;
-      color: $dark-blue;
+      padding: 0.65rem 1rem;
+      border-bottom: 1px solid #f1f5f9;
+      color: #334155;
+      &.text-right { text-align: right; }
+      &.font-bold   { font-weight: 600; color: $dark-blue; }
     }
-
-    &:hover { background: $gray-light; }
-    &:last-child td { border-bottom: none; }
+    &:hover { background: #f8fafc; }
   }
 
   .p-paginator {
-    border-top: 1px solid $border-color;
-    padding: 0.8rem;
-    background: white;
+    background: #f9fafb;
+    border-top: 1px solid #e5e7eb;
+    padding: 1rem;
   }
 }
 
@@ -184,29 +177,43 @@ $border-color: #e2e8f0;
   justify-content: center;
 }
 
-.action-btn {
-  width: 36px;
-  height: 36px;
-  border: none;
-  border-radius: 6px;
+// ===== PAGINATION (Harmonisé avec Factures) =====
+::ng-deep .p-paginator {
+  background: white;
+  padding: 0.75rem 1rem;
+  border-top: 1px solid #f1f5f9;
+  .p-paginator-page.p-highlight {
+    background: $primary-blue;
+    color: white;
+    border-radius: 8px;
+  }
+}
+
+.icon-btn {
+  border: 1px solid #e5e7eb;
+  background: transparent;
+  color: #666666;
+  border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  color: white;
-  transition: transform 0.2s, opacity 0.2s;
+  transition: all 0.2s ease;
 
-  i { font-size: 0.95rem; }
+  i { font-size: 1rem; }
 
   &:hover {
-    transform: translateY(-2px);
-    opacity: 0.9;
+    border-color: #d1d5db;
+    background: #f9fafb;
   }
 
-  &.edit-btn   { background: $warning; }
-  &.delete-btn { background: $danger; }
+  &:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
 }
 
+// ===== MESSAGE VIDE =====
 .empty-message {
   text-align: center;
   padding: 4rem 2rem;
@@ -218,11 +225,7 @@ $border-color: #e2e8f0;
     margin-bottom: 1rem;
   }
 
-  h3 {
-    color: $dark-blue;
-    font-size: 1.3rem;
-    margin: 0 0 0.5rem;
-  }
+  h3 { color: $dark-blue; font-size: 1.3rem; margin: 0 0 0.5rem; }
 
   p {
     color: $gray-text;
@@ -231,9 +234,8 @@ $border-color: #e2e8f0;
   }
 }
 
-.dialog-content {
-  padding: 0.5rem 0.25rem;
-}
+// ===== DIALOGUE =====
+.dialog-content { padding: 0.5rem 0.25rem; }
 
 .form-group {
   margin-bottom: 1.2rem;
@@ -245,20 +247,14 @@ $border-color: #e2e8f0;
     color: $dark-blue;
     font-size: 0.88rem;
 
-    .required {
-      color: $danger;
-      margin-left: 2px;
-    }
+    .required { color: $danger; margin-left: 2px; }
   }
 }
 
 .form-row {
   display: flex;
   gap: 1rem;
-  .half {
-    flex: 1;
-    min-width: 0;
-  }
+  .half { flex: 1; min-width: 0; }
 }
 
 .client-input {
@@ -285,28 +281,6 @@ $border-color: #e2e8f0;
   }
 }
 
-::ng-deep .p-dropdown {
-  border: 2px solid $border-color !important;
-  border-radius: 8px !important;
-  transition: all 0.2s;
-
-  &:hover { border-color: $primary-blue !important; }
-
-  &.p-focus,
-  &.p-inputwrapper-focus {
-    border-color: $primary-blue !important;
-    box-shadow: 0 0 0 3px rgba($primary-blue, 0.1) !important;
-  }
-
-  .p-dropdown-label {
-    font-size: 0.95rem;
-    color: $dark-blue;
-    padding: 0.65rem 0.8rem;
-  }
-
-  .p-dropdown-trigger { color: $gray-text; }
-}
-
 .dialog-footer {
   display: flex;
   justify-content: flex-end;
@@ -314,79 +288,250 @@ $border-color: #e2e8f0;
   padding-top: 0.5rem;
 }
 
-::ng-deep .p-button-success {
-  background: $success !important;
-  border-color: $success !important;
+.dialog-footer-btn {
+  background: $primary-blue;
+  color: white;
+  border: none;
+  padding: 0.7rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 2px 8px rgba($primary-blue, 0.15);
 
-  &:hover {
-    background: #059669 !important;
-    border-color: #059669 !important;
-  }
+  &:hover { background: #2563eb; transform: scale(1.03); }
+  &:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
 
-  &:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
+  &.cancel {
+    background: white;
+    color: $dark-blue;
+    border: 1.5px solid $border-color;
+    box-shadow: none;
+    &:hover { background: $gray-light; border-color: $dark-blue; }
   }
 }
 
-// ✅ DIALOG - EN DEHORS DU @media
+// ===== PRIMENG OVERRIDES =====
+::ng-deep .p-dropdown {
+  border: 2px solid $border-color !important;
+  border-radius: 8px !important;
+  transition: all 0.2s;
+
+  &:hover { border-color: $primary-blue !important; }
+
+  &.p-focus, &.p-inputwrapper-focus {
+    border-color: $primary-blue !important;
+    box-shadow: 0 0 0 3px rgba($primary-blue, 0.1) !important;
+  }
+
+  .p-dropdown-label { font-size: 0.95rem; color: $dark-blue; padding: 0.65rem 0.8rem; }
+  .p-dropdown-trigger { color: $gray-text; }
+}
+
+::ng-deep .p-paginator {
+  .p-paginator-page.p-highlight {
+    background: $primary-blue;
+    color: white;
+    border-radius: 8px;
+  }
+}
+
+// ===== RESPONSIVE =====
+@media (max-width: 768px) {
+  .clients-container { padding: 0.75rem 1rem; }
+
+  .header-section {
+    flex-direction: column;
+    align-items: flex-start;
+
+    h2 { font-size: 1.2rem; }
+
+    .header-actions {
+      flex-direction: column;
+      width: 100%;
+
+      .search-box { width: 100%; input { width: 100%; } }
+      .add-btn { width: 100%; justify-content: center; }
+    }
+  }
+
+  .form-row { flex-direction: column; gap: 0; }
+  .actions-cell { flex-direction: column; align-items: stretch; }
+  .action-btn   { justify-content: center; }
+}
+
+
+// =====================================================
+// ===== DIALOG CLIENT — STYLE PROPRE (fond blanc) =====
+// =====================================================
+
 ::ng-deep .p-dialog-mask {
-  background: rgba(0, 0, 0, 0.5) !important;
+  background: rgba(15, 23, 42, 0.5) !important;
+  backdrop-filter: blur(4px) !important;
 }
 
-::ng-deep .p-dialog {
-  background: #ffffff !important;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3) !important;
-  border-radius: 12px !important;
+::ng-deep .client-dialog {
+  border-radius: 16px !important;
   overflow: hidden !important;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25) !important;
+  border: none !important;
+  font-family: 'Segoe UI', sans-serif;
+  background: #ffffff !important;
 
   .p-dialog-header {
     background: #ffffff !important;
-    color: #1e293b !important;
-    border-bottom: 2px solid #e2e8f0 !important;
-    padding: 1.2rem 1.5rem !important;
+    color: $dark-blue !important;
+    padding: 1.4rem 1.8rem 1.2rem !important;
+    border-bottom: 1px solid $border-color !important;
+
+    .p-dialog-title {
+      font-size: 1.15rem !important;
+      font-weight: 700 !important;
+      color: $dark-blue !important;
+    }
+
+    .p-dialog-header-icon {
+      color: $gray-text !important;
+      border-radius: 8px !important;
+      background: transparent !important;
+      transition: all 0.2s;
+
+      &:hover {
+        color: $dark-blue !important;
+        background: $gray-light !important;
+      }
+
+      svg, .p-icon { color: $gray-text !important; }
+    }
   }
 
   .p-dialog-content {
     background: #ffffff !important;
-    padding: 1.5rem !important;
-    opacity: 1 !important;
+    padding: 1.5rem 1.8rem !important;
+    color: $dark-blue !important;
   }
 
   .p-dialog-footer {
-    background: #ffffff !important;
-    border-top: 2px solid #e2e8f0 !important;
-    padding: 1rem 1.5rem !important;
+    background: #f8fafc !important;
+    padding: 1rem 1.8rem 1.4rem !important;
+    border-top: 1px solid $border-color !important;
+    display: flex !important;
+    justify-content: flex-end !important;
+    gap: 0.8rem;
   }
 }
 
-@media (max-width: 768px) {
-  .clients-container { padding: 1rem; }
 
-  .header-section {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 1rem;
+// =====================================================
+// ===== CONFIRM DIALOG — STYLE PERSONNALISÉ =====
+// =====================================================
 
-    h2 { font-size: 1.4rem; }
+::ng-deep p-confirmdialog .p-dialog {
+  border-radius: 20px !important;
+  overflow: hidden;
+  box-shadow: 0 30px 70px rgba(0, 0, 0, 0.45) !important;
+  min-width: 440px;
+  border: none !important;
+  font-family: 'Segoe UI', sans-serif;
 
-    .header-actions {
-      flex-direction: column;
+  .p-dialog-header {
+    background: $dark-blue !important;
+    color: white !important;
+    padding: 1.3rem 1.8rem !important;
+    border-bottom: none !important;
 
-      .search-box {
-        width: 100%;
-        input { width: 100%; }
-      }
+    .p-dialog-title {
+      font-size: 1.05rem !important;
+      font-weight: 700 !important;
+      letter-spacing: 0.4px;
+      color: white !important;
+    }
 
-      .add-btn {
-        width: 100%;
-        justify-content: center;
+    .p-dialog-header-icons .p-dialog-header-icon {
+      color: rgba(255, 255, 255, 0.55) !important;
+      border-radius: 50%;
+      width: 2rem;
+      height: 2rem;
+      transition: all 0.2s;
+
+      &:hover {
+        color: white !important;
+        background: rgba(255, 255, 255, 0.12) !important;
       }
     }
   }
 
-  .form-row {
-    flex-direction: column;
-    gap: 0;
+  .p-dialog-content {
+    background: #ffffff !important;
+    padding: 2rem 1.8rem 1.6rem !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 1.2rem;
+
+    .p-confirm-dialog-icon {
+      font-size: 2.4rem !important;
+      color: $warning !important;
+      flex-shrink: 0;
+    }
+
+    .p-confirm-dialog-message {
+      font-size: 1rem !important;
+      color: $dark-blue !important;
+      font-weight: 500 !important;
+      line-height: 1.6;
+    }
+  }
+
+  .p-dialog-footer {
+    background: #f8fafc !important;
+    padding: 1rem 1.8rem 1.4rem !important;
+    display: flex !important;
+    justify-content: flex-end !important;
+    gap: 0.8rem;
+    border-top: 1px solid $border-color !important;
+
+    .p-confirm-dialog-reject.p-button {
+      background: transparent !important;
+      color: #64748b !important;
+      border: 2px solid $border-color !important;
+      border-radius: 10px !important;
+      padding: 0.55rem 1.4rem !important;
+      font-weight: 600 !important;
+      font-size: 0.9rem !important;
+      box-shadow: none !important;
+      transition: all 0.2s;
+
+      &:hover {
+        background: #f1f5f9 !important;
+        border-color: #94a3b8 !important;
+        color: $dark-blue !important;
+      }
+
+      .p-button-label { font-weight: 600 !important; }
+    }
+
+    .p-confirm-dialog-accept.p-button {
+      background: $danger !important;
+      color: white !important;
+      border: 2px solid $danger !important;
+      border-radius: 10px !important;
+      padding: 0.55rem 1.4rem !important;
+      font-weight: 700 !important;
+      font-size: 0.9rem !important;
+      box-shadow: 0 4px 14px rgba($danger, 0.35) !important;
+      transition: all 0.2s;
+
+      &:hover {
+        background: #dc2626 !important;
+        border-color: #dc2626 !important;
+        transform: translateY(-1px);
+        box-shadow: 0 6px 18px rgba($danger, 0.45) !important;
+      }
+
+      .p-button-label { font-weight: 700 !important; }
+    }
   }
 }

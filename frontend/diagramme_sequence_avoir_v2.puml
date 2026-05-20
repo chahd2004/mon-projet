@@ -1,0 +1,82 @@
+@startuml "Diagramme de Séquence - Gestion des Avoirs"
+
+title Diagramme de Séquence - Gestion des Avoirs
+
+skinparam style strictuml
+skinparam maxMessageSize 150
+skinparam sequence {
+    ParticipantPadding 30
+    MessageAlign center
+}
+
+actor "Manager" as Manager
+
+boundary "Interface\n<<Boundary>>" as Interface
+control "AvoirController\n<<Control>>" as Controller
+control "AvoirService\n<<Control>>" as Service
+control "EmailService\n<<Control>>" as EmailService
+entity "Avoir\n<<Entity>>" as Avoir
+
+
+== Modification ou Correction (Manager uniquement) ==
+
+Manager -> Interface : Sélectionner + Modifier
+activate Interface
+Interface -> Controller : PUT /api/avoirs/{id}
+activate Controller
+Controller -> Service : update(id, dto)
+activate Service
+Service -> Avoir : update fields + save()
+activate Avoir
+Avoir --> Service : Avoir
+deactivate Avoir
+Service --> Controller : AvoirResponseDTO
+deactivate Service
+Controller --> Interface : 200 OK
+deactivate Controller
+Interface --> Manager : Succès : Avoir mis à jour
+deactivate Interface
+
+== Validation de l'Avoir (Manager uniquement) ==
+
+Manager -> Interface : cliquer sur "Valider Avoir"
+activate Interface
+Interface -> Controller : PUT /api/avoirs/{id}/valider
+activate Controller
+Controller -> Service : valider(id)
+activate Service
+Service -> Avoir : setStatut(VALIDATED)
+activate Avoir
+Avoir --> Service : void
+deactivate Avoir
+Service --> Controller : AvoirResponseDTO
+deactivate Service
+Controller --> Interface : 200 OK
+deactivate Controller
+Interface --> Manager : Succès : Avoir validé
+deactivate Interface
+
+== Envoi de l'Avoir au Client (Manager uniquement) ==
+
+Manager -> Interface : cliquer sur "Envoyer Avoir"
+activate Interface
+Interface -> Controller : PUT /api/avoirs/{id}/envoyer
+activate Controller
+Controller -> Service : envoyer(id)
+activate Service
+Service -> EmailService : sendAvoirEmail(...)
+activate EmailService
+EmailService --> Service : void
+deactivate EmailService
+Service -> Avoir : setStatut(SENT)
+activate Avoir
+Avoir --> Service : void
+deactivate Avoir
+Service --> Controller : AvoirResponseDTO
+deactivate Service
+Controller --> Interface : 200 OK
+deactivate Controller
+Interface --> Manager : Succès : Avoir envoyé
+deactivate Interface
+
+@enduml

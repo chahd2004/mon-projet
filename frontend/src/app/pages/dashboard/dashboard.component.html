@@ -1,79 +1,109 @@
 <!-- src/app/pages/dashboard/dashboard.component.html -->
-<p-toast></p-toast>
-<div class="dashboard-layout">
-  <!-- SIDEBAR GAUCHE (FIXE) -->
-  <aside class="sidebar">
-    <div class="sidebar-header">
-      <div class="logo">
-        <i class="pi pi-chart-pie"></i>
-        <span>GESTION</span>
+<div class="accueil-container">
+  <!-- En-tête -->
+  <div class="header-section">
+    <div>
+      <h2 class="enterprise-name" *ngIf="raisonSociale">{{ raisonSociale }}</h2>
+      <h1>{{ 'DASHBOARD.TITLE' | translate }}</h1>
+      <p class="subtitle">{{ 'DASHBOARD.SUBTITLE' | translate }}</p>
+    </div>
+    <div class="header-actions">
+      <button class="btn-outline" (click)="rafraichir()">
+        <i class="pi pi-refresh"></i> {{ 'DASHBOARD.REFRESH' | translate }}
+      </button>
+    </div>
+  </div>
+
+  <!-- Spinner -->
+  <div *ngIf="loading" class="loading-center">
+    <p-progressSpinner strokeWidth="4"></p-progressSpinner>
+  </div>
+
+  <!-- CARTES STATISTIQUES -->
+  <div class="stats-grid" *ngIf="!loading">
+    <div class="stat-card blue" (click)="naviguerVersFactures()">
+      <div class="stat-icon"><i class="pi pi-file"></i></div>
+      <div class="stat-info">
+        <span class="stat-value">{{ totalFactures }}</span>
+        <span class="stat-label">{{ 'DASHBOARD.TOTAL_FACTURES' | translate }}</span>
       </div>
     </div>
-
-    <nav class="sidebar-nav">
-      <div class="nav-section">
-        <div class="section-title">GÉNÉRAL</div>
-        <a routerLink="/dashboard" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" class="nav-item">
-          <i class="pi pi-home"></i>
-          <span>Accueil</span>
-        </a>
-        <a routerLink="/dashboard/clients" routerLinkActive="active" class="nav-item">
-          <i class="pi pi-users"></i>
-          <span>Clients</span>
-        </a>
-        <a routerLink="/dashboard/produits" routerLinkActive="active" class="nav-item">
-          <i class="pi pi-box"></i>
-          <span>Produits</span>
-        </a>
+    <div class="stat-card green" (click)="naviguerVersClients()">
+      <div class="stat-icon"><i class="pi pi-users"></i></div>
+      <div class="stat-info">
+        <span class="stat-value">{{ totalClients }}</span>
+        <span class="stat-label">{{ 'DASHBOARD.TOTAL_CLIENTS' | translate }}</span>
       </div>
-
-      <div class="nav-section">
-        <div class="section-title">FACTURATION</div>
-        <a routerLink="/dashboard/factures" routerLinkActive="active" class="nav-item">
-          <i class="pi pi-file"></i>
-          <span>Factures</span>
-          <span class="nav-badge">{{ totalFactures }}</span>
-        </a>
-        <a routerLink="/dashboard/devise" routerLinkActive="active" class="nav-item">
-          <i class="pi pi-calculator"></i>
-          <span>Devis</span>
-          <span class="nav-badge">0</span>
-        </a>
-        <a routerLink="/dashboard/avoirs" routerLinkActive="active" class="nav-item">
-          <i class="pi pi-credit-card"></i>
-          <span>Avoirs</span>
-          <span class="nav-badge">0</span>
-        </a>
+    </div>
+    <div class="stat-card purple" *ngIf="!isViewer && !isManager" (click)="naviguerVersCollaborateurs()" style="cursor: pointer">
+      <div class="stat-icon"><i class="pi pi-id-card"></i></div>
+      <div class="stat-info">
+        <span class="stat-value">{{ totalCollaborateurs }}</span>
+        <span class="stat-label">{{ 'DASHBOARD.COLLABORATEURS' | translate }}</span>
       </div>
-
-      <div class="nav-section">
-        <div class="section-title">PARAMÈTRES</div>
-        <a routerLink="/dashboard/parametres" routerLinkActive="active" class="nav-item">
-          <i class="pi pi-cog"></i>
-          <span>Paramètres</span>
-        </a>
-        <a class="nav-item" (click)="logout()">
-          <i class="pi pi-sign-out"></i>
-          <span>Déconnexion</span>
-        </a>
+    </div>
+    <div class="stat-card red" (click)="naviguerVersFacturesImpayees()" style="cursor: pointer">
+      <div class="stat-icon"><i class="pi pi-exclamation-triangle"></i></div>
+      <div class="stat-info">
+        <span class="stat-value">{{ facturesImpayees }}</span>
+        <span class="stat-label">{{ 'DASHBOARD.UNPAID_INVOICES' | translate }}</span>
       </div>
-    </nav>
+    </div>
+  </div>
 
-    <div class="sidebar-footer">
-      <div class="user-info">
-        <div class="user-icon">
-          <i class="pi pi-user"></i>
-        </div>
-        <div class="user-details">
-          <span class="user-name">Admin</span>
-          <span class="user-role">Administrateur</span>
+  <!-- GRAPHIQUE + DERNIÈRES FACTURES -->
+  <div class="content-grid" *ngIf="!loading">
+    <div class="chart-card">
+      <div class="card-header">
+        <h3><i class="pi pi-chart-pie"></i> {{ 'DASHBOARD.CHART_DISTRIBUTION' | translate }}</h3>
+      </div>
+      <div class="card-body">
+        <p-chart type="doughnut" [data]="chartData" [options]="chartOptions" height="220px"></p-chart>
+        <div *ngIf="chartData.datasets[0].data.length === 0" class="chart-empty">
+          <p>{{ 'DASHBOARD.NO_DATA' | translate }}</p>
         </div>
       </div>
     </div>
-  </aside>
 
-  <!-- CONTENU PRINCIPAL DROIT (CHANGE SELON LA ROUTE) -->
-  <main class="main-content">
-    <router-outlet></router-outlet>
-  </main>
+    <div class="chart-card">
+      <div class="card-header">
+        <h3><i class="pi pi-chart-bar"></i> {{ 'DASHBOARD.CHART_SALES' | translate }}</h3>
+      </div>
+      <div class="card-body">
+        <p-chart type="bar" [data]="ventesProduitsData" [options]="ventesProduitsOptions" height="220px"></p-chart>
+        <div *ngIf="ventesProduitsData.datasets.length === 0" class="chart-empty">
+          <p>{{ 'DASHBOARD.NO_DATA' | translate }}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- CARTE PREMIUM : FACTURES EN RETARD -->
+    <div class="chart-card overdue-card">
+      <div class="overdue-header">
+        <div class="alert-icon">
+          <i class="pi pi-exclamation-triangle"></i>
+        </div>
+        <div class="overdue-titles">
+          <h3>{{ 'DASHBOARD.LATE_INVOICES_TITLE' | translate }}</h3>
+          <p>{{ 'DASHBOARD.LATE_INVOICES_SUBTITLE' | translate }}</p>
+        </div>
+      </div>
+      <div class="overdue-body">
+        <div class="overdue-list" *ngIf="lateInvoices.length > 0">
+          <div class="overdue-item" *ngFor="let inv of lateInvoices">
+            <span class="status-dot" [class]="inv.severity"></span>
+            <span class="invoice-num">{{ inv.numFact }}</span>
+            <span class="separator">—</span>
+            <span class="delay">{{ 'DASHBOARD.DAYS_LATE' | translate:{days: inv.days} }}</span>
+          </div>
+        </div>
+        <div *ngIf="lateInvoices.length === 0" class="overdue-empty">
+          <i class="pi pi-check-circle"></i>
+          <p>{{ 'DASHBOARD.NO_DATA' | translate }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
 </div>

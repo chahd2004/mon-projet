@@ -1,0 +1,29 @@
+@startuml
+left to right direction
+actor "Manager" as M
+actor "Consultant" as C
+
+rectangle "Gestion des Bons de Livraison" {
+  usecase "Consulter les bons de livraison" as UC1
+  usecase "Générer un bon de livraison\n(depuis commande)" as UC2
+  usecase "Envoyer une demande de\nsignature par mail" as UC3
+  usecase "Signaler un litige" as UC4
+  usecase "Annuler un bon de livraison" as UC5
+  usecase "S'authentifier" as Auth
+}
+
+M -- UC1
+M -- UC2
+M -- UC3
+M -- UC4
+M -- UC5
+
+C -- UC1
+
+UC1 ..> Auth : <<include>>
+UC2 ..> Auth : <<include>>
+UC3 ..> Auth : <<include>>
+UC4 ..> Auth : <<include>>
+UC5 ..> Auth : <<include>>
+
+@enduml

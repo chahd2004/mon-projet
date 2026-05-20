@@ -1,0 +1,136 @@
+<div class="facture-detail">
+  <div class="detail-header">
+    <button (click)="goBack()" class="btn-back">← Retour</button>
+    <h2>Détail Facture</h2>
+  </div>
+
+  <div *ngIf="loading" class="loading-spinner">
+    <p>Chargement de la facture...</p>
+  </div>
+
+  <div *ngIf="error" class="alert alert-danger">
+    {{ error }}
+  </div>
+
+  <div *ngIf="!loading && facture" class="facture-detail-container">
+    <!-- Header Info -->
+    <div class="detail-section header-info">
+      <div class="info-row">
+        <div class="info-item">
+          <label>Numéro de Facture</label>
+          <p>{{ facture.numFact }}</p>
+        </div>
+        <div class="info-item">
+          <label>Statut</label>
+          <p>
+            <span [ngClass]="['badge', getStatutClass(facture.statut)]">
+              {{ facture.statut }}
+            </span>
+          </p>
+        </div>
+        <div class="info-item">
+          <label>Date d'émission</label>
+          <p>{{ facture.dateEmission | date: 'dd/MM/yyyy' }}</p>
+        </div>
+        <div class="info-item">
+          <label>Date de paiement</label>
+          <p>{{ facture.datePaiement | date: 'dd/MM/yyyy' }}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Parties -->
+    <div class="detail-section parties-info">
+      <div class="party">
+        <h3>Vendeur</h3>
+        <p class="party-name">{{ facture.vendeurNom }}</p>
+        <p class="party-id">ID: {{ facture.vendeurId }}</p>
+      </div>
+      <div class="party">
+        <h3>Acheteur</h3>
+        <p class="party-name">{{ facture.acheteurNom }}</p>
+        <p class="party-id">ID: {{ facture.acheteurId }}</p>
+        <p class="party-type">Type: {{ facture.typeAcheteur }}</p>
+      </div>
+    </div>
+
+    <!-- Lignes Facture -->
+    <div class="detail-section lignes-info" *ngIf="facture.lignes && facture.lignes.length > 0">
+      <h3>Lignes de Facture</h3>
+      <div class="table-container">
+        <table class="lignes-table">
+          <thead>
+            <tr>
+              <th>Produit</th>
+              <th>Quantité</th>
+              <th>Designation</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let ligne of facture.lignes">
+              <td>{{ ligne.produitId }}</td>
+              <td class="quantity">{{ ligne.quantite }}</td>
+              <td>{{ ligne.produitDesignation || '-' }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Montants -->
+    <div class="detail-section montants-info">
+      <div class="montant-row">
+        <label>Montant HT</label>
+        <p>{{ facture.totalHT | number: '1.2-2' }} €</p>
+      </div>
+      <div class="montant-row">
+        <label>Montant TVA</label>
+        <p>{{ facture.montantTVA | number: '1.2-2' }} €</p>
+      </div>
+      <div class="montant-row total">
+        <label>Montant TTC</label>
+        <p>{{ facture.totalTTC | number: '1.2-2' }} €</p>
+      </div>
+      <div class="montant-row" *ngIf="facture.montantEnLettres">
+        <label>Montant en Lettres</label>
+        <p>{{ facture.montantEnLettres }}</p>
+      </div>
+    </div>
+
+    <!-- Infos Paiement -->
+    <div class="detail-section paiement-info">
+      <div class="info-row">
+        <div class="info-item" *ngIf="facture.modePaiement">
+          <label>Mode de Paiement</label>
+          <p>{{ facture.modePaiement }}</p>
+        </div>
+        <div class="info-item" *ngIf="facture.periode_du">
+          <label>Période Du</label>
+          <p>{{ facture.periode_du }}</p>
+        </div>
+        <div class="info-item" *ngIf="facture.periode_au">
+          <label>Période Au</label>
+          <p>{{ facture.periode_au }}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Références -->
+    <div class="detail-section references-info" *ngIf="facture.reference_unique || facture.reference_ttn">
+      <div class="info-row">
+        <div class="info-item" *ngIf="facture.reference_unique">
+          <label>Référence Unique</label>
+          <p>{{ facture.reference_unique }}</p>
+        </div>
+        <div class="info-item" *ngIf="facture.reference_ttn">
+          <label>Référence TTN</label>
+          <p>{{ facture.reference_ttn }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="!loading && !facture && !error" class="no-data">
+    <p>Facture non trouvée</p>
+  </div>
+</div>

@@ -1,0 +1,150 @@
+<div class="form-container">
+  <div class="form-header">
+    <h1>Modifier Facture</h1>
+  </div>
+
+  <p-card class="form-card">
+    <form [formGroup]="form">
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="client">Client *</label>
+          <p-dropdown
+            id="client"
+            [options]="[
+              { label: 'Société ABC SARL', value: '1' },
+              { label: 'Entreprise XYZ Ltée', value: '2' },
+              { label: 'Société Commerce TN', value: '3' }
+            ]"
+            formControlName="client"
+            optionLabel="label"
+            optionValue="value"
+          ></p-dropdown>
+        </div>
+
+        <div class="form-group">
+          <label for="modePaiement">Mode de Paiement *</label>
+          <p-dropdown
+            id="modePaiement"
+            [options]="[
+              { label: 'Virement', value: 'VIREMENT' },
+              { label: 'Chèque', value: 'CHEQUE' },
+              { label: 'Espèces', value: 'ESPECES' },
+              { label: 'Carte Bancaire', value: 'CARTE' }
+            ]"
+            formControlName="modePaiement"
+            optionLabel="label"
+            optionValue="value"
+          ></p-dropdown>
+        </div>
+
+        <div class="form-group">
+          <label for="dateEmission">Date d'Émission *</label>
+          <input id="dateEmission" type="date" pInputText formControlName="dateEmission" />
+        </div>
+
+        <div class="form-group">
+          <label for="dateEcheance">Date d'Échéance *</label>
+          <input id="dateEcheance" type="date" pInputText formControlName="dateEcheance" />
+        </div>
+      </div>
+
+      <h3 class="section-title">Lignes de Facture</h3>
+      <div class="lines-section">
+        <p-table [value]="lignes.controls" responsiveLayout="scroll">
+          <ng-template pTemplate="header">
+            <tr>
+              <th>Produit *</th>
+              <th style="text-align: center">Quantité *</th>
+              <th style="text-align: right">Prix Unitaire *</th>
+              <th style="text-align: center">TVA %</th>
+              <th style="text-align: right">Total TTC</th>
+              <th style="width: 50px">Action</th>
+            </tr>
+          </ng-template>
+
+          <ng-template pTemplate="body" let-ligne let-idx="rowIndex">
+            <tr [formGroup]="ligne">
+              <td>
+                <p-dropdown
+                  [options]="[
+                    { label: 'Logiciel Comptabilité Pro', value: '1' },
+                    { label: 'Support Technique 1 An', value: '2' },
+                    { label: 'License Cloud', value: '3' }
+                  ]"
+                  formControlName="produit"
+                  optionLabel="label"
+                  optionValue="value"
+                ></p-dropdown>
+              </td>
+              <td style="text-align: center">
+                <p-inputNumber formControlName="quantite" [min]="1" [step]="1"></p-inputNumber>
+              </td>
+              <td style="text-align: right">
+                <p-inputNumber formControlName="prixUnitaire" [minFractionDigits]="2" [maxFractionDigits]="2"></p-inputNumber>
+              </td>
+              <td style="text-align: center">
+                <p-dropdown
+                  [options]="[
+                    { label: '0%', value: 0 },
+                    { label: '6%', value: 6 },
+                    { label: '13%', value: 13 },
+                    { label: '19%', value: 19 }
+                  ]"
+                  formControlName="tva"
+                  optionLabel="label"
+                  optionValue="value"
+                ></p-dropdown>
+              </td>
+              <td style="text-align: right; font-weight: 600">
+                {{
+                  (
+                    (ligne.get('quantite')?.value || 0) *
+                      (ligne.get('prixUnitaire')?.value || 0) *
+                      (1 + (ligne.get('tva')?.value || 0) / 100)
+                  ) | number: '1.2-2'
+                }}
+                TND
+              </td>
+              <td style="text-align: center">
+                <button
+                  pButton
+                  type="button"
+                  icon="pi pi-trash"
+                  class="p-button-rounded p-button-text p-button-sm p-button-danger"
+                  (click)="removeLigne(idx)"
+                ></button>
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
+
+        <button pButton type="button" label="Ajouter Ligne" icon="pi pi-plus" class="p-button-sm" (click)="addLigne()"></button>
+      </div>
+
+      <div class="form-group full-width">
+        <label for="notes">Notes</label>
+        <textarea id="notes" pInputText formControlName="notes" placeholder="Notes internes..." rows="3"></textarea>
+      </div>
+
+      <div class="total-section">
+        <div class="total-item">
+          <span>Total TTC:</span>
+          <strong>{{ calculateTotal() | number: '1.2-2' }} TND</strong>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button pButton type="button" label="Annuler" class="p-button-text" (click)="cancel()"></button>
+        <button
+          pButton
+          type="button"
+          label="Mettre à jour"
+          icon="pi pi-check"
+          [loading]="isSubmitting"
+          [disabled]="!form.valid || isSubmitting || lignes.length === 0"
+          (click)="save()"
+        ></button>
+      </div>
+    </form>
+  </p-card>
+</div>

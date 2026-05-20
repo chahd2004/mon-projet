@@ -1,0 +1,41 @@
+<div class="clients-view">
+  <div class="view-header">
+    <h2>Clients (Lecture)</h2>
+    <p class="subtitle">Consultez les clients en mode lecture seule</p>
+  </div>
+
+  <div *ngIf="loading" class="loading-spinner">
+    <p>Chargement des clients...</p>
+  </div>
+
+  <div *ngIf="error" class="alert alert-danger">
+    {{ error }}
+  </div>
+
+  <div *ngIf="!loading && clients.length > 0" class="table-container">
+    <table class="clients-table">
+      <thead>
+        <tr>
+          <th>Raison Sociale</th>
+          <th>Email</th>
+          <th>Téléphone</th>
+          <th>Région</th>
+          <th>Pays</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let client of clients" class="client-row">
+          <td class="client-name">{{ client.raisonSociale }}</td>
+          <td>{{ client.email || '-' }}</td>
+          <td>{{ client.telephone || '-' }}</td>
+          <td>{{ client.region || '-' }}</td>
+          <td>{{ client.pays || '-' }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div *ngIf="!loading && clients.length === 0 && !error" class="no-data">
+    <p>Aucun client disponible</p>
+  </div>
+</div>

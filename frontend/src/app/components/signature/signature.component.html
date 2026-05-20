@@ -1,0 +1,65 @@
+<div class="signature-popup-content">
+  <!-- Étape 1 : Formulaire -->
+  <ng-container *ngIf="!success">
+    <div class="signature-header">
+      <h3>{{ 'SIGNATURE.TITLE' | translate }}</h3>
+      <div class="divider"></div>
+    </div>
+
+    <div class="signature-body">
+
+      <div class="input-group">
+        <label>{{ 'SIGNATURE.FILE_LABEL' | translate }}</label>
+        <div class="file-picker-wrapper">
+          <p-fileUpload mode="basic" name="p12File" accept=".p12,.pfx" [auto]="true" 
+            [chooseLabel]="'SIGNATURE.BROWSE' | translate" (onSelect)="onFichierSelect($event)" 
+            styleClass="custom-file-upload"></p-fileUpload>
+          <span class="selected-filename" *ngIf="fichier">{{ fichier.name }}</span>
+          <span class="placeholder-filename" *ngIf="!fichier">virtualtoken.p12</span>
+        </div>
+      </div>
+
+      <div class="input-group">
+        <label>{{ 'SIGNATURE.PASSWORD_LABEL' | translate }}</label>
+        <div class="password-wrapper">
+          <input type="text" pInputText [(ngModel)]="motDePasse" [ngModelOptions]="{standalone: true}"
+            placeholder="• • • • • • • • • • • • •"
+            [disabled]="loading"
+            autocomplete="off"
+            autocorrect="off"
+            autocapitalize="off"
+            spellcheck="false"
+            readonly
+            (focus)="$any($event.target).removeAttribute('readonly')"
+            style="-webkit-text-security: disc; font-family: monospace;">
+        </div>
+      </div>
+
+      <div *ngIf="message && erreur" class="message erreur">
+        <i class="pi pi-times-circle"></i> {{ message }}
+      </div>
+
+      <button type="button" class="btn-signer" (click)="signer()" [disabled]="loading || !fichier || !motDePasse">
+        <i class="pi pi-check-circle" *ngIf="!loading"></i>
+        <i class="pi pi-spin pi-spinner" *ngIf="loading"></i>
+        {{ 'SIGNATURE.BTN_SIGN' | translate }}
+      </button>
+
+      <button type="button" class="btn-annuler" (click)="annuler()" [disabled]="loading">
+        <i class="pi pi-times"></i>
+        {{ 'SIGNATURE.BTN_CANCEL' | translate }}
+      </button>
+    </div>
+  </ng-container>
+
+  <!-- Étape 2 : Succès -->
+  <ng-container *ngIf="success">
+    <div class="signature-success-state">
+      <h3>{{ 'SIGNATURE.SUCCESS_TITLE' | translate }}</h3>
+      <div class="divider"></div>
+      <i class="pi pi-check-circle success-icon"></i>
+      <div class="divider"></div>
+      <button class="btn-ok" (click)="onOk()">{{ 'PUBLIC_SIGNATURE.BTN_CLOSE' | translate }}</button>
+    </div>
+  </ng-container>
+</div>

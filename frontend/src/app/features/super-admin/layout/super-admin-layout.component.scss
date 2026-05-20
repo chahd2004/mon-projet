@@ -1,0 +1,42 @@
+.layout-container {
+  display: flex;
+  height: 100vh;
+  background: var(--app-surface);
+  margin: 0;
+  padding: 0;
+}
+
+.layout-body {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+.layout-content {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 2rem;
+  background: linear-gradient(135deg, var(--app-surface) 0%, var(--app-surface-soft) 100%);
+
+  @media (max-width: 768px) {
+    padding: 1rem;
+  }
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+  border-radius: 4px;
+
+  &:hover {
+    background: #9ca3af;
+  }
+}

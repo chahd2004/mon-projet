@@ -1,0 +1,78 @@
+<div class="statistiques-container">
+  <div class="page-header">
+    <div class="welcome-section">
+      <div>
+        <h1 class="welcome-title">{{ 'SUPER_ADMIN.DASHBOARD.WELCOME' | translate }} <span class="admin-name">{{
+            userFullName() }}</span></h1>
+        <h2>{{ 'SUPER_ADMIN.DASHBOARD.TITLE' | translate }}</h2>
+      </div>
+    </div>
+  </div>
+
+  <!-- KPI Cards Grid -->
+  <div class="kpi-grid">
+    <div class="kpi-card clickable" routerLink="/super-admin/utilisateurs">
+      <div class="kpi-icon users">
+        <i class="pi pi-users"></i>
+      </div>
+      <div class="kpi-content">
+        <p class="kpi-label">{{ 'SUPER_ADMIN.DASHBOARD.USERS' | translate }}</p>
+        <p class="kpi-value" *ngIf="!isLoading">{{ usersCount | number }}</p>
+        <p-skeleton *ngIf="isLoading" width="80%" height="2rem"></p-skeleton>
+      </div>
+    </div>
+
+    <!-- Move Companies card here -->
+    <div class="kpi-card" routerLink="/emetteurs">
+      <div class="kpi-icon emetteurs">
+        <i class="pi pi-building"></i>
+      </div>
+      <div class="kpi-content">
+        <p class="kpi-label">{{ 'SUPER_ADMIN.DASHBOARD.COMPANIES' | translate }}</p>
+        <p class="kpi-value" *ngIf="!isLoading">{{ emetteursCount | number }}</p>
+        <p-skeleton *ngIf="isLoading" width="80%" height="2rem"></p-skeleton>
+      </div>
+    </div>
+  </div>
+
+  <!-- Chart Section: Below cards -->
+  <div class="main-chart-section">
+    <div class="chart-card invoice-breakdown-card">
+      <div class="card-header">
+        <i class="pi pi-chart-pie"></i>
+        <h3>{{ 'SUPER_ADMIN.DASHBOARD.INVOICE_BREAKDOWN' | translate }}</h3>
+      </div>
+      
+      <div class="chart-container-wrapper" *ngIf="!isLoading">
+        <div class="chart-wrapper">
+          <p-chart type="doughnut" [data]="chartData" [options]="chartOptions" height="220px"></p-chart>
+          <div class="chart-center-text">
+            <span class="total-count">{{ totalInvoicesForChart }}</span>
+            <span class="total-label">total</span>
+          </div>
+        </div>
+
+        <div class="custom-legend">
+          <div class="legend-item" *ngFor="let item of invoicesByCompany; let i = index">
+            <span class="legend-color" [style.background-color]="chartData.datasets[0].backgroundColor[i]"></span>
+            <span class="legend-name">{{ item.company }}</span>
+            <span class="legend-value">{{ item.count }}</span>
+            <span class="legend-percentage">{{ item.percentage }}%</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="loading-chart" *ngIf="isLoading">
+        <div class="skeleton-chart-wrapper">
+          <p-skeleton shape="circle" size="150px"></p-skeleton>
+        </div>
+        <div class="skeleton-legend">
+          <p-skeleton width="120px" height="1.2rem" styleClass="mb-3"></p-skeleton>
+          <p-skeleton width="100px" height="1.2rem" styleClass="mb-3"></p-skeleton>
+          <p-skeleton width="110px" height="1.2rem"></p-skeleton>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>

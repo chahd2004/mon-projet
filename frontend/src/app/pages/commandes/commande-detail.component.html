@@ -1,0 +1,83 @@
+<div class="commande-detail-page" *ngIf="!loading && commande; else loadingOrError">
+  <button class="back-link" (click)="retourAuxCommandes()">&larr; {{ 'COMMON.BACK_TO_LIST' | translate }}</button>
+
+  <section class="header-card">
+    <div class="header-main">
+      <h1>{{ 'COMMANDES.TITLE' | translate | uppercase }} #{{ formatCommandeReference() }}</h1>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>{{ 'DEVIS.GENERAL_INFO' | translate }}</h2>
+
+    <div class="info-grid">
+      <div class="mini-card">
+        <h3>{{ 'FACTURE.CLIENT' | translate }}</h3>
+        <p class="strong">{{ client?.raisonSociale || commande.acheteurNom }}</p>
+        <p>{{ client?.adresseComplete || '-' }}</p>
+        <p>{{ client?.email || '-' }}</p>
+        <p>{{ client?.telephone || '-' }}</p>
+      </div>
+
+      <div class="mini-card">
+        <h3>{{ 'COMMANDES.TITLE' | translate }}</h3>
+        <p><strong>{{ 'FACTURE.ISSUE_DATE' | translate }}:</strong> {{ commande.dateCreation | date:'dd/MM/yyyy' }}</p>
+        <p><strong>{{ 'FACTURE.PAYMENT_METHOD' | translate }}:</strong> {{ formatModePaiement(commande.modePaiement) }}
+        </p>
+      </div>
+    </div>
+
+    <div class="linked-bc">
+      {{ 'COMMANDES.LINKED_BC' | translate }}: <strong>{{ bonCommandeLieReference }}</strong>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>{{ 'FACTURE.INVOICE_LINES' | translate }}</h2>
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>{{ 'FACTURE.DESIGNATION' | translate }}</th>
+            <th>{{ 'FACTURE.QUANTITY' | translate }}</th>
+            <th>{{ 'FACTURE.UNIT_PRICE' | translate }}</th>
+            <th>{{ 'FACTURE.VAT' | translate }} %</th>
+            <th>{{ 'FACTURE.AMOUNT_TTC' | translate }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let ligne of lignes; let i = index">
+            <td>{{ i + 1 }}</td>
+            <td>{{ ligne.produitDesignation || '-' }}</td>
+            <td>{{ ligne.quantite || 0 }}</td>
+            <td>{{ (ligne.prixUnitaire || 0) | number:'1.3-3' }}</td>
+            <td>{{ getLigneTauxTVA(ligne) | number:'1.0-2' }}%</td>
+            <td>{{ getLigneMontantTTC(ligne) | number:'1.3-3' }}</td>
+          </tr>
+          <tr *ngIf="!lignes.length">
+            <td colspan="6" class="empty">{{ 'COMMANDES.EMPTY_LINES' | translate }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="card total-card">
+    <h2>{{ 'DEVIS.SUMMARY' | translate }}</h2>
+    <div class="totals-row">
+      <span>{{ 'FACTURE.TOTAL_HT' | translate }}: {{ commande.totalHT | number:'1.3-3' }} TND</span>
+      <span>{{ 'FACTURE.VAT' | translate }}: {{ commande.montantTVA | number:'1.3-3' }} TND</span>
+      <span class="ttc">{{ 'FACTURE.TOTAL_TTC' | translate }}: {{ commande.totalTTC | number:'1.3-3' }} TND</span>
+    </div>
+  </section>
+
+
+  <div class="message error" *ngIf="errorMessage">{{ errorMessage }}</div>
+  <div class="message info" *ngIf="infoMessage">{{ infoMessage }}</div>
+</div>
+
+<ng-template #loadingOrError>
+  <div class="loading" *ngIf="loading">{{ 'DASHBOARD.REFRESH' | translate }}...</div>
+  <div class="message error" *ngIf="!loading && errorMessage">{{ errorMessage }}</div>
+</ng-template>

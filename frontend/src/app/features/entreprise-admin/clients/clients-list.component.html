@@ -1,0 +1,82 @@
+<div class="clients-container">
+  <div class="page-header">
+    <div>
+      <h2 class="enterprise-name">{{ enterpriseName || 'Entreprise' }}</h2>
+      <h1>Clients</h1>
+      <p class="subtitle">Gérez votre liste de clients</p>
+    </div>
+    <a *ngIf="!isReadOnly()" routerLink="ajouter" pButton type="button" icon="pi pi-plus" label="Ajouter Client" class="p-button-lg"></a>
+  </div>
+
+  <div class="filters-section">
+    <span class="p-input-icon-left">
+      <i class="pi pi-search"></i>
+      <input type="text" pInputText placeholder="Rechercher par nom ou email..." [(ngModel)]="searchTerm" (keyup)="onSearch()" />
+    </span>
+  </div>
+
+  <p-table
+    [value]="filteredClients"
+    [loading]="isLoading"
+    [paginator]="true"
+    [rows]="10"
+    responsiveLayout="scroll"
+    [globalFilterFields]="['raisonSociale', 'email']"
+  >
+    <ng-template pTemplate="header">
+      <tr>
+        <th pSortableColumn="raisonSociale">Raison Sociale <p-sortIcon field="raisonSociale"></p-sortIcon></th>
+        <th pSortableColumn="email">Email <p-sortIcon field="email"></p-sortIcon></th>
+        <th pSortableColumn="telephone">Téléphone <p-sortIcon field="telephone"></p-sortIcon></th>
+        <th pSortableColumn="adresseComplete">Adresse <p-sortIcon field="adresseComplete"></p-sortIcon></th>
+        <th pSortableColumn="pays">Pays <p-sortIcon field="pays"></p-sortIcon></th>
+        <th pSortableColumn="region">Région <p-sortIcon field="region"></p-sortIcon></th>
+        <th *ngIf="!isReadOnly()" style="width: 10%">Actions</th>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="body" let-client>
+      <tr>
+        <td><strong>{{ client.raisonSociale }}</strong></td>
+        <td style="color: #3b82f6">{{ client.email }}</td>
+        <td>{{ client.telephone }}</td>
+        <td>{{ client.adresseComplete }}</td>
+        <td>{{ client.pays }}</td>
+        <td>{{ client.region }}</td>
+        <td *ngIf="!isReadOnly()">
+          <div class="action-buttons">
+            <a
+              [routerLink]="[client.id]"
+              pButton
+              type="button"
+              icon="pi pi-pencil"
+              class="p-button-rounded p-button-text p-button-sm"
+              pTooltip="Modifier"
+              tooltipPosition="top"
+            ></a>
+            <button
+              pButton
+              type="button"
+              icon="pi pi-trash"
+              class="p-button-rounded p-button-text p-button-sm p-button-danger"
+              pTooltip="Supprimer"
+              tooltipPosition="top"
+              (click)="deleteClient(client.id)"
+            ></button>
+          </div>
+        </td>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="emptymessage">
+      <tr>
+        <td colspan="7" style="text-align: center; padding: 2rem;">
+          <div style="display: flex; flex-direction: column; align-items: center; gap: 1rem; color: #6b7280;">
+            <i class="pi pi-users" style="font-size: 2.5rem;"></i>
+            <span>Aucun client n'est enregistré pour le moment.</span>
+          </div>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>

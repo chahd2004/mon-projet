@@ -1,0 +1,170 @@
+.signature-page {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #f1f5f9;
+  padding: 1.5rem;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+.signature-container, .success-card, .error-card, .loading-state {
+  background: white;
+  width: 100%;
+  max-width: 480px;
+  padding: 2.5rem;
+  border-radius: 16px;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  animation: fadeIn 0.4s ease-out;
+}
+
+.signature-header {
+  text-align: center;
+  margin-bottom: 2rem;
+
+  h1 {
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: #1e293b;
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+  }
+
+  .divider {
+    height: 3px;
+    width: 60px;
+    background: #1e293b;
+    margin: 1.5rem auto 0;
+    border-radius: 2px;
+  }
+}
+
+.bc-info {
+  background: #f8fafc;
+  border-radius: 12px;
+  padding: 1.25rem;
+  margin-bottom: 2rem;
+  border: 1px solid #e2e8f0;
+
+  .info-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+
+    &:last-child { margin-bottom: 0; }
+  }
+
+  .info-label {
+    color: #64748b;
+    font-size: 0.9rem;
+  }
+
+  .info-value {
+    color: #1e293b;
+    font-weight: 600;
+
+    &.amount {
+      color: #0f172a;
+      font-weight: 700;
+    }
+  }
+}
+
+.btn-signer {
+  width: 100%;
+  background: transparent;
+  padding: 0.9rem;
+  border-radius: 10px;
+  font-weight: 800;
+  font-size: 1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  transition: all 0.2s;
+  border: 2px solid transparent;
+
+  &:hover:not(:disabled) {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+/* Specific hover effect for the approve button */
+.btn-signer[style*="color: #166534"]:hover:not(:disabled) {
+  background-color: #22c55e !important;
+  color: #ffffff !important;
+}
+
+.success-card, .error-card {
+  text-align: center;
+  
+  h2 {
+    color: #1e293b;
+    font-size: 1.25rem;
+    margin-bottom: 0.75rem;
+    font-weight: 700;
+  }
+
+  p {
+    color: #64748b;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    margin-bottom: 1.5rem;
+  }
+
+  .divider {
+    height: 1px;
+    background: #e2e8f0;
+    margin: 1.5rem 0;
+  }
+}
+
+.btn-close {
+  background: #1e293b;
+  color: white;
+  border: none;
+  padding: 0.75rem 2rem;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:hover {
+    background: #334155;
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.loading-state {
+  text-align: center;
+  .spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid #f3f3f3;
+    border-top: 3px solid #1e293b;
+    border-radius: 50%;
+    margin: 0 auto 1.25rem;
+    animation: spin 1s linear infinite;
+  }
+  p { color: #64748b; font-size: 0.9rem; }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}

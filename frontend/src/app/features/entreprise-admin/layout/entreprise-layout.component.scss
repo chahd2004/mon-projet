@@ -1,0 +1,32 @@
+.layout-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: linear-gradient(135deg, var(--app-surface) 0%, var(--app-surface-soft) 100%);
+}
+
+.layout-body {
+  display: flex;
+  flex: 1;
+  gap: 1rem;
+  padding: 1rem;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    gap: 0;
+    padding: 0.5rem;
+  }
+}
+
+.layout-content {
+  flex: 1;
+  overflow-y: auto;
+  border-radius: 8px;
+  background-color: white;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+
+  @media (max-width: 768px) {
+    border-radius: 0;
+    box-shadow: none;
+  }
+}

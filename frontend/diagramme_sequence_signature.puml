@@ -1,0 +1,134 @@
+@startuml "Diagramme de Séquence - Signature Numérique"
+
+skinparam style strictuml
+skinparam maxMessageSize 150
+skinparam sequence {
+    ParticipantPadding 30
+    MessageAlign center
+}
+
+actor "Manager" as Manager
+actor "Client" as Client
+
+boundary "Interface\n<<Boundary>>" as Interface
+control "SignatureController\n(Manager / Private)\n<<Control>>" as Controller
+control "PublicDocumentController\n(Client / Public)\n<<Control>>" as PublicController
+control "SignatureService\n<<Control>>" as Service
+entity "Facture\n<<Entity>>" as Facture
+entity "BonCommande\n<<Entity>>" as BonCommande
+entity "BonLivraison\n<<Entity>>" as BonLivraison
+
+== Signature XAdES-B (Manager uniquement) ==
+
+Manager -> Interface : cliquer sur "Signer" (Facture)
+activate Interface
+
+Interface -> Controller : POST /api/signature/signer\n(p12File, password, factureId)
+activate Controller
+
+Controller -> Service : signerFacture(request)
+activate Service
+
+note right of Service : Inclus : Chargement et signature DSS
+Service -> Service : buildXML(facture)
+Service -> Service : sign(xml, token)
+
+Service -> Facture : setXmlContent(xmlSigne)
+activate Facture
+Facture --> Service : void
+deactivate Facture
+
+Service -> Facture : setStatut(SIGNED)
+activate Facture
+Facture --> Service : FactureInfo
+deactivate Facture
+
+Service --> Controller : SignatureResponseDTO
+deactivate Service
+
+Controller --> Interface : 200 OK (Succès)
+deactivate Controller
+
+Interface --> Manager : Message de Succès : Facture signée
+deactivate Interface
+
+== Télécharger XML (Manager uniquement) ==
+
+Manager -> Interface : cliquer sur "Télécharger XML"
+activate Interface
+
+Interface -> Controller : GET /api/signature/xml/{factureId}
+activate Controller
+
+Controller -> Facture : getXmlContent()
+activate Facture
+Facture --> Controller : String (XML)
+deactivate Facture
+
+Controller --> Interface : 200 OK (Fichier .xml)
+deactivate Controller
+
+Interface --> Manager : Ouverture du fichier XML signé
+deactivate Interface
+
+== Signature Client (Bon de Commande) ==
+
+Client -> Interface : Accéder au lien public (BC)\net charger clé (.p12)
+activate Interface
+
+Interface -> PublicController : POST /api/public/bon-commande/signer-client
+activate PublicController
+
+PublicController -> Service : signerParClient(request)
+activate Service
+
+Service -> BonCommande : setXmlContent(xmlSigne)
+activate BonCommande
+BonCommande --> Service : void
+deactivate BonCommande
+
+Service -> BonCommande : setStatut(SIGNED)
+activate BonCommande
+BonCommande --> Service : void
+deactivate BonCommande
+
+Service --> PublicController : BonCommandeResponseDTO
+deactivate Service
+
+PublicController --> Interface : 200 OK (Succès)
+deactivate PublicController
+
+Interface --> Client : Message de Succès : BC signé
+deactivate Interface
+
+== Signature Client (Bon de Livraison) ==
+
+Client -> Interface : Accéder au lien public (BL)\net charger clé (.p12)
+activate Interface
+
+Interface -> PublicController : POST /api/public/bon-livraison/signer-client
+activate PublicController
+
+PublicController -> Service : signerParClient(request)
+activate Service
+
+Service -> BonLivraison : setXmlContent(xmlSigne)
+activate BonLivraison
+BonLivraison --> Service : void
+deactivate BonLivraison
+
+Service -> BonLivraison : setStatut(SIGNED)
+activate BonLivraison
+BonLivraison --> Service : void
+deactivate BonLivraison
+
+Service --> PublicController : BonLivraisonResponseDTO
+deactivate Service
+
+PublicController --> Interface : 200 OK (Succès)
+deactivate PublicController
+
+Interface --> Client : Message de Succès : BL signé
+deactivate Interface
+
+@enduml

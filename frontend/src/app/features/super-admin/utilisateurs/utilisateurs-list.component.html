@@ -1,0 +1,275 @@
+<div class="utilisateurs-container">
+  <p-toast></p-toast>
+
+  <!-- En-tête amélioré -->
+  <div class="page-header">
+    <div class="header-content">
+      <h1>
+        <i class="pi pi-users"></i> {{ 'SUPER_ADMIN.USERS.TITLE' | translate }}
+      </h1>
+      <p>{{ 'SUPER_ADMIN.USERS.SUBTITLE' | translate }}</p>
+    </div>
+    <button
+      pButton
+      type="button"
+      icon="pi pi-plus"
+      [label]="'SUPER_ADMIN.USERS.CREATE_BTN' | translate"
+      class="p-button-success create-btn btn-green"
+      (click)="openCreateDialog()"
+    ></button>
+  </div>
+
+  <!-- Table des utilisateurs -->
+  <div class="table-container">
+    <p-table
+      [value]="filteredUtilisateurs"
+      [loading]="isLoading"
+      [paginator]="false"
+      responsiveLayout="scroll"
+      styleClass="p-datatable-striped users-table"
+      [tableStyle]="{ 'min-width': '50rem' }"
+    >
+      <!-- En-tête -->
+      <ng-template pTemplate="header">
+        <tr>
+          <th pSortableColumn="prenom" class="col-nom">
+            {{ 'SUPER_ADMIN.USERS.TABLE.NAME' | translate }} <p-sortIcon field="prenom"></p-sortIcon>
+          </th>
+          <th pSortableColumn="email" class="col-email">
+            {{ 'SUPER_ADMIN.USERS.TABLE.EMAIL' | translate }} <p-sortIcon field="email"></p-sortIcon>
+          </th>
+          <th pSortableColumn="role" class="col-role">
+            {{ 'SUPER_ADMIN.USERS.TABLE.ROLE' | translate }} <p-sortIcon field="role"></p-sortIcon>
+          </th>
+          <th class="col-entreprise">{{ 'SUPER_ADMIN.USERS.TABLE.COMPANY' | translate }}</th>
+          <th pSortableColumn="accountStatus" class="col-statut">
+            {{ 'SUPER_ADMIN.USERS.TABLE.STATUS' | translate }} <p-sortIcon field="accountStatus"></p-sortIcon>
+          </th>
+          <th class="col-actions">{{ 'SUPER_ADMIN.USERS.TABLE.ACTIONS' | translate }}</th>
+        </tr>
+      </ng-template>
+
+      <!-- Lignes -->
+      <ng-template pTemplate="body" let-user>
+        <tr>
+          <!-- Nom -->
+          <td class="col-nom">
+            <div class="user-name">
+              <span class="name-text"><strong>{{ user.prenom }}</strong></span>
+              <span class="name-text"><strong>{{ user.nom }}</strong></span>
+            </div>
+          </td>
+
+          <!-- Email -->
+          <td class="col-email">
+            <span class="email-text">{{ user.email }}</span>
+          </td>
+
+          <!-- Rôle -->
+          <td class="col-role">
+            <span [ngClass]="'role-badge role-' + user.role?.toLowerCase()">
+              {{ user.role | roleLabel }}
+            </span>
+          </td>
+
+          <!-- Entreprise -->
+          <td class="col-entreprise">
+            <span class="entreprise-text">{{ getEntrepriseName(user) || '-' }}</span>
+          </td>
+
+          <!-- Statut -->
+          <td class="col-statut">
+            <span [ngClass]="'status-badge status-' + getStatusClass(user.accountStatus)">
+              {{ getStatusLabel(user.accountStatus) }}
+            </span>
+          </td>
+
+          <!-- Actions -->
+          <td class="col-actions">
+            <div class="action-buttons">
+              <button
+                pButton
+                icon="pi pi-pencil"
+                class="action-btn action-edit"
+                [pTooltip]="'COMMON.EDIT' | translate"
+                tooltipPosition="top"
+                (click)="editUser(user.id)"
+              ></button>
+              <button
+                pButton
+                [icon]="user.enabled ? 'pi pi-ban' : 'pi pi-check'"
+                [class]="user.enabled ? 'action-btn action-delete' : 'action-btn action-enable'"
+                [pTooltip]="(user.enabled ? 'SUPER_ADMIN.USERS.ACTIONS.BLOCK' : 'SUPER_ADMIN.USERS.ACTIONS.ACTIVATE') | translate"
+                tooltipPosition="top"
+                (click)="user.enabled ? disableUser(user.id) : enableUser(user.id)"
+              ></button>
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+
+      <!-- Message vide -->
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="6" class="empty-message">
+            <div class="empty-content">
+              <i class="pi pi-inbox"></i>
+              <p>{{ 'SUPER_ADMIN.USERS.EMPTY' | translate }}</p>
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+
+      <!-- Loading -->
+      <ng-template pTemplate="loadingbody">
+        <tr *ngFor="let i of [1, 2, 3, 4, 5]">
+          <td colspan="6">
+            <p-skeleton height="2rem"></p-skeleton>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+
+  <!-- Dialog de création Super Admin -->
+  <p-dialog
+    [(visible)]="displayCreateDialog"
+    [header]="'SUPER_ADMIN.USERS.FORM.CREATE_TITLE' | translate"
+    [modal]="true"
+    [style]="{ width: '600px' }"
+    [draggable]="false"
+    [resizable]="false"
+    styleClass="create-dialog"
+  >
+    <form [formGroup]="createForm" class="create-form">
+      <div class="form-grid">
+        <div class="form-group mb-3">
+          <label for="prenom">{{ 'SUPER_ADMIN.USERS.FORM.FIRST_NAME' | translate }} *</label>
+          <span class="p-input-icon-left w-full">
+            <i class="pi pi-user"></i>
+            <input
+              pInputText
+              id="prenom"
+              formControlName="prenom"
+              [placeholder]="'SUPER_ADMIN.USERS.FORM.PLACEHOLDERS.FIRST_NAME' | translate"
+              class="w-full"
+            />
+          </span>
+          <small class="p-error" *ngIf="createForm.get('prenom')?.invalid && createForm.get('prenom')?.touched">
+            {{ 'SUPER_ADMIN.USERS.FORM.VALIDATIONS.FIRST_NAME_REQ' | translate }}
+          </small>
+        </div>
+
+        <div class="form-group mb-3">
+          <label for="nom">{{ 'SUPER_ADMIN.USERS.FORM.LAST_NAME' | translate }} *</label>
+          <span class="p-input-icon-left w-full">
+            <i class="pi pi-user"></i>
+            <input
+              pInputText
+              id="nom"
+              formControlName="nom"
+              [placeholder]="'SUPER_ADMIN.USERS.FORM.PLACEHOLDERS.LAST_NAME' | translate"
+              class="w-full"
+            />
+          </span>
+          <small class="p-error" *ngIf="createForm.get('nom')?.invalid && createForm.get('nom')?.touched">
+            {{ 'SUPER_ADMIN.USERS.FORM.VALIDATIONS.LAST_NAME_REQ' | translate }}
+          </small>
+        </div>
+
+        <div class="form-group mb-3">
+          <label for="email">{{ 'SUPER_ADMIN.USERS.FORM.EMAIL' | translate }} *</label>
+          <span class="p-input-icon-left w-full">
+            <i class="pi pi-envelope"></i>
+            <input
+              pInputText
+              id="email"
+              type="email"
+              formControlName="email"
+              [placeholder]="'SUPER_ADMIN.USERS.FORM.PLACEHOLDERS.EMAIL' | translate"
+              class="w-full"
+            />
+          </span>
+          <small class="p-error" *ngIf="createForm.get('email')?.invalid && createForm.get('email')?.touched">
+            {{ 'SUPER_ADMIN.USERS.FORM.VALIDATIONS.EMAIL_VALID' | translate }}
+          </small>
+        </div>
+
+        <div class="form-group mb-3">
+          <label for="telephone">{{ 'SUPER_ADMIN.USERS.FORM.PHONE' | translate }} *</label>
+          <span class="p-input-icon-left w-full">
+            <i class="pi pi-phone"></i>
+            <input
+              pInputText
+              id="telephone"
+              formControlName="telephone"
+              [placeholder]="'SUPER_ADMIN.USERS.FORM.PLACEHOLDERS.PHONE' | translate"
+              class="w-full"
+            />
+          </span>
+          <small class="p-error" *ngIf="createForm.get('telephone')?.invalid && createForm.get('telephone')?.touched">
+            {{ 'SUPER_ADMIN.USERS.FORM.VALIDATIONS.PHONE_REQ' | translate }}
+          </small>
+        </div>
+
+        <div class="form-group mb-3">
+          <label for="motDePasse">{{ 'SUPER_ADMIN.USERS.FORM.PASSWORD' | translate }} *</label>
+          <span class="p-input-icon-left w-full">
+            <i class="pi pi-lock"></i>
+            <input
+              pInputText
+              id="motDePasse"
+              type="password"
+              formControlName="motDePasse"
+              [placeholder]="'SUPER_ADMIN.USERS.FORM.PLACEHOLDERS.PASSWORD' | translate"
+              class="w-full"
+            />
+          </span>
+          <small class="p-error" *ngIf="createForm.get('motDePasse')?.invalid && createForm.get('motDePasse')?.touched">
+            {{ 'SUPER_ADMIN.USERS.FORM.VALIDATIONS.PASSWORD_REQ' | translate }}
+          </small>
+        </div>
+
+        <div class="form-group mb-3">
+          <label for="confirmationMotDePasse">{{ 'SUPER_ADMIN.USERS.FORM.CONFIRM_PASSWORD' | translate }} *</label>
+          <span class="p-input-icon-left w-full">
+            <i class="pi pi-lock"></i>
+            <input
+              pInputText
+              id="confirmationMotDePasse"
+              type="password"
+              formControlName="confirmationMotDePasse"
+              [placeholder]="'SUPER_ADMIN.USERS.FORM.PLACEHOLDERS.CONFIRM_PASSWORD' | translate"
+              class="w-full"
+            />
+          </span>
+          <small class="p-error" *ngIf="createForm.get('confirmationMotDePasse')?.invalid && createForm.get('confirmationMotDePasse')?.touched">
+            {{ 'SUPER_ADMIN.USERS.FORM.VALIDATIONS.CONFIRM_REQ' | translate }}
+          </small>
+          <small class="p-error" *ngIf="createForm.errors?.['passwordMismatch'] && createForm.get('confirmationMotDePasse')?.touched">
+            {{ 'SUPER_ADMIN.USERS.FORM.VALIDATIONS.MISMATCH' | translate }}
+          </small>
+        </div>
+      </div>
+
+      <div class="dialog-actions flex justify-content-end gap-2 mt-4">
+        <button
+          pButton
+          type="button"
+          [label]="'SUPER_ADMIN.USERS.FORM.ACTIONS.CANCEL' | translate"
+          class="p-button-text"
+          (click)="displayCreateDialog = false"
+        ></button>
+        <button
+          pButton
+          type="button"
+          [label]="'SUPER_ADMIN.USERS.FORM.ACTIONS.CREATE' | translate"
+          class="p-button-success"
+          [loading]="isSaving"
+          [disabled]="createForm.invalid || isSaving"
+          (click)="saveSuperAdmin()"
+        ></button>
+      </div>
+    </form>
+  </p-dialog>
+</div>

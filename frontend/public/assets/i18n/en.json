@@ -1,0 +1,836 @@
+{
+  "FACTURATION": "Billing",
+  "CHATBOT": {
+    "TITLE": "Billing Assistant",
+    "WELCOME": "Hello! I am your billing assistant. How can I help you?",
+    "THINKING": "AI is thinking...",
+    "PLACEHOLDER": "Ask your question...",
+    "ERROR": "Sorry, an error occurred while communicating with the assistant. Please check your connection or try again later."
+  },
+  "DASHBOARD": {
+    "TITLE": "Dashboard",
+    "SUBTITLE": "Welcome to your management space",
+    "HOME": "Home",
+    "REFRESH": "Refresh",
+    "TOTAL_FACTURES": "Total Invoices",
+    "TOTAL_CLIENTS": "Total Clients",
+    "COLLABORATEURS": "Collaborators",
+    "REVENUE": "Revenue",
+    "UNPAID_INVOICES": "Unpaid Invoices",
+    "REFRESH_SUCCESS": "Data refreshed",
+    "REGIONS": {
+      "TUNIS": "Tunis",
+      "ARIANA": "Ariana",
+      "BEN_AROUS": "Ben Arous",
+      "MANOUBA": "Manouba",
+      "NABEUL": "Nabeul",
+      "ZAGHOUAN": "Zaghouan",
+      "BIZERTE": "Bizerte",
+      "BEJA": "Beja",
+      "JENDOUBA": "Jendouba",
+      "KEF": "Kef",
+      "SILIANA": "Siliana",
+      "SOUSSE": "Sousse",
+      "MONASTIR": "Monastir",
+      "MAHDIA": "Mahdia",
+      "SFAX": "Sfax",
+      "KAIROUAN": "Kairouan",
+      "KASSERINE": "Kasserine",
+      "SIDI_BOUZID": "Sidi Bouzid",
+      "GABES": "Gabes",
+      "MEDENINE": "Medenine",
+      "TATAOUINE": "Tataouine",
+      "GAFSA": "Gafsa",
+      "TOZEUR": "Tozeur",
+      "KEBILI": "Kebili"
+    },
+    "CHART_TITLE": "Monthly Evolution",
+    "CHART_DISTRIBUTION": "Invoices Distribution",
+    "CHART_SALES": "Sales by product / month",
+    "LATE_INVOICES_TITLE": "Late Invoices",
+    "LATE_INVOICES_SUBTITLE": "Number of unpaid invoices past due date",
+    "DAYS_LATE": "+{{days}} days",
+    "NO_DATA": "No data available"
+  },
+  "FACTURES": {
+    "TITLE": "Invoices Management",
+    "NEW": "New Invoice",
+    "ALL_STATUSES": "All statuses",
+    "FILTER_STATUS": "Filter by status",
+    "SEARCH_PLACEHOLDER": "Search by Invoice N° or client...",
+    "TABLE": {
+      "NUM": "Invoice N°",
+      "CLIENT": "Client",
+      "DATE_EMISSION": "Issue Date",
+      "DATE_ECHEANCE": "Due Date",
+      "STATUS": "Status",
+      "ACTIONS": "Actions",
+      "NOT_DEFINED": "Not defined"
+    },
+    "ACTIONS": {
+      "VIEW": "View",
+      "SIGN": "Sign",
+      "EDIT": "Edit",
+      "DELETE": "Delete",
+      "EMIT": "Emit",
+      "PAY": "Pay",
+      "REJECT": "Reject",
+      "CANCEL": "Cancel",
+      "BACK_TO_DRAFT": "Back to Draft",
+      "DOWNLOAD_XML": "Download XML"
+    },
+    "DETAIL_HINT": "This page is ready to display complete information for the request.",
+    "EMPTY": {
+      "TITLE": "No invoices found",
+      "SUBTITLE": "Start by creating your first invoice.",
+      "BUTTON": "Create an invoice"
+    },
+    "CHART_HEADER": "Invoices Evolution",
+    "MSGS": {
+      "DELETE_CONFIRM": "Are you sure you want to delete this invoice?",
+      "DELETE_SUCCESS": "Invoice deleted successfully",
+      "DELETE_ERROR": "Unable to delete invoice",
+      "SAVE_SUCCESS_ADD": "Invoice added successfully",
+      "SAVE_SUCCESS_EDIT": "Invoice modified successfully",
+      "EMIT_SUCCESS": "Invoice emitted and sent",
+      "PAY_SUCCESS": "Invoice marked as paid",
+      "REJECT_REASON_REQ": "Rejection reason is required",
+      "REJECT_SUCCESS": "Invoice rejected",
+      "CANCEL_CONFIRM": "Are you sure you want to cancel this invoice? This will generate a credit note.",
+      "CANCEL_SUCCESS": "Invoice cancelled",
+      "DRAFT_SUCCESS": "Invoice returned to draft",
+      "DOWNLOAD_SUCCESS": "Download started",
+      "DOWNLOAD_ERROR": "Unable to download XML"
+    },
+    "HINTS": {
+      "DRAFT": "Draft order, you can modify before confirmation.",
+      "CONFIRMED": "Order confirmed, ready to start production.",
+      "IN_PROGRESS": "Production in progress, follow advancement above.",
+      "DELIVERED": "Order delivered, ready for invoicing.",
+      "CANCELLED": "Order cancelled.",
+      "NOT_DEFINED": "No status information."
+    }
+  },
+  "FACTURE": {
+    "TITLE": "Invoice",
+    "INVOICE_INFO": "INVOICE INFORMATION",
+    "INVOICE_LINES": "Invoice Lines",
+    "ADD_LINE": "Add a line",
+    "UNIT_PRICE": "Unit Price",
+    "VENDOR": "Vendor",
+    "CLIENT": "Client",
+    "NUMBER": "Invoice N°",
+    "DATE": "Date",
+    "AMOUNT_HT": "Total HT",
+    "AMOUNT_TTC": "Total TTC",
+    "ACTIONS": "Actions",
+    "SAVE": "Save",
+    "SUBMIT": "Submit",
+    "CANCEL": "Cancel",
+    "ADDRESS": "Address:",
+    "PHONE": "Phone:",
+    "CODE_RC": "Code / RC:",
+    "EMAIL": "Email:",
+    "ISSUE_DATE": "Issue Date",
+    "PAYMENT_DATE": "Payment Date",
+    "PAYMENT_METHOD": "Payment Method",
+    "PAYMENT_METHODS": {
+      "VIREMENT": "Bank Transfer",
+      "CHEQUE": "Check",
+      "ESPECES": "Cash",
+      "CARTE": "Credit Card"
+    },
+    "BUYER_TYPES": {
+      "CLIENT": "Client",
+      "EMETTEUR": "Issuer"
+    },
+    "BUYER": "BUYER",
+    "BUYER_TYPE": "Buyer Type",
+    "SELECT_BUYER": "Select Buyer",
+    "PRODUCT": "Product",
+    "QUANTITY": "Quantity",
+    "ADD": "Add",
+    "SELECT_BUYER_HINT": "Select the buyer above, then add lines",
+    "TOTAL_GENERAL": "TOTAL",
+    "TOTAL_HT": "Total excl. VAT",
+    "VAT": "VAT",
+    "STAMP_DUTY": "Stamp Duty",
+    "NOT_DEFINED": "Not defined",
+    "NOT_PROVIDED": "Not provided",
+    "TOTAL_TTC": "Total incl. VAT",
+    "DESIGNATION": "Description",
+    "SCAN_QR": "Scan to check real-time status",
+    "MF": "Fiscal ID"
+  },
+  "STATUS": {
+    "DRAFT": "Draft",
+    "SENT": "Sent",
+    "PAID": "Paid",
+    "PARTIAL": "Partial",
+    "CANCELLED": "Cancelled",
+    "VALIDATED": "Validated",
+    "SIGNED": "Signed",
+    "CONFIRMED": "Confirmed",
+    "CONVERTED": "Converted",
+    "IN_PROGRESS": "In Progress",
+    "ACCEPTED": "Accepted",
+    "REJECTED": "Rejected",
+    "EXPIRED": "Expired",
+    "PENDING": "Pending",
+    "EN_ATTENTE": "Pending",
+    "EN_RETARD": "Late",
+    "UNPAID": "Unpaid",
+    "APPROVED": "Approved",
+    "DELIVERED": "Delivered",
+    "CLOSED": "Closed",
+    "DISPUTE": "In Dispute",
+    "SIGNED_CLIENT": "Signed by Client",
+    "ACTIVE": "Active",
+    "DISABLED": "Blocked"
+  },
+  "ROLES": {
+    "SUPER_ADMIN": "Super Admin",
+    "ENTREPRISE_ADMIN": "Administrator",
+    "ENTREPRISE_VIEWER": "Consultant (Read-only)",
+    "COLLABORATOR": "Collaborator",
+    "CLIENT": "Client",
+    "EMETTEUR": "Issuer"
+  },
+  "DEVIS": {
+    "TITLE": "Quotes Management",
+    "NEW": "New Quote",
+    "EDIT": "Edit Quote",
+    "CREATE": "Create Quote",
+    "GENERAL_INFO": "General Information",
+    "SELECT_CLIENT": "Search client",
+    "NEW_CLIENT": "New Client",
+    "PRODUCT_LINES": "Quote Lines",
+    "SEARCH_PRODUCT": "Search product",
+    "SUMMARY": "Summary",
+    "NOTES": "Notes (optional)",
+    "NOTES_PLACEHOLDER": "Add conditions, remarks, etc.",
+    "SAVE_DRAFT": "Save Draft",
+    "UPDATE_DRAFT": "Update Draft",
+    "CREATE_SEND": "Create and Send",
+    "UPDATE_SEND": "Update and Send",
+    "TOTAL_TTC": "TOTAL incl. VAT",
+    "TOTAL_HT": "Total excl. VAT",
+    "VALIDITY_DATE": "Validity Date",
+    "ACTIONS": {
+      "NEW": "New Quote",
+      "STATS": "Statistics",
+      "GENERATE_INVOICE": "Generate Invoice",
+      "APPROVE": "Approve Quote",
+      "REJECT": "Reject Quote"
+    },
+    "FILTER_STATUS": "Filter by status",
+    "TABLE": {
+      "NUM": "Quote N°",
+      "CLIENT": "Client",
+      "DATE": "Date",
+      "TOTAL": "Total",
+      "STATUS": "Status",
+      "ACTIONS": "Actions"
+    },
+    "EMPTY": "No quotes found",
+    "STATS_TITLE": "Distribution by status",
+    "LOADING": "Loading quotes...",
+    "MSGS": {
+      "LOADING_ERROR": "Could not load quotes.",
+      "ACCEPT_ERROR": "Error accepting quote {{id}}.",
+      "REJECT_REASON_PROMPT": "Enter rejection reason:",
+      "REJECT_ERROR": "Error rejecting quote {{id}}.",
+      "CONVERT_ERROR": "Error converting quote {{id}}.",
+      "SEND_ERROR": "Error sending quote {{id}}.",
+      "CONVERT_FACT_SUCCESS": "Invoice generated successfully.",
+      "CONVERT_FACT_ERROR": "Error during invoice generation."
+    },
+    "CONVERT_MODAL": {
+      "TITLE": "Generate an Invoice",
+      "SUBTITLE": "Please provide payment details for the conversion.",
+      "DATE_DOC": "Invoice Date",
+      "MODE_PAIEMENT": "Payment Mode",
+      "DATE_PAIEMENT": "Payment Date",
+      "CANCEL": "Cancel",
+      "SUBMIT": "Generate Invoice"
+    }
+  },
+  "BC": {
+    "TITLE": "Purchase Orders",
+    "ACTIONS": {
+      "FROM_QUOTE": "From Quote",
+      "STATS": "Statistics"
+    },
+    "FILTER_STATUS": "Filter by status",
+    "TABLE": {
+      "NUM": "PO N°",
+      "CLIENT": "Client",
+      "DATE": "Date",
+      "TOTAL": "Total incl. VAT",
+      "STATUS": "Status",
+      "ACTIONS": "Actions"
+    },
+    "EMPTY": "No purchase orders found",
+    "LOADING": "Loading...",
+    "CONVERT_MODAL": {
+      "TITLE": "Generate Purchase Order",
+      "SUBTITLE": "Select an ACCEPTED quote to convert into a purchase order.",
+      "SEARCH_PLACEHOLDER": "Search by number or client...",
+      "EMPTY": "No accepted quotes found.",
+      "LOADING": "Loading quotes...",
+      "NOTES_LABEL": "Notes / Observations",
+      "NOTES_PLACEHOLDER": "Add notes to this purchase order...",
+      "BTN_CANCEL": "Cancel",
+      "CONVERTING": "Converting...",
+      "BTN_CONVERT": "Convert to PO",
+      "LOAD_ERROR": "Could not load accepted quotes.",
+      "SELECT_REQUIRED": "Please select a quote.",
+      "SUCCESS": "Purchase order generated successfully.",
+      "ERROR": "Error during quote conversion."
+    },
+    "MSGS": {
+      "SEND_SUCCESS": "Purchase order sent successfully.",
+      "SEND_ERROR": "Error during purchase order send.",
+      "CONFIRM_SUCCESS": "Purchase order confirmed successfully.",
+      "CONFIRM_ERROR": "Error during purchase order confirmation.",
+      "CANCEL_REASON_PROMPT": "Enter cancellation reason:",
+      "CANCEL_SUCCESS": "Purchase order cancelled successfully.",
+      "CANCEL_ERROR": "Error during purchase order cancellation.",
+      "LOADING_ERROR": "Could not load purchase orders."
+    }
+  },
+  "BL": {
+    "TITLE": "Delivery Notes",
+    "ACTIONS": {
+      "FROM_ORDER": "From Order",
+      "STATS": "Statistics"
+    },
+    "FILTER_STATUS": "Filter by status",
+    "TABLE": {
+      "NUM": "DN N°",
+      "ORDER_LINK": "Linked Order",
+      "CLIENT": "Client",
+      "DATE": "Date",
+      "STATUS": "Status",
+      "TOTAL": "Total incl. VAT",
+      "ACTIONS": "Actions"
+    },
+    "EMPTY": "No delivery notes found",
+    "STATS_TITLE": "Deliveries distribution",
+    "DISPUTES_TITLE": "Current Disputes",
+    "DISPUTE_REASON_LABEL": "Reason:",
+    "DISPUTE_REASON_UNKNOWN": "Reason not specified",
+    "LOADING": "Loading...",
+    "CONVERT_MODAL": {
+      "TITLE": "Generate Delivery Note",
+      "SUBTITLE": "Select a CONFIRMED order to generate the DN.",
+      "SEARCH_PLACEHOLDER": "Search by number or client...",
+      "EMPTY": "No confirmed orders found.",
+      "LOADING": "Loading orders...",
+      "NOTES_LABEL": "Delivery Notes",
+      "NOTES_PLACEHOLDER": "Delivery instructions...",
+      "BTN_CANCEL": "Cancel",
+      "CONVERTING": "Generating...",
+      "BTN_CONVERT": "Generate DN",
+      "LOAD_ERROR": "Could not load delivered orders.",
+      "SELECT_REQUIRED": "Please select an order.",
+      "SUCCESS": "Delivery note generated successfully.",
+      "ERROR": "Error during delivery note generation.",
+      "NOT_FOUND": "Order not found.",
+      "NO_LINES": "Selected order has no products."
+    },
+    "MSGS": {
+      "DELIVER_SUCCESS": "Delivery note marked as delivered.",
+      "DELIVER_ERROR": "Error during delivery marking.",
+      "CLOSE_SUCCESS": "Delivery note closed successfully.",
+      "CLOSE_ERROR": "Error during delivery note closing.",
+      "DELETE_SUCCESS": "Delivery note deleted successfully.",
+      "DELETE_ERROR": "Error during delivery note deletion.",
+      "RESOLVE_SUCCESS": "Dispute resolved successfully.",
+      "RESOLVE_ERROR": "Error during dispute resolution.",
+      "DISPUTE_PROMPT": "Enter dispute reason:",
+      "DISPUTE_SUCCESS": "Dispute reported successfully.",
+      "DISPUTE_ERROR": "Error during dispute report.",
+      "LOADING_ERROR": "Could not load delivery notes."
+    }
+  },
+  "COMMANDES": {
+    "TITLE": "Orders Management",
+    "ACTIONS": {
+      "FROM_BC": "From PO",
+      "STATS": "Statistics"
+    },
+    "FILTER_STATUS": "Filter by status",
+    "TABLE": {
+      "NUM": "Order N°",
+      "CLIENT": "Client",
+      "DATE": "Date",
+      "TOTAL": "Total incl. VAT",
+      "STATUS": "Status",
+      "ACTIONS": "Actions"
+    },
+    "EMPTY": "No orders found",
+    "STATS_TITLE": "Orders tracking",
+    "LOADING": "Loading...",
+    "CONVERT_MODAL": {
+      "TITLE": "Generate Order",
+      "SUBTITLE": "Select a CONFIRMED purchase order to convert it.",
+      "SEARCH_PLACEHOLDER": "Search by number or client...",
+      "EMPTY": "No confirmed purchase orders found.",
+      "NOTES_LABEL": "Notes / Instructions",
+      "NOTES_PLACEHOLDER": "Add instructions to this order...",
+      "BTN_CANCEL": "Cancel",
+      "CONVERTING": "Converting...",
+      "BTN_CONVERT": "Convert to Order",
+      "LOAD_ERROR": "Could not load purchase orders.",
+      "SELECT_REQUIRED": "Please select a purchase order.",
+      "SUCCESS": "Order generated successfully.",
+      "ERROR": "Error during order generation."
+    },
+    "MSGS": {
+      "LOADING_ERROR": "Error while loading orders.",
+      "CONFIRM_SUCCESS": "Order {{id}} confirmed.",
+      "CONFIRM_ERROR": "Error during order {{id}} confirmation.",
+      "START_PROD_SUCCESS": "Production started for {{id}}.",
+      "START_PROD_ERROR": "Error starting production for {{id}}.",
+      "DELIVER_SUCCESS": "Order {{id}} marked as delivered.",
+      "DELIVER_ERROR": "Error during delivery marking for {{id}}.",
+      "CANCEL_REASON_PROMPT": "Cancellation reason:",
+      "CANCEL_SUCCESS": "Order {{id}} cancelled.",
+      "CANCEL_ERROR": "Error during order {{id}} cancellation."
+    }
+  },
+  "CLIENTS": {
+    "TITLE": "Client List",
+    "NEW": "New Client",
+    "SEARCH_PLACEHOLDER": "Search by company name, email...",
+    "TABLE": {
+      "RAISON_SOCIALE": "Company Name",
+      "EMAIL": "Email",
+      "TELEPHONE": "Phone",
+      "ADRESSE": "Address",
+      "PAYS": "Country",
+      "REGION": "Region",
+      "ACTIONS": "Actions"
+    },
+    "ACTIONS": {
+      "EDIT_TOOLTIP": "Edit this client",
+      "DELETE_TOOLTIP": "Delete this client"
+    },
+    "EMPTY": {
+      "MESSAGE": "No clients",
+      "SUBTITLE_ADD": "Start by adding your first client using the \"New Client\" button.",
+      "SUBTITLE_VIEW": "No clients available at the moment."
+    },
+    "DIALOG": {
+      "ADD_TITLE": "New Client",
+      "EDIT_TITLE": "Edit Client"
+    },
+    "FORM": {
+      "RAISON_SOCIALE": "Company Name",
+      "EMAIL": "Email",
+      "TELEPHONE": "Phone",
+      "ADRESSE": "Address",
+      "PAYS": "Country",
+      "REGION": "Region",
+      "PLACEHOLDERS": {
+        "RAISON_SOCIALE": "Company name",
+        "EMAIL": "example@email.com",
+        "TELEPHONE": "71 234 567",
+        "ADRESSE": "Street, city, postal code",
+        "PAYS": "TUNISIA",
+        "REGION_SELECT": "Select"
+      }
+    },
+    "MSGS": {
+      "LOAD_ERROR": "Unable to load clients",
+      "SAVE_SUCCESS_ADD": "Client added",
+      "SAVE_SUCCESS_EDIT": "Client modified",
+      "SAVE_ERROR_ADD": "Unable to add client",
+      "SAVE_ERROR_EDIT": "Unable to modify client",
+      "DELETE_CONFIRM": "Delete this client?",
+      "DELETE_SUCCESS": "Client deleted",
+      "DELETE_ERROR": "Unable to delete",
+      "VALIDATION_REQUIRED": "Required fields: Company Name, Email, Phone (8 digits)",
+      "VALIDATION_PHONE": "Phone must contain exactly 8 digits",
+      "VALIDATION_ADDRESS": "Address is required",
+      "VALIDATION_REGION": "Region is required"
+    }
+  },
+  "PRODUITS": {
+    "TITLE": "Product Management",
+    "NEW": "New Product",
+    "SEARCH_PLACEHOLDER": "Search by reference or designation...",
+    "TABLE": {
+      "REF": "Reference",
+      "DESIGNATION": "Designation",
+      "PRIX_HT": "Unit Price",
+      "TVA": "VAT %",
+      "PRIX_TTC": "Price",
+      "STOCK": "Stock",
+      "STATUS": "Status",
+      "ACTIONS": "Actions"
+    },
+    "ACTIONS": {
+      "EDIT_TOOLTIP": "Edit this product",
+      "DELETE_TOOLTIP": "Delete this product"
+    },
+    "EMPTY": {
+      "TITLE": "No products found",
+      "SUBTITLE_ADD": "Start by adding your first product.",
+      "SUBTITLE_VIEW": "No products available at the moment."
+    },
+    "DIALOG": {
+      "ADD_TITLE": "New Product",
+      "EDIT_TITLE": "Edit Product"
+    },
+    "FORM": {
+      "REF": "Reference",
+      "DESIGNATION": "Designation",
+      "PRIX_HT": "Unit Price",
+      "TVA": "VAT %",
+      "STOCK_TITLE": "Stock Management",
+      "STOCK_UNLIMITED": "Unlimited stock (services / digital products)",
+      "STOCK_QTY": "Quantity in stock",
+      "STOCK_ALERT": "Alert threshold",
+      "STOCK_PREVIEW": "Expected status:",
+      "EMETTEUR_ID": "Issuer ID",
+      "PREVIEW_TITLE": "Price Preview",
+      "PREVIEW_HT": "Price",
+      "PREVIEW_VAT": "VAT Amount",
+      "PREVIEW_TTC": "Total Price"
+    },
+    "STOCK_STATUS": {
+      "AVAILABLE": "Available",
+      "LOW": "Low stock",
+      "OUT": "Out of stock",
+      "UNLIMITED": "Unlimited"
+    },
+    "MSGS": {
+      "LOAD_ERROR": "Unable to load products",
+      "SAVE_SUCCESS_ADD": "Product added successfully",
+      "SAVE_SUCCESS_EDIT": "Product updated successfully",
+      "SAVE_ERROR": "Error while saving product",
+      "DELETE_CONFIRM": "Delete this product?",
+      "DELETE_SUCCESS": "Product deleted",
+      "DELETE_ERROR": "Unable to delete product",
+      "VALIDATION_REQUIRED": "Please fill in all required fields",
+      "REF_EXISTS": "This reference already exists"
+    }
+  },
+  "AVOIRS": {
+    "TITLE": "Credit Notes",
+    "SUBTITLE": "Notes of credit",
+    "DOC_COUNT": "{{count}} document",
+    "DOC_COUNT_PLURAL": "{{count}} documents",
+    "TYPE_TOTAL_TITLE": "TOTAL",
+    "TYPE_TOTAL_DESC": "Full cancellation",
+    "TYPE_TOTAL_DETAIL": "All lines",
+    "TYPE_PARTIEL_TITLE": "PARTIAL",
+    "TYPE_PARTIEL_DESC": "Partial correction",
+    "TYPE_PARTIEL_DETAIL": "Adjustable lines",
+    "SEARCH_PLACEHOLDER": "Search by number, client, or invoice...",
+    "STATUS": {
+      "ALL": "All credit notes",
+      "APPLIED": "Applied"
+    },
+    "LINKED_INVOICE": "Invoice",
+    "TABLE": {
+      "NUM": "Credit Note N°",
+      "LINKED": "Linked Invoice",
+      "CLIENT": "Client",
+      "TYPE": "Type",
+      "DATE": "Date",
+      "TOTAL": "Total TTC",
+      "STATUS": "Status",
+      "ACTIONS": "Actions"
+    },
+    "TYPE": {
+      "ALL": "All types",
+      "TOTAL": "Total",
+      "PARTIEL": "Partial"
+    },
+    "EMPTY_MESSAGE": "No credit notes found.",
+    "LOADING_MESSAGE": "Loading credit notes...",
+    "MSGS": {
+      "LOAD_ERROR": "Could not load credit notes",
+      "VALIDATE_SUCCESS": "Credit note validated successfully.",
+      "VALIDATE_ERROR": "Error during credit note validation.",
+      "SEND_SUCCESS": "Credit note sent to client successfully.",
+      "SEND_ERROR": "Error during credit note send.",
+      "APPLY_SUCCESS": "Credit note applied successfully.",
+      "APPLY_ERROR": "Error during credit note apply."
+    }
+  },
+  "PARAMETRES": {
+    "TITLE": "Settings",
+    "PROFIL": "Profile",
+    "PREFERENCES": "Preferences",
+    "LANGUE": "Language",
+    "THEME": "Theme",
+    "SAVE_SUCCESS": "Preferences saved",
+    "MON_PROFIL": {
+      "TITLE": "MY PROFILE",
+      "EMAIL": "Email",
+      "PRENOM": "First Name",
+      "NOM": "Last Name",
+      "PLACEHOLDER_PRENOM": "Your first name",
+      "PLACEHOLDER_NOM": "Your last name",
+      "BTN_SAVE": "Save",
+      "BTN_UPDATE": "Update"
+    },
+    "PASSWORD": {
+      "TITLE": "PASSWORD",
+      "ACTUEL": "Current",
+      "NOUVEAU": "New",
+      "CONFIRMER": "Confirm",
+      "BTN_CHANGE": "Change"
+    },
+    "SOCIETE": {
+      "TITLE": "COMPANY",
+      "RAISON": "Company name",
+      "TEL": "Phone",
+      "ADRESSE": "Address",
+      "IBAN": "IBAN",
+      "BTN_SAVE": "Save",
+      "MF": "Fiscal registration number"
+    },
+    "PREFS": {
+      "LANG_HINT": "Applied immediately",
+      "LANG_FR_DESC": "🇫🇷 Interface in French — direction left → right",
+      "LANG_EN_DESC": "🇬🇧 Interface in English — direction left → right"
+    },
+    "MSGS": {
+      "PROFILE_SUCCESS": "Profile updated",
+      "PWD_SUCCESS": "Password changed",
+      "SOCIETE_SUCCESS": "Company details updated",
+      "ERROR": "An error occurred",
+      "SAVING": "Saving..."
+    }
+  },
+  "COMMON": {
+    "SAVE": "Save",
+    "CANCEL": "Cancel",
+    "DELETE": "Delete",
+    "EDIT": "Edit",
+    "BACK": "Back",
+    "BACK_TO_LIST": "Back to list",
+    "PDF": "PDF"
+  },
+  "TOAST": {
+    "SUCCESS": "Success",
+    "ERROR": "Error",
+    "WARN": "Warning",
+    "INFO": "Info",
+    "CONFIRMATION": "Confirmation"
+  },
+  "SIDEBAR": {
+    "LOGO": "MANAGEMENT",
+    "VIEW_MODE": "Consultation mode: you are in read-only (no Add/Edit buttons).",
+    "GENERAL": "GENERAL",
+    "DASHBOARD": "Dashboard",
+    "CLIENTS": "Clients",
+    "PRODUITS": "Products",
+    "DEMANDES": "Requests",
+    "UTILISATEURS": "Users",
+    "COLLABORATEURS": "Collaborators",
+    "PROFIL": "My profile",
+    "FACTURATION": "BILLING",
+    "FACTURES": "Invoices",
+    "DEVIS": "Quotes",
+    "BON_COMMANDES": "Purchase Orders",
+    "COMMANDES": "Orders",
+    "BON_LIVRAISON": "Delivery Notes",
+    "AVOIRS": "Credit Notes",
+    "PARAMETRES": "Settings",
+    "LOGOUT": "Logout"
+  },
+  "SIGNATURE": {
+    "TITLE": "ELECTRONIC SIGNATURE",
+    "FILE_LABEL": ".p12 File:",
+    "PASSWORD_LABEL": "Password:",
+    "BROWSE": "Browse",
+    "BTN_SIGN": "SIGN",
+    "BTN_CANCEL": "CANCEL",
+    "SUCCESS_TITLE": "SIGNATURE SUCCESSFUL!",
+    "SUCCESS_MSG": "Invoice signed successfully (XAdES-B, ETSI compliant).",
+    "ERROR_MSG": "Please select a .p12 file and enter the password."
+  },
+  "PUBLIC_SIGNATURE": {
+    "BC_TITLE": "PURCHASE ORDER SIGNATURE",
+    "BL_TITLE": "DELIVERY NOTE SIGNATURE",
+    "BTN_CLOSE": "Close",
+    "BTN_SIGN_BL": "SIGN DELIVERY NOTE",
+    "LOADING_BC": "Loading purchase order...",
+    "LOADING_BL": "Loading delivery note...",
+    "NOT_FOUND_TITLE": "Document not found",
+    "NOT_FOUND_BC": "Purchase order not found.",
+    "NOT_FOUND_BL": "Delivery note not found.",
+    "BC_LABEL": "Purchase Order N°",
+    "BL_LABEL": "Delivery Note N°",
+    "AMOUNT_LABEL": "Total incl. VAT",
+    "INVOICE_LABEL": "Linked Invoice",
+    "ALREADY_SIGNED_TITLE": "DOCUMENT ALREADY SIGNED",
+    "BC_ALREADY_SIGNED": "This purchase order ({{ref}}) has already been signed by the client.",
+    "BL_ALREADY_SIGNED": "This delivery note ({{ref}}) has already been signed by the client.",
+    "SUCCESS_BC": "Purchase order {{ref}} signed successfully.",
+    "SUCCESS_BL": "Delivery note {{ref}} signed successfully."
+  },
+  "COLLABORATEURS": {
+    "TITLE": "Collaborators List",
+    "ADD_BTN": "New Collaborator",
+    "SEARCH_PLACEHOLDER": "Search by name or email...",
+    "TABLE": {
+      "FIRSTNAME": "First Name",
+      "LASTNAME": "Last Name",
+      "EMAIL": "Email",
+      "ROLE": "Role",
+      "DATE_ADDED": "Date Added",
+      "ACTIONS": "Actions"
+    },
+    "EMPTY": {
+      "TITLE": "No collaborators found",
+      "SUBTITLE": "Add collaborators to see them appearing here."
+    },
+    "CONFIRM": {
+      "DELETE_TITLE": "Confirmation",
+      "DELETE_MSG": "Are you sure you want to deactivate this collaborator?",
+      "DELETE_SUCCESS": "Collaborator deactivated successfully.",
+      "DELETE_ERROR": "Impossible to deactivate this collaborator."
+    },
+    "FORM": {
+      "TITLE": "Invite a new collaborator",
+      "EMAIL": "Work Email",
+      "PRENOM": "First Name",
+      "NOM": "Last Name",
+      "ROLE": "Assigned Role",
+      "ROLE_VIEWER": "Consultant (Limited Access)",
+      "FONCTION": "Function / Position",
+      "TEL": "Phone",
+      "INFO": "The collaborator will receive an email invitation to set up their access.",
+      "BTN_CANCEL": "Cancel",
+      "BTN_CREATE": "Create account"
+    }
+  },
+  "SUPER_ADMIN": {
+    "DASHBOARD": {
+      "WELCOME": "Welcome",
+      "TITLE": "SUPER ADMIN - Dashboard",
+      "USERS": "USERS",
+      "INVOICES": "INVOICES",
+      "COMPANIES": "COMPANIES",
+      "INVOICE_BREAKDOWN": "Invoices Breakdown by Company"
+    },
+    "REQUESTS": {
+      "TITLE": "Registration Requests Management",
+      "SUBTITLE": "Approve or reject company requests",
+      "SEARCH_PLACEHOLDER": "Search by company or email...",
+      "FILTER_STATUS": "Filter by status",
+      "STATUS_ALL": "All requests",
+      "TABLE": {
+        "COMPANY": "Company",
+        "EMAIL": "Email",
+        "REGION": "Region",
+        "STATUS": "Status",
+        "DATE": "Date",
+        "ACTIONS": "Actions"
+      },
+      "EMPTY": "No requests found",
+      "DETAIL": {
+        "TITLE": "Request Detail",
+        "BACK": "Back to list",
+        "LOADING": "Loading details...",
+        "CURRENT_STATUS": "Current Status:",
+        "SUBMITTED_ON": "Submitted on {{date}}",
+        "COMPANY_INFO": "Company Information",
+        "CODE": "Code",
+        "BUSINESS_NAME": "Business Name",
+        "TAX_ID": "Tax ID",
+        "LEGAL_FORM": "Legal Form",
+        "ADDRESS": "Address",
+        "REGION": "Region",
+        "PHONE": "Phone",
+        "WEBSITE": "Website",
+        "BANK": "Bank",
+        "IBAN": "IBAN",
+        "RESPONSIBLE": "Responsible",
+        "FIRST_NAME": "First Name",
+        "LAST_NAME": "Last Name",
+        "FUNCTION": "Function",
+        "REJECTION_COMMENT": "Treatment Comment",
+        "REJECT_REASON_TITLE": "Rejection Reason",
+        "REJECT_REASON_PLACEHOLDER": "Explain the reason for rejection (required)...",
+        "CONFIRM_REJECT": "Confirm Rejection",
+        "APPROVE": "Approve",
+        "REJECT": "Reject"
+      },
+      "CONFIRMATIONS": {
+        "APPROVE_HEADER": "Approval Confirmation",
+        "APPROVE_MESSAGE": "Approve the request from \"{{company}}\"? An email with credentials will be sent automatically.",
+        "APPROVE_SUCCESS_TITLE": "Request Approved",
+        "APPROVE_SUCCESS_DETAIL": "Account created and email sent to the responsible.",
+        "REJECT_SUCCESS_TITLE": "Request Rejected",
+        "REJECT_SUCCESS_DETAIL": "Request rejected and email sent.",
+        "REJECT_WARN_TITLE": "Validation",
+        "REJECT_WARN_DETAIL": "Please enter a rejection reason."
+      }
+    },
+    "USERS": {
+      "TITLE": "Users Management",
+      "SUBTITLE": "Manage all platform users",
+      "CREATE_BTN": "Create Super Admin",
+      "SEARCH_PLACEHOLDER": "Search by name, first name or email...",
+      "TABLE": {
+        "NAME": "Name",
+        "EMAIL": "Email",
+        "ROLE": "Role",
+        "COMPANY": "Company",
+        "STATUS": "Status",
+        "ACTIONS": "Actions"
+      },
+      "EMPTY": "No users found",
+      "ACTIONS": {
+        "ACTIVATE": "Activate",
+        "BLOCK": "Block"
+      },
+      "FORM": {
+        "CREATE_TITLE": "Create Super Admin",
+        "EDIT_TITLE": "Edit User",
+        "NEW_TITLE": "New User",
+        "FIRST_NAME": "First Name *",
+        "LAST_NAME": "Last Name *",
+        "EMAIL": "Email *",
+        "PHONE": "Phone *",
+        "PASSWORD": "Password *",
+        "CONFIRM_PASSWORD": "Confirm Password *",
+        "ROLE": "Role *",
+        "PLACEHOLDERS": {
+          "FIRST_NAME": "First Name",
+          "LAST_NAME": "Last Name",
+          "EMAIL": "email@exemple.com",
+          "PHONE": "+216 XX XXX XXX",
+          "PASSWORD": "Enter password",
+          "CONFIRM_PASSWORD": "Confirm password",
+          "ROLE_SELECT": "Select a role"
+        },
+        "VALIDATIONS": {
+          "FIRST_NAME_REQ": "First name required (min 2 characters)",
+          "LAST_NAME_REQ": "Last name required (min 2 characters)",
+          "EMAIL_VALID": "Valid email required",
+          "PHONE_REQ": "Phone required (min 8 characters)",
+          "PASSWORD_REQ": "Password required (min 8 characters)",
+          "CONFIRM_REQ": "Password confirmation required",
+          "MISMATCH": "Passwords do not match",
+          "ROLE_REQ": "Role required"
+        },
+        "INFO_BOX": "Please enter a secure password (minimum 8 characters) for this Super Admin.",
+        "ACTIONS": {
+          "CANCEL": "Cancel",
+          "CREATE": "Create Super Admin",
+          "SAVE": "Save",
+          "NEW": "Create"
+        }
+      }
+    }
+  }
+}

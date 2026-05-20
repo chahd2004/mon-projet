@@ -1,0 +1,126 @@
+<div class="utilisateur-edit-container" [class.loading]="isLoading">
+  <div class="page-header">
+    <h1>{{ (isNew ? 'SUPER_ADMIN.USERS.FORM.CREATE_TITLE' : 'SUPER_ADMIN.USERS.FORM.EDIT_TITLE') | translate }}</h1>
+  </div>
+
+  <p-card class="edit-card">
+    <form [formGroup]="editForm">
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="prenom">{{ 'SUPER_ADMIN.USERS.FORM.FIRST_NAME' | translate }}</label>
+          <input
+            pInputText
+            id="prenom"
+            formControlName="prenom"
+            [placeholder]="'SUPER_ADMIN.USERS.FORM.FIRST_NAME' | translate"
+            [class.ng-invalid]="editForm.get('prenom')?.invalid && editForm.get('prenom')?.touched"
+          />
+          <small *ngIf="editForm.get('prenom')?.invalid && editForm.get('prenom')?.touched" class="error">
+            {{ 'SUPER_ADMIN.USERS.FORM.MIN_LENGTH' | translate:{min: 2} }}
+          </small>
+        </div>
+
+        <div class="form-group">
+          <label for="nom">{{ 'SUPER_ADMIN.USERS.FORM.LAST_NAME' | translate }}</label>
+          <input
+            pInputText
+            id="nom"
+            formControlName="nom"
+            [placeholder]="'SUPER_ADMIN.USERS.FORM.LAST_NAME' | translate"
+            [class.ng-invalid]="editForm.get('nom')?.invalid && editForm.get('nom')?.touched"
+          />
+          <small *ngIf="editForm.get('nom')?.invalid && editForm.get('nom')?.touched" class="error">
+            {{ 'SUPER_ADMIN.USERS.FORM.MIN_LENGTH' | translate:{min: 2} }}
+          </small>
+        </div>
+
+        <div class="form-group">
+          <label for="email">{{ 'SUPER_ADMIN.USERS.FORM.EMAIL' | translate }}</label>
+          <input
+            pInputText
+            id="email"
+            type="email"
+            formControlName="email"
+            placeholder="email@example.com"
+            [class.ng-invalid]="editForm.get('email')?.invalid && editForm.get('email')?.touched"
+          />
+          <small *ngIf="editForm.get('email')?.invalid && editForm.get('email')?.touched" class="error">
+            {{ 'SUPER_ADMIN.USERS.FORM.INVALID_EMAIL' | translate }}
+          </small>
+        </div>
+
+        <div class="form-group">
+          <label for="telephone">{{ 'SUPER_ADMIN.USERS.FORM.PHONE' | translate }}</label>
+          <input
+            pInputText
+            id="telephone"
+            formControlName="telephone"
+            placeholder="+216 XX XXX XXX"
+            [class.ng-invalid]="editForm.get('telephone')?.invalid && editForm.get('telephone')?.touched"
+          />
+          <small *ngIf="editForm.get('telephone')?.invalid && editForm.get('telephone')?.touched" class="error">
+            {{ 'SUPER_ADMIN.USERS.FORM.INVALID' | translate }}
+          </small>
+        </div>
+
+        <div class="form-group">
+          <label for="role">{{ 'SUPER_ADMIN.USERS.TABLE.ROLE' | translate }} *</label>
+          <p-dropdown
+            id="role"
+            [options]="roleOptions"
+            optionLabel="label"
+            optionValue="value"
+            formControlName="role"
+            [placeholder]="'SUPER_ADMIN.USERS.FORM.PLACEHOLDERS.ROLE_SELECT' | translate"
+            [showClear]="false"
+            [class.ng-invalid]="editForm.get('role')?.invalid && editForm.get('role')?.touched"
+          ></p-dropdown>
+          <small *ngIf="editForm.get('role')?.invalid && editForm.get('role')?.touched" class="error">
+            {{ 'SUPER_ADMIN.USERS.FORM.INVALID' | translate }}
+          </small>
+        </div>
+
+        <div class="form-group" *ngIf="editForm.get('role')?.value === 'ENTREPRISE_ADMIN' || editForm.get('role')?.value === 'ENTREPRISE_VIEWER'">
+          <label for="emetteurId">Entreprise associée *</label>
+          <p-dropdown
+            id="emetteurId"
+            [options]="emetteurOptions"
+            optionLabel="label"
+            optionValue="value"
+            formControlName="emetteurId"
+            placeholder="Sélectionnez une entreprise"
+            [showClear]="true"
+            [filter]="true"
+            filterBy="label"
+          ></p-dropdown>
+          <small class="info-text">
+            Important : L'administrateur ne pourra voir que les données de cette entreprise.
+          </small>
+        </div>
+
+      </div>
+
+      <p-toast></p-toast>
+
+      <div class="form-actions">
+        <button
+          pButton
+          type="button"
+          [label]="'COMMON.CANCEL' | translate"
+          (click)="cancel()"
+          text
+          class="action-cancel"
+        ></button>
+        <button
+          pButton
+          type="button"
+          [label]="(isNew ? 'COMMON.CREATE' : 'COMMON.SAVE') | translate"
+          (click)="save()"
+          [disabled]="editForm.invalid || isLoading"
+          [loading]="isLoading"
+          class="action-save"
+        ></button>
+      </div>
+    </form>
+  </p-card>
+</div>

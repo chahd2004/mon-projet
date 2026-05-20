@@ -1,0 +1,91 @@
+@startuml
+title Diagramme de séquence — Gestion des collaborateurs (ECB)
+
+skinparam backgroundColor #FFFFFF
+skinparam sequenceArrowThickness 1.5
+skinparam roundcorner 5
+skinparam LifeLineBorderColor #333333
+skinparam SequenceGroupBorderColor #888888
+skinparam SequenceGroupFontColor #333333
+skinparam SequenceGroupBackgroundColor #F5F5F5
+
+' ECB Stereotypes
+actor "Admin Entreprise" as AE
+boundary "Interface" as I <<Boundary>>
+control "CollaborateurController" as CC <<Control>>
+control "UserService" as US
+entity "User" as U <<Entity>>
+control "EmailService" as ES
+
+== Ajouter un collaborateur ==
+
+AE -> I : Remplir le formulaire d'invitation
+activate AE
+activate I
+I -> I : Validation locale
+activate I
+deactivate I
+
+alt Formulaire Invalide
+    I --> AE : Afficher erreurs de saisie
+else Formulaire Valide
+    I -> CC : POST /api/collaborateurs
+    activate CC
+    CC -> US : createCollaborateur(dto)
+    activate US
+    US -> U : findByEmail(email)
+    activate U
+    U --> US : User | null
+    deactivate U
+    
+    alt Email déjà utilisé
+        US --> CC : UserAlreadyExistsException
+        CC --> I : 400 Bad Request
+        I --> AE : Erreur : Cet email est déjà utilisé
+    else Email disponible
+        US -> U : save(newCollaborateur)
+        activate U
+        U --> US : User
+        deactivate U
+        US -> ES : sendAccountInfo(credentials)
+        activate ES
+        ES --> US : void
+        deactivate ES
+        US --> CC : UserResponseDTO
+        deactivate US
+        CC --> I : 201 Created
+        deactivate CC
+        I --> AE : Succès : Compte créé et invitation envoyée
+    end
+end
+deactivate I
+deactivate AE
+
+== Supprimer (Désactiver) un collaborateur ==
+
+AE -> I : Cliquer sur "Supprimer"
+activate AE
+activate I
+I --> AE : Demander confirmation
+AE -> I : Confirmer la suppression
+I -> CC : DELETE /api/collaborateurs/{id}
+activate CC
+CC -> US : deleteUser(id)
+activate US
+US -> U : findById(id)
+activate U
+U --> US : User
+deactivate U
+US -> U : delete(user) / updateStatus(DISABLED)
+activate U
+U --> US : void
+deactivate U
+US --> CC : void
+deactivate US
+CC --> I : 204 No Content
+deactivate CC
+I --> AE : Succès : Collaborateur désactivé avec succès
+deactivate I
+deactivate AE
+
+@enduml

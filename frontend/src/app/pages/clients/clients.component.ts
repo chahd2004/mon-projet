@@ -1,9 +1,8 @@
 // src/app/pages/clients/clients.component.ts
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { HttpErrorResponse } from '@angular/common/http';
 
 // PrimeNG Modules
 import { TableModule } from 'primeng/table';
@@ -19,8 +18,9 @@ import { MessageService } from 'primeng/api';
 import { ConfirmationService } from 'primeng/api';
 
 import { ClientService } from '../../core/services/client.service';
-import { getHttpErrorMessage } from '../../core/utils/http-error.util';
+import { AuthService } from '../../core/services/auth.service';
 import { Client, ClientRequest, RegionTunisie } from '../../models/client.model';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-clients',
@@ -36,7 +36,8 @@ import { Client, ClientRequest, RegionTunisie } from '../../models/client.model'
     InputTextModule,
     DialogModule,
     DropdownModule,
-    TooltipModule
+    TooltipModule,
+    TranslateModule
   ],
   providers: [MessageService, ConfirmationService],
   templateUrl: './clients.component.html',
@@ -44,27 +45,36 @@ import { Client, ClientRequest, RegionTunisie } from '../../models/client.model'
 })
 export class ClientsComponent implements OnInit {
   private clientService = inject(ClientService);
+  private authService = inject(AuthService);
   private router = inject(Router);
   private messageService = inject(MessageService);
   private confirmationService = inject(ConfirmationService);
+  private translate = inject(TranslateService);
+
+  get isViewer(): boolean {
+    return this.authService.hasRole('ENTREPRISE_VIEWER');
+  }
+
+  isReadOnly = computed(() => this.authService.hasRole('ENTREPRISE_VIEWER'));
 
   // Données
   clients: Client[] = [];
   clientsFiltered: Client[] = [];
   loading: boolean = false;
-  
+
   // Pagination côté client
   page: number = 1;
   rowsPerPage: number = 10;
-  
+  rowsOptions: number[] = [10, 20, 50, 100];
+
   // Recherche
   searchText: string = '';
-  
+
   // Dialog
   displayDialog: boolean = false;
   dialogMode: 'add' | 'edit' = 'add';
   selectedClient: Client | null = null;
-  
+
   // Formulaire client (camelCase pour le backend)
   clientForm: Partial<ClientRequest> = {
     raisonSociale: '',
@@ -109,40 +119,43 @@ export class ClientsComponent implements OnInit {
 
   loadClients(): void {
     this.loading = true;
-    
+
     this.clientService.getClients().subscribe({
       next: (clients) => {
         this.clients = clients;
         this.applyFilter();
         this.loading = false;
       },
-      error: (error) => {
+      error: (error: any) => {
         console.error('Erreur:', error);
-        this.loading = false;
-        const msg = getHttpErrorMessage(error, 'Impossible de charger les clients');
         this.messageService.add({
           severity: 'error',
-          summary: 'Erreur',
-          detail: msg
+          summary: this.translate.instant('TOAST.ERROR'),
+          detail: error?.error?.message || this.translate.instant('CLIENTS.MSGS.LOAD_ERROR')
         });
-        // En cas de 403 (réponse brute ou erreur transformée par l'intercepteur), rediriger
-        const is403 = (error instanceof HttpErrorResponse && error.status === 403) ||
-          (error instanceof Error && error.message?.includes('Accès non autorisé'));
-        if (is403) {
-          this.router.navigate(['/dashboard']);
-        }
+        this.loading = false;
       }
     });
   }
 
   applyFilter(): void {
     const search = (this.searchText || '').toLowerCase().trim();
-    this.clientsFiltered = search
+    let result = search
       ? this.clients.filter(c =>
-          (c.raisonSociale || '').toLowerCase().includes(search) ||
-          (c.email || '').toLowerCase().includes(search) ||
-          (c.telephone || '').includes(search))
+        (c.raisonSociale || '').toLowerCase().includes(search) ||
+        (c.email || '').toLowerCase().includes(search) ||
+        (c.telephone || '').includes(search))
       : [...this.clients];
+
+    // Tri par raison sociale alphabétique par défaut
+    this.clientsFiltered = result.sort((a, b) => 
+      (a.raisonSociale || '').localeCompare(b.raisonSociale || '')
+    );
+  }
+
+  loadClientsLazy(event: any): void {
+    this.page = (event.first / event.rows) + 1;
+    this.rowsPerPage = event.rows;
   }
 
   onPageChange(event: any): void {
@@ -161,6 +174,10 @@ export class ClientsComponent implements OnInit {
   }
 
   ajouterClient(): void {
+    if (this.isViewer) {
+      return;
+    }
+
     this.dialogMode = 'add';
     this.selectedClient = null;
     this.resetForm();
@@ -168,6 +185,10 @@ export class ClientsComponent implements OnInit {
   }
 
   modifierClient(client: Client): void {
+    if (this.isViewer) {
+      return;
+    }
+
     this.dialogMode = 'edit';
     this.selectedClient = client;
     this.clientForm = {
@@ -193,41 +214,46 @@ export class ClientsComponent implements OnInit {
   }
 
   sauvegarderClient(): void {
+    if (this.isViewer) {
+      return;
+    }
+
     if (!this.clientForm.raisonSociale?.trim() || !this.clientForm.email?.trim() || !this.clientForm.telephone?.trim()) {
       this.messageService.add({
         severity: 'warn',
-        summary: 'Validation',
-        detail: 'Champs obligatoires: Raison sociale, Email, Téléphone (8 chiffres)'
+        summary: this.translate.instant('TOAST.WARN'),
+        detail: this.translate.instant('CLIENTS.MSGS.VALIDATION_REQUIRED')
       });
       return;
     }
     if (!/^[0-9]{8}$/.test(this.clientForm.telephone)) {
       this.messageService.add({
         severity: 'warn',
-        summary: 'Validation',
-        detail: 'Le téléphone doit contenir exactement 8 chiffres'
+        summary: this.translate.instant('TOAST.WARN'),
+        detail: this.translate.instant('CLIENTS.MSGS.VALIDATION_PHONE')
       });
       return;
     }
     if (!this.clientForm.adresseComplete?.trim()) {
       this.messageService.add({
         severity: 'warn',
-        summary: 'Validation',
-        detail: 'L\'adresse est obligatoire'
+        summary: this.translate.instant('TOAST.WARN'),
+        detail: this.translate.instant('CLIENTS.MSGS.VALIDATION_ADDRESS')
       });
       return;
     }
     if (!this.clientForm.region) {
       this.messageService.add({
         severity: 'warn',
-        summary: 'Validation',
-        detail: 'La région est obligatoire'
+        summary: this.translate.instant('TOAST.WARN'),
+        detail: this.translate.instant('CLIENTS.MSGS.VALIDATION_REGION')
       });
       return;
     }
 
     this.loading = true;
     const request: ClientRequest = {
+      code: this.generateClientCode(),
       raisonSociale: this.clientForm.raisonSociale!.trim(),
       email: this.clientForm.email!.trim(),
       telephone: this.clientForm.telephone!.trim(),
@@ -241,18 +267,18 @@ export class ClientsComponent implements OnInit {
         next: () => {
           this.messageService.add({
             severity: 'success',
-            summary: 'Succès',
-            detail: 'Client ajouté'
+            summary: this.translate.instant('TOAST.SUCCESS'),
+            detail: this.translate.instant('CLIENTS.MSGS.SAVE_SUCCESS_ADD')
           });
           this.displayDialog = false;
           this.loadClients();
         },
-        error: (error) => {
+        error: (error: any) => {
           console.error('Erreur:', error);
-          const msg = error?.error?.message || error?.error?.error || (error?.status === 403 ? 'Accès refusé : droits insuffisants' : 'Impossible d\'ajouter le client');
+          const msg = error?.error?.message || error?.error?.error || (error?.status === 403 ? 'Accès refusé' : this.translate.instant('CLIENTS.MSGS.SAVE_ERROR_ADD'));
           this.messageService.add({
             severity: 'error',
-            summary: 'Erreur',
+            summary: this.translate.instant('TOAST.ERROR'),
             detail: msg
           });
           this.loading = false;
@@ -263,18 +289,18 @@ export class ClientsComponent implements OnInit {
         next: () => {
           this.messageService.add({
             severity: 'success',
-            summary: 'Succès',
-            detail: 'Client modifié'
+            summary: this.translate.instant('TOAST.SUCCESS'),
+            detail: this.translate.instant('CLIENTS.MSGS.SAVE_SUCCESS_EDIT')
           });
           this.displayDialog = false;
           this.loadClients();
         },
-        error: (error) => {
+        error: (error: any) => {
           console.error('Erreur:', error);
           this.messageService.add({
             severity: 'error',
-            summary: 'Erreur',
-            detail: 'Impossible de modifier le client'
+            summary: this.translate.instant('TOAST.ERROR'),
+            detail: this.translate.instant('CLIENTS.MSGS.SAVE_ERROR_EDIT')
           });
           this.loading = false;
         }
@@ -283,28 +309,30 @@ export class ClientsComponent implements OnInit {
   }
 
   supprimerClient(id: number): void {
+    if (this.isViewer) {
+      return;
+    }
+
     this.confirmationService.confirm({
-      message: 'Supprimer ce client ?',
-      header: 'Confirmation',
+      message: this.translate.instant('CLIENTS.MSGS.DELETE_CONFIRM'),
+      header: this.translate.instant('TOAST.CONFIRMATION'),
       icon: 'pi pi-exclamation-triangle',
-      acceptLabel: 'Oui',
-      rejectLabel: 'Non',
       accept: () => {
         this.clientService.deleteClient(id).subscribe({
           next: () => {
             this.messageService.add({
               severity: 'success',
-              summary: 'Succès',
-              detail: 'Client supprimé'
+              summary: this.translate.instant('TOAST.SUCCESS'),
+              detail: this.translate.instant('CLIENTS.MSGS.DELETE_SUCCESS')
             });
             this.loadClients();
           },
-          error: (error) => {
+          error: (error: any) => {
             console.error('Erreur:', error);
             this.messageService.add({
               severity: 'error',
-              summary: 'Erreur',
-              detail: 'Impossible de supprimer'
+              summary: this.translate.instant('TOAST.ERROR'),
+              detail: this.translate.instant('CLIENTS.MSGS.DELETE_ERROR')
             });
           }
         });
@@ -318,5 +346,9 @@ export class ClientsComponent implements OnInit {
 
   voirFactures(clientId: number): void {
     this.router.navigate(['/clients', clientId, 'factures']);
+  }
+
+  private generateClientCode(): string {
+    return `CL-${Date.now().toString().slice(-8)}`;
   }
 }

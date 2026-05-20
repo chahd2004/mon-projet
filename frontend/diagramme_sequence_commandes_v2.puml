@@ -1,0 +1,120 @@
+@startuml "Diagramme de Séquence - Gestion des commandes (ECB)"
+
+skinparam style strictuml
+skinparam maxMessageSize 150
+skinparam sequence {
+    ParticipantPadding 30
+    MessageAlign center
+}
+
+actor "Manager" as Manager
+actor "Consultant" as Consultant
+
+boundary "Interface\n<<Boundary>>" as Interface
+control "CommandeController\n<<Control>>" as Controller
+control "ConversionController\n<<Control>>" as ConvController
+control "CommandeService\n<<Control>>" as Service
+control "ConversionService\n<<Control>>" as ConvService
+control "BonCommandeService\n<<Control>>" as BCService
+entity "Commande\n<<Entity>>" as Commande
+entity "BonCommande\n<<Entity>>" as BC
+control "BonLivraisonService\n<<Control>>" as BLService
+entity "BonLivraison\n<<Entity>>" as BL
+
+== Consultation (Manager & Consultant) ==
+
+Manager -> Interface : Accéder aux Commandes
+Consultant -> Interface : Accéder aux Commandes
+activate Interface
+Interface -> Controller : GET /api/commandes
+activate Controller
+Controller -> Service : getByVendeur()
+activate Service
+Service -> Commande : findByVendeurId()
+activate Commande
+Commande --> Service : List<Commande>
+deactivate Commande
+Service --> Controller : List<CommandeDTO>
+deactivate Service
+Controller --> Interface : 200 OK
+deactivate Controller
+Interface --> Manager : Liste affichée
+Interface --> Consultant : Liste affichée
+deactivate Interface
+
+== Modification (Manager uniquement) ==
+
+Manager -> Interface : Sélectionner + Modifier
+activate Interface
+Interface -> Controller : PUT /api/commandes/{id}
+activate Controller
+Controller -> Service : update(id, dto)
+activate Service
+Service -> Commande : findById() + save()
+activate Commande
+Commande --> Service : Commande
+deactivate Commande
+Service --> Controller : CommandeResponseDTO
+deactivate Service
+Controller --> Interface : 200 OK
+deactivate Controller
+Interface --> Manager : Succès : Commande mise à jour
+deactivate Interface
+
+Manager -> Interface : Sélectionner BC + Convertir
+Interface -> ConvController : POST /api/conversions/bon-commande/{id}/vers-commande
+activate ConvController
+ConvController -> ConvService : bonCommandeVersCommande(bcId)
+activate ConvService
+ConvService -> Commande : save(statut=DRAFT)
+activate Commande
+Commande --> ConvService : Commande
+deactivate Commande
+ConvService -> BCService : marquerConverti(bcId)
+activate BCService
+BCService -> BC : updateStatut(CONVERTED)
+activate BC
+BC --> BCService : void
+deactivate BC
+BCService --> ConvService : void
+deactivate BCService
+ConvService --> ConvController : CommandeDTO
+deactivate ConvService
+ConvController --> Interface : 201 Created
+deactivate ConvController
+
+== Cycle de Vie ==
+
+group Confirmation, Production & Annulation
+    Manager -> Interface : Confirmer / Démarrer / Annuler
+    activate Interface
+    Interface -> Controller : PUT /api/commandes/{id}/{action}
+    activate Controller
+    Controller -> Service : updateStatus(id, action)
+    activate Service
+    Service -> Commande : updateStatus(id, statut)
+    activate Commande
+    Commande --> Service : Commande
+    deactivate Commande
+
+    alt Si action == "Démarrer"
+        note right of Service : Génération automatique\ndu Bon de Livraison
+        Service -> BLService : generateBL()
+        activate BLService
+        BLService -> BL : save(newBL, statut=DRAFT)
+        activate BL
+        BL --> BLService : BonLivraison
+        deactivate BL
+        BLService --> Service : BonLivraison
+        deactivate BLService
+    end
+
+    Service --> Controller : 200 OK
+    deactivate Service
+    Controller --> Interface : Statut mis à jour
+    deactivate Controller
+    Interface --> Manager : Succès
+    deactivate Interface
+end
+
+@enduml

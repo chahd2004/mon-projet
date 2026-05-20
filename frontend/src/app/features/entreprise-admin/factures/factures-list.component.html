@@ -1,0 +1,100 @@
+<div class="factures-container">
+  <div class="page-header">
+    <div>
+      <h1>Factures</h1>
+      <p class="subtitle">Gérez l'ensemble de vos factures</p>
+    </div>
+    <a *ngIf="!isReadOnly()" routerLink="ajouter" pButton type="button" icon="pi pi-plus" label="Créer Facture" class="p-button-lg"></a>
+  </div>
+
+  <div class="filters-section">
+    <span class="p-input-icon-left">
+      <i class="pi pi-search"></i>
+      <input type="text" pInputText placeholder="Rechercher par numéro ou client..." [(ngModel)]="searchTerm"
+        (keyup)="onSearch()" />
+    </span>
+
+    <p-dropdown [options]="statutOptions" [(ngModel)]="selectedStatut" optionLabel="label" optionValue="value"
+      placeholder="Filtrer par statut" (onChange)="onStatutChange()" styleClass="w-full"></p-dropdown>
+  </div>
+
+  <p-table [value]="filteredFactures" [loading]="isLoading" [paginator]="true" [rows]="25" responsiveLayout="scroll"
+    [globalFilterFields]="['numFact', 'partenaireNom']">
+    <ng-template pTemplate="header">
+      <tr>
+        <th pSortableColumn="numFact">Numéro <p-sortIcon field="numFact"></p-sortIcon></th>
+        <th pSortableColumn="isVente">Type <p-sortIcon field="isVente"></p-sortIcon></th>
+        <th pSortableColumn="partenaireNom">Partenaire <p-sortIcon field="partenaireNom"></p-sortIcon></th>
+        <th pSortableColumn="dateEmission">Émise le <p-sortIcon field="dateEmission"></p-sortIcon></th>
+        <th pSortableColumn="datePaiement">Échéance <p-sortIcon field="datePaiement"></p-sortIcon></th>
+        <th pSortableColumn="totalTTC" style="text-align: right">Montant <p-sortIcon field="totalTTC"></p-sortIcon></th>
+        <th pSortableColumn="statut">Statut <p-sortIcon field="statut"></p-sortIcon></th>
+        <th style="width: 15%">Actions</th>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="body" let-fact>
+      <tr>
+        <td><strong>{{ fact.numFact }}</strong></td>
+        <td>
+          <p-tag [value]="fact.isVente ? 'VENTE' : 'ACHAT'" [severity]="fact.isVente ? 'success' : 'info'"></p-tag>
+        </td>
+        <td>{{ fact.partenaireNom }}</td>
+        <td>{{ fact.dateEmission | date:'dd/MM/yyyy' }}</td>
+        <td>{{ fact.datePaiement | date:'dd/MM/yyyy' }}</td>
+        <td style="text-align: right; font-weight: 600">{{ fact.totalTTC | number: '1.2-2' }} TND</td>
+        <td>
+          <p-tag [value]="getStatutLabel(fact.statut)" [severity]="$any(getStatutSeverity(fact.statut))"></p-tag>
+        </td>
+        <td>
+          <div class="action-buttons">
+            <a [routerLink]="[fact.id]" pButton type="button" icon="pi pi-eye"
+              class="p-button-rounded p-button-text p-button-sm" pTooltip="Voir détails" tooltipPosition="top"></a>
+            
+            <!-- Brouillon -->
+            <ng-container *ngIf="!isReadOnly()">
+              <a *ngIf="fact.statut === 'DRAFT'" [routerLink]="[fact.id, 'edit']" pButton type="button"
+                icon="pi pi-pencil" class="p-button-rounded p-button-text p-button-sm" pTooltip="Modifier"
+                tooltipPosition="top"></a>
+              <button *ngIf="fact.statut === 'DRAFT'" pButton type="button" icon="pi pi-check"
+                class="p-button-rounded p-button-text p-button-sm" pTooltip="Signer"
+                tooltipPosition="top" (click)="signerFacture(fact.id)"></button>
+              <button *ngIf="fact.statut === 'DRAFT'" pButton type="button" icon="pi pi-trash"
+                class="p-button-rounded p-button-text p-button-sm p-button-danger" pTooltip="Supprimer"
+                tooltipPosition="top" (click)="deleteFacture(fact.id)"></button>
+            </ng-container>
+
+            <ng-container *ngIf="!isReadOnly()">
+              <!-- Signée -->
+              <button *ngIf="fact.statut === 'SIGNED'" pButton type="button" icon="pi pi-send"
+                class="p-button-rounded p-button-text p-button-sm" pTooltip="Émettre"
+                tooltipPosition="top" (click)="emettreFacture(fact.id)"></button>
+              <button *ngIf="fact.statut === 'SIGNED'" pButton type="button" icon="pi pi-times"
+                class="p-button-rounded p-button-text p-button-sm p-button-warning" pTooltip="Rejeter"
+                tooltipPosition="top" (click)="rejeterFacture(fact.id)"></button>
+              <button *ngIf="fact.statut === 'SIGNED'" pButton type="button" icon="pi pi-ban"
+                class="p-button-rounded p-button-text p-button-sm p-button-danger" pTooltip="Annuler"
+                tooltipPosition="top" (click)="annulerFacture(fact.id)"></button>
+
+              <!-- Émise -->
+              <button *ngIf="fact.statut === 'SENT'" pButton type="button" icon="pi pi-wallet"
+                class="p-button-rounded p-button-text p-button-sm" pTooltip="Payer"
+                tooltipPosition="top" (click)="payerFacture(fact.id)"></button>
+              <button *ngIf="fact.statut === 'SENT'" pButton type="button" icon="pi pi-times"
+                class="p-button-rounded p-button-text p-button-sm p-button-warning" pTooltip="Rejeter"
+                tooltipPosition="top" (click)="rejeterFacture(fact.id)"></button>
+              <button *ngIf="fact.statut === 'SENT'" pButton type="button" icon="pi pi-ban"
+                class="p-button-rounded p-button-text p-button-sm p-button-danger" pTooltip="Annuler"
+                tooltipPosition="top" (click)="annulerFacture(fact.id)"></button>
+
+              <!-- Rejetée: Retour Brouillon (uniquement si rejet vient de SIGNED) -->
+              <button *ngIf="fact.statut === 'REJECTED' && (fact.previousStatut === 'SIGNED' || fact.previous_statut === 'SIGNED')" pButton type="button" icon="pi pi-refresh"
+                class="p-button-rounded p-button-text p-button-sm" pTooltip="Retour Brouillon"
+                tooltipPosition="top" (click)="retourBrouillon(fact.id)"></button>
+            </ng-container>
+          </div>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>

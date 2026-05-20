@@ -1,0 +1,257 @@
+<mxfile host="app.diagrams.net">
+  <diagram name="Page-1" id="N1BcoMlHKRKlRMdHhtNR">
+    <mxGraphModel dx="888" dy="459" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="p1" parent="1" style="swimlane;startSize=25;fillColor=#f8f9fa;strokeColor=#000000;fontColor=#000000;" value="Comptes" vertex="1">
+          <mxGeometry height="750" width="280" y="10" as="geometry" />
+        </mxCell>
+        <mxCell id="DemandeEmetteur" parent="p1" style="swimlane;startSize=25;fillColor=#ffffff;strokeColor=#000000;fontColor=#000000;headerFillColor=#dae8fc;" value="DemandeEmetteur" vertex="1">
+          <mxGeometry height="115" width="180" x="10" y="40" as="geometry" />
+        </mxCell>
+        <mxCell id="de1" parent="DemandeEmetteur" style="text;align=left;spacingLeft=4;fontColor=#000000;" value="id : Long&#xa;raisonSociale : String&#xa;matriculeFiscal : String&#xa;status : AccountStatus&#xa;dateSoumission : DateTime" vertex="1">
+          <mxGeometry height="90" width="180" y="25" as="geometry" />
+        </mxCell>
+        <mxCell id="User" parent="p1" style="swimlane;startSize=25;fillColor=#ffffff;strokeColor=#000000;fontColor=#000000;headerFillColor=#dae8fc;" value="User" vertex="1">
+          <mxGeometry height="135" width="180" x="10" y="185" as="geometry" />
+        </mxCell>
+        <mxCell id="u1" parent="User" style="text;align=left;spacingLeft=4;fontColor=#000000;" value="id : Long&#xa;email : String&#xa;nom : String&#xa;prenom : String&#xa;role : UserRole&#xa;accountStatus : AccountStatus" vertex="1">
+          <mxGeometry height="110" width="180" y="25" as="geometry" />
+        </mxCell>
+        <mxCell id="Emetteur" parent="p1" style="swimlane;startSize=25;fillColor=#ffffff;strokeColor=#000000;fontColor=#000000;headerFillColor=#dae8fc;" value="Emetteur" vertex="1">
+          <mxGeometry height="175" width="200" y="345" as="geometry" />
+        </mxCell>
+        <mxCell id="e1" parent="Emetteur" style="text;align=left;spacingLeft=4;fontColor=#000000;" value="id : Long&#xa;raisonSociale : String&#xa;matriculeFiscal : String&#xa;formeJuridique : FormeJuridique&#xa;adresseComplete : String&#xa;region : RegionTunisie&#xa;email : String&#xa;telephone : String" vertex="1">
+          <mxGeometry height="150" width="200" y="30" as="geometry" />
+        </mxCell>
+        <mxCell id="Client" parent="p1" style="swimlane;startSize=25;fillColor=#ffffff;strokeColor=#000000;fontColor=#000000;headerFillColor=#dae8fc;" value="Client" vertex="1">
+          <mxGeometry height="110" width="200" x="10" y="580" as="geometry" />
+        </mxCell>
+        <mxCell id="c1" parent="Client" style="text;align=left;spacingLeft=4;fontColor=#000000;" value="id : Long&#xa;raisonSociale : String&#xa;email : String&#xa;telephone : String&#xa;region : RegionTunisie" vertex="1">
+          <mxGeometry height="85" width="200" y="25" as="geometry" />
+        </mxCell>
+        <mxCell id="ri1" edge="1" parent="p1" source="User" style="endArrow=open;html=1;strokeColor=#000000;fontSize=9;fontColor=#000000;exitX=1;exitY=0.3;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="DemandeEmetteur" value="userCree&#xa;1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ri2" edge="1" parent="p1" source="User" style="endArrow=block;endFill=0;html=1;strokeColor=#000000;fontSize=9;fontColor=#000000;" target="Emetteur" value="administre&#xa;1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ri3" edge="1" parent="p1" source="DemandeEmetteur" style="endArrow=open;html=1;strokeColor=#000000;fontSize=9;fontColor=#000000;" target="Emetteur" value="emetteurCree&#xa;0..1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ri4" edge="1" parent="p1" source="Emetteur" style="endArrow=open;html=1;strokeColor=#000000;fontSize=9;fontColor=#000000;" target="Client" value="gere&#xa;1 → 0..*">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="p2" parent="1" style="swimlane;startSize=25;fillColor=#f8f9fa;strokeColor=#000000;fontColor=#000000;" value="Documents" vertex="1">
+          <mxGeometry height="1060" width="245" x="350" y="20" as="geometry" />
+        </mxCell>
+        <mxCell id="Devis" parent="p2" style="swimlane;startSize=25;fillColor=#ffffff;strokeColor=#000000;" value="Devis" vertex="1">
+          <mxGeometry height="140" width="215" x="15" y="40" as="geometry" />
+        </mxCell>
+        <mxCell id="dv1" parent="Devis" style="text;align=left;spacingLeft=4;fontColor=#000000;" value="id : Long&#xa;numDevis : String&#xa;dateCreation : LocalDate&#xa;statut : StatutDevis&#xa;totalHT : BigDecimal&#xa;totalTTC : BigDecimal&#xa;calculerTotaux() : void" vertex="1">
+          <mxGeometry height="115" width="215" y="25" as="geometry" />
+        </mxCell>
+        <mxCell id="Facture" parent="p2" style="swimlane;startSize=25;fillColor=#ffffff;strokeColor=#000000;" value="Facture" vertex="1">
+          <mxGeometry height="140" width="215" x="15" y="205" as="geometry" />
+        </mxCell>
+        <mxCell id="f1" parent="Facture" style="text;align=left;spacingLeft=4;fontColor=#000000;" value="id : Long&#xa;numFact : String&#xa;dateEmission : LocalDate&#xa;statut : StatutFacture&#xa;totalHT : BigDecimal&#xa;totalTTC : BigDecimal&#xa;calculerTotaux() : void" vertex="1">
+          <mxGeometry height="115" width="215" y="25" as="geometry" />
+        </mxCell>
+        <mxCell id="BonCommande" parent="p2" style="swimlane;startSize=25;fillColor=#ffffff;strokeColor=#000000;" value="BonCommande" vertex="1">
+          <mxGeometry height="140" width="215" x="15" y="370" as="geometry" />
+        </mxCell>
+        <mxCell id="bc1" parent="BonCommande" style="text;align=left;spacingLeft=4;fontColor=#000000;" value="id : Long&#xa;numBonCommande : String&#xa;dateCreation : LocalDate&#xa;statut : StatutBonCommande&#xa;dateSignature : LocalDateTime&#xa;calculerTotaux() : void" vertex="1">
+          <mxGeometry height="115" width="215" y="25" as="geometry" />
+        </mxCell>
+        <mxCell id="Commande" parent="p2" style="swimlane;startSize=25;fillColor=#ffffff;strokeColor=#000000;" value="Commande" vertex="1">
+          <mxGeometry height="140" width="215" x="15" y="535" as="geometry" />
+        </mxCell>
+        <mxCell id="co1" parent="Commande" style="text;align=left;spacingLeft=4;fontColor=#000000;" value="id : Long&#xa;numCommande : String&#xa;dateCreation : LocalDate&#xa;statut : StatutCommande&#xa;totalTTC : BigDecimal&#xa;calculerTotaux() : void" vertex="1">
+          <mxGeometry height="115" width="215" y="25" as="geometry" />
+        </mxCell>
+        <mxCell id="BonLivraison" parent="p2" style="swimlane;startSize=25;fillColor=#ffffff;strokeColor=#000000;" value="BonLivraison" vertex="1">
+          <mxGeometry height="135" width="215" x="15" y="700" as="geometry" />
+        </mxCell>
+        <mxCell id="bl1" parent="BonLivraison" style="text;align=left;spacingLeft=4;fontColor=#000000;" value="id : Long&#xa;numBonLivraison : String&#xa;dateCreation : LocalDate&#xa;dateLivraison : LocalDate&#xa;statut : StatutBonLivraison" vertex="1">
+          <mxGeometry height="110" width="215" y="25" as="geometry" />
+        </mxCell>
+        <mxCell id="Avoir" parent="p2" style="swimlane;startSize=25;fillColor=#ffffff;strokeColor=#000000;" value="Avoir" vertex="1">
+          <mxGeometry height="140" width="215" x="15" y="860" as="geometry" />
+        </mxCell>
+        <mxCell id="av1" parent="Avoir" style="text;align=left;spacingLeft=4;fontColor=#000000;" value="id : Long&#xa;numAvoir : String&#xa;dateCreation : LocalDate&#xa;statut : StatutAvoir&#xa;totalTTC : BigDecimal&#xa;calculerTotaux() : void" vertex="1">
+          <mxGeometry height="115" width="215" y="25" as="geometry" />
+        </mxCell>
+        <mxCell id="fl1" edge="1" parent="p2" source="Devis" style="endArrow=open;dashed=1;strokeColor=#AA0000;fontColor=#AA0000;fontSize=9;" target="BonCommande" value="génère">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="fl2" edge="1" parent="p2" source="BonCommande" style="endArrow=open;dashed=1;strokeColor=#AA0000;fontColor=#AA0000;fontSize=9;" target="Commande" value="génère">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="fl3" edge="1" parent="p2" source="Commande" style="endArrow=open;dashed=1;strokeColor=#AA0000;fontColor=#AA0000;fontSize=9;" target="BonLivraison" value="expédie">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="fl4" edge="1" parent="p2" source="BonLivraison" style="endArrow=open;dashed=1;strokeColor=#AA0000;fontColor=#AA0000;fontSize=9;" target="Facture" value="transforme">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="fl5" edge="1" parent="p2" source="Facture" style="endArrow=open;dashed=1;strokeColor=#AA0000;fontColor=#AA0000;fontSize=9;" target="Avoir" value="annule">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="130" y="360" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="p3" parent="1" style="swimlane;startSize=25;fillColor=#f8f9fa;strokeColor=#000000;fontColor=#000000;" value="Lignes" vertex="1">
+          <mxGeometry height="1060" width="185" x="642" as="geometry" />
+        </mxCell>
+        <mxCell id="LigneDevis" parent="p3" style="swimlane;startSize=25;fillColor=#ffffff;strokeColor=#000000;" value="LigneDevis" vertex="1">
+          <mxGeometry height="100" width="165" x="10" y="40" as="geometry" />
+        </mxCell>
+        <mxCell id="ld1" parent="LigneDevis" style="text;align=left;spacingLeft=4;fontColor=#000000;" value="id : Long&#xa;quantite : Integer&#xa;prixUnitaire : BigDecimal&#xa;montantHT : BigDecimal" vertex="1">
+          <mxGeometry height="75" width="165" y="25" as="geometry" />
+        </mxCell>
+        <mxCell id="LigneFacture" parent="p3" style="swimlane;startSize=25;fillColor=#ffffff;strokeColor=#000000;" value="LigneFacture" vertex="1">
+          <mxGeometry height="100" width="165" x="10" y="205" as="geometry" />
+        </mxCell>
+        <mxCell id="lf1" parent="LigneFacture" style="text;align=left;spacingLeft=4;fontColor=#000000;" value="id : Long&#xa;quantite : Integer&#xa;prixUnitaire : BigDecimal" vertex="1">
+          <mxGeometry height="75" width="165" y="25" as="geometry" />
+        </mxCell>
+        <mxCell id="LigneBonCommande" parent="p3" style="swimlane;startSize=25;fillColor=#ffffff;strokeColor=#000000;" value="LigneBonCommande" vertex="1">
+          <mxGeometry height="100" width="165" x="10" y="370" as="geometry" />
+        </mxCell>
+        <mxCell id="lb1" parent="LigneBonCommande" style="text;align=left;spacingLeft=4;fontColor=#000000;" value="id : Long&#xa;quantite : Integer&#xa;prixUnitaire : BigDecimal&#xa;montantHT : BigDecimal" vertex="1">
+          <mxGeometry height="75" width="165" y="25" as="geometry" />
+        </mxCell>
+        <mxCell id="LigneCommande" parent="p3" style="swimlane;startSize=25;fillColor=#ffffff;strokeColor=#000000;" value="LigneCommande" vertex="1">
+          <mxGeometry height="100" width="165" x="10" y="535" as="geometry" />
+        </mxCell>
+        <mxCell id="lc1" parent="LigneCommande" style="text;align=left;spacingLeft=4;fontColor=#000000;" value="id : Long&#xa;quantite : Integer&#xa;prixUnitaire : BigDecimal&#xa;montantHT : BigDecimal" vertex="1">
+          <mxGeometry height="75" width="165" y="25" as="geometry" />
+        </mxCell>
+        <mxCell id="LigneBonLivraison" parent="p3" style="swimlane;startSize=25;fillColor=#ffffff;strokeColor=#000000;" value="LigneBonLivraison" vertex="1">
+          <mxGeometry height="80" width="165" x="10" y="700" as="geometry" />
+        </mxCell>
+        <mxCell id="ll1" parent="LigneBonLivraison" style="text;align=left;spacingLeft=4;fontColor=#000000;" value="id : Long&#xa;quantite : Integer" vertex="1">
+          <mxGeometry height="55" width="165" y="25" as="geometry" />
+        </mxCell>
+        <mxCell id="LigneAvoir" parent="p3" style="swimlane;startSize=25;fillColor=#ffffff;strokeColor=#000000;" value="LigneAvoir" vertex="1">
+          <mxGeometry height="100" width="165" x="10" y="860" as="geometry" />
+        </mxCell>
+        <mxCell id="la1" parent="LigneAvoir" style="text;align=left;spacingLeft=4;fontColor=#000000;" value="id : Long&#xa;quantite : Integer&#xa;prixUnitaire : BigDecimal&#xa;montantHT : BigDecimal" vertex="1">
+          <mxGeometry height="75" width="165" y="25" as="geometry" />
+        </mxCell>
+        <mxCell id="Produit" parent="1" style="swimlane;startSize=25;fillColor=#ffffff;strokeColor=#000000;fontColor=#000000;headerFillColor=#dae8fc;" value="Produit" vertex="1">
+          <mxGeometry height="200" width="200" x="880" y="60" as="geometry" />
+        </mxCell>
+        <mxCell id="pr1" parent="Produit" style="text;align=left;spacingLeft=4;fontColor=#000000;" value="id : Long&#xa;reference : String&#xa;designation : String&#xa;prixUnitaire : BigDecimal&#xa;tauxTVA : BigDecimal&#xa;quantiteStock : Integer&#xa;seuilAlerteStock : Integer&#xa;isDisponible(qty) : boolean&#xa;diminuerStock(qty) : void" vertex="1">
+          <mxGeometry height="175" width="200" y="25" as="geometry" />
+        </mxCell>
+        <mxCell id="v1" edge="1" parent="1" source="Emetteur" style="endArrow=open;html=1;strokeColor=#000000;fontSize=9;fontColor=#000000;" target="Devis" value="vendeur  1 → 0..*">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="v2" edge="1" parent="1" source="Emetteur" style="endArrow=open;html=1;strokeColor=#000000;fontSize=9;fontColor=#000000;" target="Facture" value="vendeur  1 → 0..*">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="290" y="310" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="v3" edge="1" parent="1" source="Emetteur" style="endArrow=open;html=1;strokeColor=#000000;fontSize=9;fontColor=#000000;" target="BonCommande" value="vendeur  1 → 0..*">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="v4" edge="1" parent="1" source="Emetteur" style="endArrow=open;html=1;strokeColor=#000000;fontSize=9;fontColor=#000000;" target="Commande" value="vendeur  1 → 0..*">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="240" y="650" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="v5" edge="1" parent="1" source="Emetteur" style="endArrow=open;html=1;strokeColor=#000000;fontSize=9;fontColor=#000000;" target="BonLivraison" value="vendeur  1 → 0..*">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="230" y="630" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="v6" edge="1" parent="1" source="Emetteur" style="endArrow=open;html=1;strokeColor=#000000;fontSize=9;fontColor=#000000;" target="Avoir" value="vendeur  1 → 0..*">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="cat1" edge="1" parent="1" source="Emetteur" style="endArrow=open;html=1;strokeColor=#000000;fontSize=9;fontColor=#000000;" target="Produit" value="catalogue  0..*">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="310" y="370" />
+              <mxPoint x="530" y="380" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="a1" edge="1" parent="1" source="Client" style="endArrow=open;html=1;strokeColor=#000000;fontSize=9;fontColor=#000000;" target="Devis" value="acheteur  0..1 → 1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="210" y="530" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="a2" edge="1" parent="1" source="Client" style="endArrow=open;html=1;strokeColor=#000000;fontSize=9;fontColor=#000000;entryX=0;entryY=1;entryDx=0;entryDy=0;" target="Facture" value="acheteur  0..1 → 1">
+          <mxGeometry relative="1" x="0.0249" y="4" as="geometry">
+            <mxPoint as="offset" />
+            <Array as="points">
+              <mxPoint x="230" y="510" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="a3" edge="1" parent="1" source="Client" style="endArrow=open;html=1;strokeColor=#000000;fontSize=9;fontColor=#000000;" target="BonCommande" value="acheteur  0..1 → 1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="260" y="440" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="a4" edge="1" parent="1" source="Client" style="endArrow=open;html=1;strokeColor=#000000;fontSize=9;fontColor=#000000;" target="Commande" value="acheteur  0..1 → 1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a5" edge="1" parent="1" source="Client" style="endArrow=open;html=1;strokeColor=#000000;fontSize=9;fontColor=#000000;" target="BonLivraison" value="acheteur  0..1 → 1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a6" edge="1" parent="1" source="Client" style="endArrow=open;html=1;strokeColor=#000000;fontSize=9;fontColor=#000000;" target="Avoir" value="acheteur  0..1 → 1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="2" edge="1" parent="1" source="Devis" style="endArrow=diamond;endFill=1;startArrow=ERmandOne;startFill=1;strokeColor=#000000;" target="LigneDevis">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="c2" edge="1" parent="1" source="Facture" style="endArrow=diamond;endFill=1;startArrow=ERmandOne;startFill=1;strokeColor=#000000;" target="LigneFacture">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="c3" edge="1" parent="1" source="BonCommande" style="endArrow=diamond;endFill=1;startArrow=ERmandOne;startFill=1;strokeColor=#000000;" target="LigneBonCommande">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="c4" edge="1" parent="1" source="Commande" style="endArrow=diamond;endFill=1;startArrow=ERmandOne;startFill=1;strokeColor=#000000;" target="LigneCommande">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="c5" edge="1" parent="1" source="BonLivraison" style="endArrow=diamond;endFill=1;startArrow=ERmandOne;startFill=1;strokeColor=#000000;" target="LigneBonLivraison">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="c6" edge="1" parent="1" source="Avoir" style="endArrow=diamond;endFill=1;startArrow=ERmandOne;startFill=1;strokeColor=#000000;" target="LigneAvoir">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="lp1" edge="1" parent="1" source="LigneDevis" style="endArrow=block;endFill=0;strokeColor=#000000;fontSize=9;fontColor=#000000;" target="Produit" value="0..*">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="lp2" edge="1" parent="1" source="LigneFacture" style="endArrow=block;endFill=0;strokeColor=#000000;fontSize=9;fontColor=#000000;" target="Produit" value="0..*">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="lp3" edge="1" parent="1" source="LigneBonCommande" style="endArrow=block;endFill=0;strokeColor=#000000;fontSize=9;fontColor=#000000;" target="Produit" value="0..*">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="lp4" edge="1" parent="1" source="LigneCommande" style="endArrow=block;endFill=0;strokeColor=#000000;fontSize=9;fontColor=#000000;" target="Produit" value="0..*">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="lp5" edge="1" parent="1" source="LigneBonLivraison" style="endArrow=block;endFill=0;strokeColor=#000000;fontSize=9;fontColor=#000000;" target="Produit" value="0..*">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="lp6" edge="1" parent="1" source="LigneAvoir" style="endArrow=block;endFill=0;strokeColor=#000000;fontSize=9;fontColor=#000000;" target="Produit" value="0..*">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

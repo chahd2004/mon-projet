@@ -1,0 +1,116 @@
+<div class="detail-container">
+  <div class="detail-header">
+    <div>
+      <h1>{{ facture.numero }}</h1>
+      <p class="subtitle">Détails de la facture</p>
+    </div>
+    <div class="header-actions">
+      <p-tag [value]="getStatusTag().label" [severity]="$any(getStatusTag().severity)"></p-tag>
+      
+      <!-- Actions communes -->
+      <button pButton type="button" icon="pi pi-download" label="PDF" class="p-button-sm p-button-secondary" (click)="downloadPDF()"></button>
+      <button pButton type="button" icon="pi pi-envelope" label="Email" class="p-button-sm p-button-secondary" (click)="sendEmail()"></button>
+
+      <!-- Brouillon -->
+      <button *ngIf="facture.statut === 'DRAFT'" pButton type="button" icon="pi pi-pencil" label="Modifier" class="p-button-sm p-button-warning" [routerLink]="['edit']"></button>
+      <button *ngIf="facture.statut === 'DRAFT'" pButton type="button" icon="pi pi-check" label="Signer" class="p-button-sm" (click)="signer()"></button>
+      
+      <!-- Signée -->
+      <button *ngIf="facture.statut === 'SIGNED'" pButton type="button" icon="pi pi-send" label="Émettre" class="p-button-sm" (click)="envoyee()"></button>
+      <button *ngIf="facture.statut === 'SIGNED'" pButton type="button" icon="pi pi-times-circle" label="Rejeter" class="p-button-sm p-button-warning" (click)="rejeter()"></button>
+      <button *ngIf="facture.statut === 'SIGNED'" pButton type="button" icon="pi pi-ban" label="Annuler" class="p-button-sm p-button-danger" (click)="annuler()"></button>
+
+      <!-- Émise -->
+      <button *ngIf="facture.statut === 'SENT'" pButton type="button" icon="pi pi-wallet" label="Payer" class="p-button-sm" (click)="payer()"></button>
+      <button *ngIf="facture.statut === 'SENT'" pButton type="button" icon="pi pi-times-circle" label="Rejeter" class="p-button-sm p-button-warning" (click)="rejeter()"></button>
+      <button *ngIf="facture.statut === 'SENT'" pButton type="button" icon="pi pi-ban" label="Annuler" class="p-button-sm p-button-danger" (click)="annuler()"></button>
+
+      <!-- Rejetée -->
+      <button *ngIf="facture.statut === 'REJECTED' && (facture.previousStatut === 'SIGNED' || facture.previous_statut === 'SIGNED')" pButton type="button" icon="pi pi-replay" label="Retour Brouillon" class="p-button-sm" (click)="retourBrouillon()"></button>
+
+      <a routerLink=".." pButton type="button" icon="pi pi-arrow-left" label="Retour" class="p-button-sm p-button-text"></a>
+    </div>
+  </div>
+
+  <div class="detail-content">
+    <div class="info-grid">
+      <p-card class="info-card">
+        <h3>Client</h3>
+        <p class="info-value">{{ facture.client }}</p>
+      </p-card>
+
+      <p-card class="info-card">
+        <h3>Date d'Émission</h3>
+        <p class="info-value">{{ facture.dateEmission }}</p>
+      </p-card>
+
+      <p-card class="info-card">
+        <h3>Date d'Échéance</h3>
+        <p class="info-value">{{ facture.dateEcheance }}</p>
+      </p-card>
+
+      <p-card class="info-card">
+        <h3>Mode de Paiement</h3>
+        <p class="info-value">{{ facture.modePaiement }}</p>
+      </p-card>
+    </div>
+
+    <p-card class="lines-card">
+      <h3>Lignes de Facture</h3>
+      <p-table [value]="facture.lignes">
+        <ng-template pTemplate="header">
+          <tr>
+            <th>Produit</th>
+            <th style="text-align: center">Quantité</th>
+            <th style="text-align: right">Prix Unitaire</th>
+            <th style="text-align: center">TVA</th>
+            <th style="text-align: right">Total TTC</th>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="body" let-ligne>
+          <tr>
+            <td>{{ ligne.produit }}</td>
+            <td style="text-align: center">{{ ligne.quantite }}</td>
+            <td style="text-align: right">{{ ligne.prixUnitaire | number: '1.2-2' }} TND</td>
+            <td style="text-align: center">{{ ligne.tva }}%</td>
+            <td style="text-align: right; font-weight: 600">{{ ligne.montant | number: '1.2-2' }} TND</td>
+          </tr>
+        </ng-template>
+      </p-table>
+
+      <div class="totals-section">
+        <div class="total-row">
+          <span>Montant HT:</span>
+          <strong>{{ facture.montantHT | number: '1.2-2' }} TND</strong>
+        </div>
+        <div class="total-row">
+          <span>TVA (19%):</span>
+          <strong>{{ (facture.montantTTC - facture.montantHT) | number: '1.2-2' }} TND</strong>
+        </div>
+        <div class="total-row final">
+          <span>Total TTC:</span>
+          <strong>{{ facture.montantTTC | number: '1.2-2' }} TND</strong>
+        </div>
+      </div>
+    </p-card>
+
+    <p-card class="payment-card" *ngIf="facture.statut === 'PAYEE'">
+      <h3>Paiement</h3>
+      <div class="payment-info">
+        <div class="payment-item">
+          <span class="label">Montant Payé:</span>
+          <span class="value">{{ facture.montantTTC | number: '1.2-2' }} TND</span>
+        </div>
+        <div class="payment-item">
+          <span class="label">Date de Règlement:</span>
+          <span class="value">{{ facture.dateReglement }}</span>
+        </div>
+        <div class="payment-item">
+          <span class="label">Statut:</span>
+          <span class="value success">✓ Payé</span>
+        </div>
+      </div>
+    </p-card>
+  </div>
+</div>

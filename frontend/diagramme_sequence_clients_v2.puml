@@ -1,0 +1,43 @@
+@startuml "Diagramme de Séquence - Gestion des clients (ECB)"
+
+skinparam style strictuml
+skinparam maxMessageSize 150
+skinparam sequence {
+    ParticipantPadding 20
+    MessageAlign center
+}
+
+actor "Manager/Cst" as User
+boundary "Interface\n<<Boundary>>" as Interface
+control "ClientController/Serv.\n<<Control>>" as Controller
+entity "Client\n<<Entity>>" as Client
+
+== Consultation ==
+
+User -> Interface : Accéder liste clients
+activate Interface
+Interface -> Controller : GET /api/clients
+activate Controller
+Controller -> Client : findAll()
+activate Client
+Client --> Controller : List<Client>
+deactivate Client
+Controller --> Interface : Liste affichée
+deactivate Controller
+
+== CRUD (Manager uniquement) ==
+
+User -> Interface : Créer / Modifier / Supprimer
+activate Interface
+Interface -> Controller : POST/PUT/DELETE /api/clients
+activate Controller
+Controller -> Client : persist() / delete()
+activate Client
+Client --> Controller : void / entity
+deactivate Client
+Controller --> Interface : 200/201/204 OK
+deactivate Controller
+Interface --> User : Succès
+deactivate Interface
+
+@enduml

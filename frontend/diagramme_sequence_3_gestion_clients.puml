@@ -1,0 +1,127 @@
+@startuml
+title Diagramme de séquence — Gestion des clients (ECB)
+
+skinparam backgroundColor #FFFFFF
+skinparam sequenceArrowThickness 1.5
+skinparam roundcorner 5
+skinparam LifeLineBorderColor #333333
+skinparam SequenceGroupBorderColor #888888
+skinparam SequenceGroupFontColor #333333
+skinparam SequenceGroupBackgroundColor #F5F5F5
+
+' ECB Stereotypes
+actor "Manager" as M
+actor "Consultant" as C
+boundary "Interface" as I <<Boundary>>
+control "ClientController" as CC <<Control>>
+control "ClientService" as CS <<Control>>
+entity "Client" as CR <<Entity>>
+
+== Consulter (Manager & Consultant) ==
+
+group Accéder à la liste
+    M -> I : Accéder à la liste
+    activate M
+    activate I
+    I -> CC : GET /api/clients
+    activate CC
+    CC -> CS : findAll()
+    activate CS
+    CS -> CR : findAll()
+    activate CR
+    CR --> CS : List<Client>
+    deactivate CR
+    CS --> CC : List<ClientResponseDTO>
+    deactivate CS
+    CC --> I : 200 OK
+    deactivate CC
+    I --> M : Afficher la liste
+    deactivate I
+    deactivate M
+    
+    |||
+    
+    C -> I : Accéder à la liste
+    activate C
+    activate I
+    I -> CC : GET /api/clients
+    activate CC
+    CC -> CS : findAll()
+    activate CS
+    CS -> CR : findAll()
+    activate CR
+    CR --> CS : List<Client>
+    deactivate CR
+    CS --> CC : List<ClientResponseDTO>
+    deactivate CS
+    CC --> I : 200 OK
+    deactivate CC
+    I --> C : Afficher la liste
+    deactivate I
+    deactivate C
+end
+
+== Ajouter (Manager uniquement) ==
+
+M -> I : Saisir infos + Enregistrer
+activate M
+activate I
+I -> CC : POST /api/clients
+activate CC
+CC -> CS : create(request)
+activate CS
+CS -> CR : save(client)
+activate CR
+CR --> CS : Client
+deactivate CR
+CS --> CC : ClientResponseDTO
+deactivate CS
+CC --> I : 201 Created
+deactivate CC
+I --> M : Succès : Client ajouté
+deactivate I
+deactivate M
+
+== Modifier (Manager uniquement) ==
+
+M -> I : Sélectionner + Modifier
+activate M
+activate I
+I -> CC : PUT /api/clients/{id}
+activate CC
+CC -> CS : update(id, request)
+activate CS
+CS -> CR : findById() + save()
+activate CR
+CR --> CS : Client
+deactivate CR
+CS --> CC : ClientResponseDTO
+deactivate CS
+CC --> I : 200 OK
+deactivate CC
+I --> M : Succès : Client modifié
+deactivate I
+deactivate M
+
+== Supprimer (Manager uniquement) ==
+
+M -> I : Cliquer Supprimer
+activate M
+activate I
+I -> CC : DELETE /api/clients/{id}
+activate CC
+CC -> CS : delete(id)
+activate CS
+CS -> CR : deleteById(id)
+activate CR
+CR --> CS : void
+deactivate CR
+CS --> CC : void
+deactivate CS
+CC --> I : 204 No Content
+deactivate CC
+I --> M : Succès : Client supprimé
+deactivate I
+deactivate M
+
+@enduml

@@ -1,0 +1,158 @@
+.register-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--brand-gradient-diagonal);
+  padding: 1rem;
+
+  .register-card {
+    width: 100%;
+    max-width: 400px;
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 18px 42px rgba(11, 22, 63, 0.35);
+
+    ::ng-deep .p-card-header {
+      padding: 0;
+      border-bottom: none;
+    }
+
+    ::ng-deep .p-card-body {
+      padding: 2rem;
+    }
+
+    ::ng-deep .p-card-footer {
+      border-top: 1px solid #e9ecef;
+      padding: 1.5rem;
+    }
+
+    .card-header {
+      background: var(--brand-primary);
+      color: white;
+      padding: 2rem;
+      text-align: center;
+
+      h1 {
+        font-size: 1.5rem;
+        margin: 0;
+      }
+    }
+
+    .form-container {
+      .form-group {
+        margin-bottom: 1.25rem;
+
+        label {
+          display: block;
+          margin-bottom: 0.5rem;
+          font-size: 0.82rem;
+          font-weight: 700;
+          letter-spacing: 0.04em;
+          text-transform: uppercase;
+          color: #334155;
+        }
+
+        input,
+        ::ng-deep .p-dropdown {
+          width: 100%;
+          padding: 0.75rem;
+          min-height: 44px;
+          border: 1px solid #e0e0e0;
+          border-radius: 6px;
+          font-size: 0.95rem;
+
+          &:focus {
+            border-color: var(--brand-primary);
+            box-shadow: 0 0 0 3px rgba(11, 22, 63, 0.12);
+            outline: none;
+          }
+
+          &:disabled {
+            background-color: #f5f5f5;
+            cursor: not-allowed;
+          }
+        }
+
+        &.checkbox {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+
+          label {
+            margin-bottom: 0;
+            cursor: pointer;
+
+            .link {
+              color: var(--brand-primary);
+              text-decoration: none;
+              font-weight: 600;
+
+              &:hover {
+                text-decoration: underline;
+              }
+            }
+          }
+        }
+      }
+
+      .form-actions {
+        display: grid;
+        gap: 0.75rem;
+        margin-top: 0.25rem;
+      }
+
+      ::ng-deep p-button {
+        width: 100%;
+
+        .p-button {
+          background: var(--brand-primary);
+          border-color: var(--brand-primary);
+          min-height: 44px;
+          border-radius: 8px;
+          font-weight: 600;
+        }
+
+        .p-button:hover {
+          background: #102452;
+          border-color: #102452;
+        }
+
+        .p-button.p-button-outlined {
+          background: transparent;
+          color: var(--brand-primary);
+          border-color: var(--brand-primary);
+        }
+      }
+    }
+
+    .card-footer {
+      text-align: center;
+      font-size: 0.9rem;
+
+      p {
+        margin: 0.5rem 0;
+
+        .link {
+          color: var(--brand-primary);
+          cursor: pointer;
+          text-decoration: none;
+          font-weight: 600;
+
+          &:hover {
+            text-decoration: underline;
+          }
+        }
+      }
+    }
+
+  }
+}
+
+@media (max-width: 576px) {
+  .register-page {
+    .register-card {
+      max-width: 100%;
+    }
+  }
+}

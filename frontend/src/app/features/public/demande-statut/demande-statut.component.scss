@@ -1,0 +1,224 @@
+.statut-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--brand-gradient-diagonal);
+  padding: 1rem;
+
+  .statut-card {
+    width: 100%;
+    max-width: 600px;
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 18px 42px rgba(11, 22, 63, 0.35);
+
+    ::ng-deep .p-card-header {
+      padding: 0;
+      border-bottom: none;
+    }
+
+    ::ng-deep .p-card-body {
+      padding: 2rem;
+    }
+
+    .card-header {
+      background: var(--brand-primary);
+      color: white;
+      padding: 2rem;
+      text-align: center;
+
+      h1 {
+        font-size: 1.5rem;
+        margin: 0 0 0.5rem 0;
+      }
+
+      .reference {
+        margin: 0;
+        opacity: 0.9;
+        font-size: 0.9rem;
+      }
+    }
+
+    .statut-container {
+      .status-section {
+        text-align: center;
+        margin-bottom: 2rem;
+        padding: 1.5rem;
+        background: #f8f9fa;
+        border-radius: 8px;
+
+        h2 {
+          margin: 0 0 1rem 0;
+          color: #1e293b;
+        }
+
+        ::ng-deep .large-tag {
+          font-size: 1.1rem;
+          padding: 0.75rem 1.5rem;
+        }
+      }
+
+      .info-section {
+        background: #f8f9fa;
+        padding: 1.5rem;
+        border-radius: 8px;
+        margin-bottom: 2rem;
+
+        .info-item {
+          display: flex;
+          justify-content: space-between;
+          padding: 0.75rem 0;
+          border-bottom: 1px solid #e0e0e0;
+
+          &:last-child {
+            border-bottom: none;
+          }
+
+          label {
+            font-weight: 600;
+            color: #1e293b;
+          }
+
+          span {
+            color: #666;
+          }
+        }
+      }
+
+      .notes-section {
+        background: #eef2ff;
+        border-left: 4px solid var(--brand-primary);
+        padding: 1.5rem;
+        border-radius: 4px;
+        margin-bottom: 2rem;
+
+        h3 {
+          margin: 0 0 0.5rem 0;
+          color: #1e293b;
+        }
+
+        .notes {
+          margin: 0;
+          color: #666;
+          line-height: 1.6;
+        }
+      }
+
+      .timeline {
+        margin-bottom: 2rem;
+
+        h3 {
+          color: #1e293b;
+          margin-bottom: 1.5rem;
+        }
+
+        .timeline-item {
+          display: flex;
+          gap: 1.5rem;
+          margin-bottom: 2rem;
+          position: relative;
+
+          &:not(:last-child)::after {
+            content: '';
+            position: absolute;
+            left: 12px;
+            top: 60px;
+            width: 2px;
+            height: 40px;
+            background: #e0e0e0;
+          }
+
+          &.completed::after {
+            background: #4caf50;
+          }
+
+          .timeline-marker {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: #e0e0e0;
+            color: #666;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            flex-shrink: 0;
+            position: relative;
+            z-index: 1;
+            border: 2px solid white;
+
+            &.completed {
+              background: #4caf50;
+              color: white;
+            }
+          }
+
+          .timeline-content {
+            padding-top: 0.25rem;
+            flex: 1;
+
+            h4 {
+              margin: 0 0 0.5rem 0;
+              color: #1e293b;
+              font-size: 1rem;
+            }
+
+            p {
+              margin: 0;
+              color: #666;
+              font-size: 0.9rem;
+            }
+          }
+        }
+      }
+
+      .action-buttons {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        flex-wrap: wrap;
+
+        ::ng-deep p-button {
+          min-width: 180px;
+
+          .p-button {
+            background: var(--brand-primary);
+            border-color: var(--brand-primary);
+          }
+
+          .p-button:hover {
+            background: #102452;
+            border-color: #102452;
+          }
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 576px) {
+  .statut-page {
+    .statut-card {
+      max-width: 100%;
+
+      .statut-container {
+        .info-section {
+          .info-item {
+            flex-direction: column;
+            gap: 0.25rem;
+          }
+        }
+
+        .action-buttons {
+          flex-direction: column;
+
+          ::ng-deep p-button {
+            min-width: unset;
+            width: 100%;
+          }
+        }
+      }
+    }
+  }
+}

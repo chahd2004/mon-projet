@@ -1,12 +1,12 @@
-// src/app/core/services/dashboard.service.ts
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, forkJoin, map } from 'rxjs';
+import { Observable, forkJoin, map, catchError, of } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { FactureService } from './facture.service';
 import { ClientService } from './client.service';
+import { AuthService } from './auth.service';
+import { BaseService } from './base.service';
 
-// Interface pour les statistiques du dashboard
 export interface DashboardStats {
   factures: {
     total: number;
@@ -15,6 +15,9 @@ export interface DashboardStats {
     enRetard: number;
   };
   clients: {
+    total: number;
+  };
+  collaborateurs: {
     total: number;
   };
   chiffreAffaires: {
@@ -32,6 +35,19 @@ export interface DashboardStats {
     caMensuel: {
       mois: string[];
       valeurs: number[];
+    };
+    factureEvolution: {
+      mois: string[];
+      emises: number[];
+      payees: number[];
+    };
+    factureRepartition: {
+      labels: string[];
+      valeurs: number[];
+    };
+    ventesParProduit: {
+      mois: string[];
+      produits: { label: string; data: number[] }[];
     };
   };
 }
@@ -51,59 +67,130 @@ export interface FactureBatch {
   montant: string;
 }
 
-@Injectable({
-  providedIn: 'root'
-})
-export class DashboardService {
-  
+export interface SuperAdminStatsResponse {
+  totalUsers: number;
+  totalClients: number;
+  totalEmetteurs: number;
+  totalFactures: number;
+}
+
+@Injectable({ providedIn: 'root' })
+export class DashboardService extends BaseService {
   private apiUrl = `${environment.apiUrl}`;
 
   constructor(
     private http: HttpClient,
     private factureService: FactureService,
-    private clientService: ClientService
-  ) { }
+    private clientService: ClientService,
+    private authService: AuthService
+  ) { super(); }
 
-  /**
-   * Récupère toutes les statistiques pour le dashboard
-   */
   getStats(): Observable<DashboardStats> {
+    const user = this.authService.currentUser();
+    
     return forkJoin({
-      factures: this.factureService.getFactures(1, 1000),
-      clients: this.clientService.getClients()
+      factures: this.factureService.getFactures(1, 1000).pipe(catchError(() => of({ data: [], total: 0 }))),
+      clients: this.clientService.getClients().pipe(catchError(() => of([]))),
+      // On n'essaie pas de charger les collaborateurs pour le VIEWER car il n'a pas les droits en principe
+      // Ou alors le backend doit autoriser le GET pour le VIEWER.
+      collaborateurs: (!user || user.role === 'ENTREPRISE_VIEWER') 
+        ? of([]) 
+        : this.http.get<any[] | { content: any[] }>(`${this.apiUrl}/entreprise-admin/collaborateurs`, this.getHeaders())
+            .pipe(catchError(() => of([])))
     }).pipe(
-      map(({ factures, clients }) => {
-        return this.calculerStats(factures.data, clients);
+      map(({ factures, clients, collaborateurs }) => {
+        const collabList = Array.isArray(collaborateurs) ? collaborateurs : (collaborateurs as any).content || [];
+        const stats = this.calculerStats(factures.data, clients, collabList);
+        
+        if (factures.data && factures.data.length > 0) {
+          (stats as any).nomEntreprise = factures.data[0].vendeurNom || factures.data[0].acheteurNom;
+        }
+        
+        return stats;
       })
     );
   }
 
-  /**
-   * Calcule les statistiques à partir des données (camelCase ou snake_case selon le backend)
-   */
-  private calculerStats(factures: any[], clients: any[]): DashboardStats {
+  getDashboardStats(): Observable<DashboardStats> {
+    return this.getStats();
+  }
+
+  getDernieresFactures(limit: number = 5): Observable<FactureRecente[]> {
+    return this.factureService.getFactures(1, limit).pipe(
+      map(response => response.data.map((f: any) => ({
+        id: f.id,
+        num_fact: f.num_fact,
+        nom_client: f.nom_client,
+        totalttc: f.totalttc,
+        statut: f.statut,
+        date_emission: f.date_emission
+      })))
+    );
+  }
+
+  getFactureBatches(): Observable<FactureBatch[]> {
+    return this.http.get<FactureBatch[]>(
+      `${this.apiUrl}/factures/batches`,
+      this.getHeaders()
+    );
+  }
+
+  getDashboardStatsFromAPI(): Observable<DashboardStats> {
+    // Le backend actuel n'expose pas /dashboard/stats.
+    // On calcule les stats à partir des endpoints existants.
+    return this.getStats();
+  }
+
+  getSuperAdminStatistics(): Observable<SuperAdminStatsResponse> {
+    return this.http.get<SuperAdminStatsResponse>(
+      `${this.apiUrl}/super-admin/statistiques`,
+      this.getHeaders()
+    );
+  }
+
+  getEntreprisesInscritesParMois(): Observable<{ mois: string[]; valeurs: number[] }> {
+    return this.http.get<any[]>(
+      `${this.apiUrl}/emetteurs`,
+      this.getHeaders()
+    ).pipe(
+      map((emetteurs: any[]) => {
+        const mois = ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Aoû', 'Sep', 'Oct', 'Nov', 'Déc'];
+        const anneeCible = 2026;
+        const compteurParMois = new Array(12).fill(0);
+
+        console.log('📊 Emetteurs reçus:', emetteurs);
+        emetteurs.forEach((em: any) => {
+          // Robustité sur les noms de champs de date
+          const dateStr = em.dateCreation || em.createdAt || em.date_creation || em.created_date;
+          if (dateStr) {
+            const dateObj = new Date(dateStr);
+            if (dateObj.getFullYear() === anneeCible) {
+              const moisIndex = dateObj.getMonth();
+              compteurParMois[moisIndex]++;
+            }
+          }
+        });
+
+        return {
+          mois,
+          valeurs: compteurParMois
+        };
+      })
+    );
+  }
+
+  private calculerStats(factures: any[], clients: any[], collaborateurs: any[]): DashboardStats {
     const anneeActuelle = new Date().getFullYear();
-    const dateEmission = (f: any) => f.dateEmission ?? f.date_emission;
-    const totalTTC = (f: any) => f.totalTTC ?? f.totalttc ?? 0;
-
-    // Statistiques factures
-    const totalFactures = factures.length;
-    const facturesEnAttente = factures.filter(f => f.statut === 'EN_ATTENTE').length;
-    const facturesPayees = factures.filter(f => f.statut === 'PAYEE').length;
-    const facturesEnRetard = factures.filter(f => f.statut === 'EN_RETARD').length;
-
-    // Statistiques clients
-    const totalClients = clients.length;
-
-    // Calcul du chiffre d'affaires par année
     const caParAnneeMap = new Map<number, number>();
-    factures.forEach(facture => {
-      const date = dateEmission(facture);
-      const ttc = totalTTC(facture);
-      if (date && (ttc || ttc === 0)) {
-        const annee = new Date(date).getFullYear();
-        const montantActuel = caParAnneeMap.get(annee) || 0;
-        caParAnneeMap.set(annee, montantActuel + Number(ttc));
+
+    factures.forEach(f => {
+      if (f.dateEmission && f.totalTTC) {
+        const annee = new Date(f.dateEmission).getFullYear();
+        // On ne compte dans le CA que les factures payées (ou signées/émises si on veut le CA prévisionnel)
+        // Ici on va prendre PAYE, SIGNED, SENT pour avoir une vue globale de l'activité validée
+        if (['PAID', 'SIGNED', 'SENT'].includes(f.statut)) {
+          caParAnneeMap.set(annee, (caParAnneeMap.get(annee) || 0) + f.totalTTC);
+        }
       }
     });
 
@@ -116,85 +203,101 @@ export class DashboardService {
       }))
       .sort((a, b) => a.annee - b.annee);
 
-    // Chiffre d'affaires actuel (année en cours)
     const caActuel = caParAnnee.find(ca => ca.annee === anneeActuelle)?.montant || 0;
     const caPrecedent = caParAnnee.find(ca => ca.annee === anneeActuelle - 1)?.montant || 0;
-    const evolution = caPrecedent > 0 ? ((caActuel - caPrecedent) / caPrecedent) * 100 : 0;
-
     const mois = ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Aoû', 'Sep', 'Oct', 'Nov', 'Déc'];
-    const valeursMensuelles = mois.map((_, index) => {
-      const facturesMois = factures.filter(f => {
-        const date = dateEmission(f);
-        if (!date) return false;
-        const d = new Date(date);
-        return d.getFullYear() === anneeActuelle && d.getMonth() === index;
-      });
-      return facturesMois.reduce((sum, f) => sum + Number(totalTTC(f)), 0);
-    });
 
     return {
       factures: {
-        total: totalFactures,
-        enAttente: facturesEnAttente,
-        payees: facturesPayees,
-        enRetard: facturesEnRetard
+        total: factures.length,
+        enAttente: factures.filter(f => f.statut === 'SENT' || f.statut === 'SIGNED').length,
+        payees: factures.filter(f => f.statut === 'PAID').length,
+        enRetard: factures.length - factures.filter(f => f.statut === 'PAID').length
       },
       clients: {
-        total: totalClients
+        total: clients.length
+      },
+      collaborateurs: {
+        total: collaborateurs.length
       },
       chiffreAffaires: {
         actuel: caActuel,
-        evolution: evolution,
+        evolution: caPrecedent > 0
+          ? ((caActuel - caPrecedent) / caPrecedent) * 100
+          : 0,
         exercice: anneeActuelle.toString(),
         parAnnee: caParAnnee
       },
       graphiques: {
         caMensuel: {
-          mois: mois,
-          valeurs: valeursMensuelles
-        }
+          mois,
+          valeurs: mois.map((_, i) =>
+            factures
+              .filter(f =>
+                f.dateEmission &&
+                new Date(f.dateEmission).getFullYear() === anneeActuelle &&
+                new Date(f.dateEmission).getMonth() === i &&
+                ['PAID', 'SIGNED', 'SENT'].includes(f.statut)
+              )
+              .reduce((sum, f) => sum + (f.totalTTC || 0), 0)
+          )
+        },
+        factureEvolution: {
+          mois,
+          emises: mois.map((_, i) =>
+            factures.filter(f =>
+              f.dateEmission &&
+              new Date(f.dateEmission).getFullYear() === anneeActuelle &&
+              new Date(f.dateEmission).getMonth() === i &&
+              ['SIGNED', 'SENT'].includes(f.statut)
+            ).length
+          ),
+          payees: mois.map((_, i) =>
+            factures.filter(f =>
+              f.dateEmission &&
+              new Date(f.dateEmission).getFullYear() === anneeActuelle &&
+              new Date(f.dateEmission).getMonth() === i &&
+              f.statut === 'PAID'
+            ).length
+          )
+        },
+        factureRepartition: {
+          labels: ['Signée', 'Payée', 'Brouillon', 'Annulée', 'Rejetée'],
+          valeurs: [
+            factures.filter(f => f.statut === 'SIGNED').length,
+            factures.filter(f => f.statut === 'PAID').length,
+            factures.filter(f => f.statut === 'SENT' || f.statut === 'DRAFT').length,
+            factures.filter(f => f.statut === 'CANCELLED').length,
+            factures.filter(f => f.statut === 'REJECTED').length
+          ]
+        },
+        ventesParProduit: (() => {
+          const produitsMap = new Map<string, number[]>();
+          
+          factures.forEach(f => {
+            if (f.dateEmission && ['PAID', 'SIGNED', 'SENT'].includes(f.statut)) {
+              const date = new Date(f.dateEmission);
+              if (date.getFullYear() === anneeActuelle) {
+                const m = date.getMonth();
+                if (f.lignes && Array.isArray(f.lignes)) {
+                  f.lignes.forEach((ligne: any) => {
+                    const designation = ligne.produitDesignation || ('Produit ' + ligne.produitId);
+                    if (!produitsMap.has(designation)) {
+                      produitsMap.set(designation, new Array(12).fill(0));
+                    }
+                    produitsMap.get(designation)![m] += (ligne.quantite || 0);
+                  });
+                }
+              }
+            }
+          });
+
+          return {
+            mois,
+            produits: Array.from(produitsMap.entries()).map(([label, data]) => ({ label, data }))
+          };
+        })()
       }
     };
   }
-
-  /**
-   * Récupère les dernières factures (camelCase ou snake_case)
-   */
-  getDernieresFactures(limit: number = 5): Observable<FactureRecente[]> {
-    return this.factureService.getFactures(1, limit).pipe(
-      map(response => {
-        return response.data.map((f: any) => ({
-          id: f.id,
-          num_fact: f.numFact ?? f.num_fact ?? '',
-          nom_client: f.acheteurNom ?? f.vendeurNom ?? f.nom_client ?? '',
-          totalttc: f.totalTTC ?? f.totalttc ?? 0,
-          statut: f.statut ?? '',
-          date_emission: f.dateEmission ?? f.date_emission
-        }));
-      })
-    );
-  }
-
-  /**
-   * Récupère les lots de factures
-   */
-  getFactureBatches(): Observable<FactureBatch[]> {
-    return this.http.get<FactureBatch[]>(`${this.apiUrl}/factures/batches`);
-  }
-
-  /**
-   * Version avec API dédiée (si tu préfères un endpoint spécifique)
-   */
-  getDashboardStatsFromAPI(): Observable<DashboardStats> {
-    return this.http.get<DashboardStats>(`${this.apiUrl}/dashboard/stats`);
-  }
-  // src/app/core/services/dashboard.service.ts
-// Ajoute cette méthode dans la classe DashboardService
-
-/**
- * Récupère les statistiques du dashboard
- */
-getDashboardStats(): Observable<DashboardStats> {
-  return this.getStats(); // Ou appelle directement l'API
-}
 }

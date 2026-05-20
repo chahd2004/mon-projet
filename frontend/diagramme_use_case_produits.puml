@@ -1,0 +1,29 @@
+@startuml
+left to right direction
+skinparam packageStyle rectangle
+
+actor "Manager" as M
+actor "Consultant" as C
+
+rectangle "Gestion des produits" {
+  usecase "S'authentifier" as UC1
+  usecase "Ajouter un produit" as UC2
+  usecase "Modifier un produit" as UC2_MOD
+  usecase "Supprimer un produit" as UC3
+  usecase "Consulter les produits" as UC4
+  usecase "Gérer le stock" as UC5
+  
+  UC2 ..> UC1 : <<include>>
+  UC2_MOD ..> UC1 : <<include>>
+  UC3 ..> UC1 : <<include>>
+  UC4 ..> UC1 : <<include>>
+  UC5 ..> UC1 : <<include>>
+}
+
+M -- UC2
+M -- UC2_MOD
+M -- UC3
+M -- UC4
+M -- UC5
+C -- UC4
+@enduml

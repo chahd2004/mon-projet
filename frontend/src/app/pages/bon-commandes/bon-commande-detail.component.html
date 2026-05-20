@@ -1,0 +1,81 @@
+<div class="bc-detail-page" *ngIf="!loading && bonCommande; else loadingOrError">
+  <button class="back-link" (click)="retourAuxBC()">&larr; Retour aux bons de commande</button>
+
+  <section class="header-card">
+    <div class="header-main">
+      <h1>BON DE COMMANDE #{{ formatBonCommandeReference() }}</h1>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>Informations</h2>
+
+    <div class="infos-grid">
+      <section class="mini-card">
+        <h3>Client</h3>
+        <p class="strong">{{ client?.raisonSociale || bonCommande.acheteurNom }}</p>
+        <p>{{ client?.adresseComplete || '-' }}</p>
+        <p>{{ client?.email || '-' }}</p>
+        <p>{{ client?.telephone || '-' }}</p>
+      </section>
+
+      <section class="mini-card">
+        <h3>Bon de commande</h3>
+        <p><strong>Date d'emission:</strong> {{ bonCommande.dateCreation | date:'dd/MM/yyyy' }}</p>
+        <p><strong>Mode de paiement:</strong> {{ formatModePaiement(bonCommande.modePaiement) }}</p>
+      </section>
+    </div>
+
+    <div class="linked-box">
+      Devis lie: <strong>{{ devisLieReference }}</strong>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>Detail des lignes de commande</h2>
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Designation</th>
+            <th>Qte</th>
+            <th>Prix HT</th>
+            <th>TVA %</th>
+            <th>Total TTC</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let ligne of lignes; let i = index">
+            <td>{{ i + 1 }}</td>
+            <td>{{ ligne.produitDesignation || '-' }}</td>
+            <td>{{ ligne.quantite || 0 }}</td>
+            <td>{{ (ligne.prixUnitaire || 0) | number:'1.3-3' }}</td>
+            <td>{{ getLigneTauxTVA(ligne) | number:'1.0-2' }}%</td>
+            <td>{{ getLigneMontantTTC(ligne) | number:'1.3-3' }} TND</td>
+          </tr>
+          <tr *ngIf="!lignes.length">
+            <td colspan="6" class="empty">Aucune ligne dans ce bon de commande.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="card total-card">
+    <h2>Total</h2>
+    <div class="totals-row">
+      <span>Total HT: {{ bonCommande.totalHT | number:'1.3-3' }} TND</span>
+      <span>TVA: {{ bonCommande.montantTVA | number:'1.3-3' }} TND</span>
+      <span class="ttc">TOTAL TTC: {{ bonCommande.totalTTC | number:'1.3-3' }} TND</span>
+    </div>
+  </section>
+
+  <div class="error" *ngIf="errorMessage">{{ errorMessage }}</div>
+  <div class="info" *ngIf="infoMessage">{{ infoMessage }}</div>
+</div>
+
+<ng-template #loadingOrError>
+  <div class="loading" *ngIf="loading">Chargement du bon de commande...</div>
+  <div class="error" *ngIf="!loading && errorMessage">{{ errorMessage }}</div>
+</ng-template>

@@ -2,7 +2,7 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 // PrimeNG Modules
 import { CardModule } from 'primeng/card';
@@ -33,6 +33,7 @@ import { AuthService } from '../../core/services/auth.service';
 })
 export class LoginComponent implements OnInit {
   private router = inject(Router);
+  private route = inject(ActivatedRoute);
   private messageService = inject(MessageService);
   private authService = inject(AuthService);
 

@@ -1,0 +1,59 @@
+@startuml "Diagramme de Séquence - Impression & Scan QR Code"
+
+skinparam style strictuml
+skinparam maxMessageSize 150
+skinparam sequence {
+    ParticipantPadding 30
+    MessageAlign center
+}
+
+actor "Manager / Consultant" as Staff
+actor "Client (Public)" as Client
+
+boundary "Interface (App)" as Interface
+boundary "Page Publique (Web)" as PublicPage
+control "FactureComponent" as FactureComponent
+control "PublicController" as PublicController
+entity "Facture" as Facture
+
+== Téléchargement ==
+
+Staff -> Interface : cliquer sur "Imprimer"
+activate Interface
+Interface -> FactureComponent : imprimer()
+activate FactureComponent
+FactureComponent -> Interface : window.print()
+deactivate FactureComponent
+Interface --> Staff : Document PDF / Impression
+deactivate Interface
+
+== Scan du QR Code ==
+
+note over Staff, Client : Le scan s'effectue sur le document papier ou PDF\n(Aucune authentification requise)
+
+group Accès via QR Code
+    alt [Staff (Manager/Collab) ou Client]
+        Staff -> PublicPage : Scanner le QR Code
+        activate PublicPage
+        PublicPage -> PublicController : GET /api/public/factures/{id}
+        activate PublicController
+        deactivate PublicController
+        PublicPage --> Staff : Statut vérifié
+        deactivate PublicPage
+    else [Client]
+        Client -> PublicPage : Scanner le QR Code
+        activate PublicPage
+        PublicPage -> PublicController : GET /api/public/factures/{id}
+        activate PublicController
+        PublicController -> Facture : Recuperer statut
+        activate Facture
+        Facture --> PublicController : Données de la facture
+        deactivate Facture
+        PublicController --> PublicPage : Affichage des informations
+        deactivate PublicController
+        PublicPage --> Client : Statut vérifié
+        deactivate PublicPage
+    end
+end
+
+@enduml

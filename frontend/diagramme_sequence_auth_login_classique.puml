@@ -1,0 +1,80 @@
+@startuml
+title Diagramme de séquence — Login classique (ECB)
+
+skinparam backgroundColor #FFFFFF
+skinparam sequenceArrowThickness 1.5
+skinparam roundcorner 5
+skinparam LifeLineBorderColor #333333
+skinparam SequenceGroupBorderColor #888888
+skinparam SequenceGroupFontColor #333333
+skinparam SequenceGroupBackgroundColor #F5F5F5
+
+' ECB Stereotypes
+actor "Utilisateur" as U
+boundary "Interface\nLogin" as LI <<Boundary>>
+control "AuthController" as AC <<Control>>
+control "AuthService" as AS <<Control>>
+entity "User" as USR <<Entity>>
+control "JwtService" as JWT
+
+== Login Classique ==
+
+U -> LI : Saisir email + mot de passe
+activate U
+activate LI
+LI -> AC : POST /api/auth/login
+activate AC
+AC -> AS : authenticate(request)
+activate AS
+AS -> AS : authenticationManager.authenticate()
+activate AS
+deactivate AS
+
+alt Identifiants Incorrects
+    AS --> AC : BadCredentialsException
+    activate AC
+    AC --> LI : 401 — Erreur : Email ou mot de passe incorrect
+    deactivate AC
+    LI --> U : Afficher erreur
+else Identifiants Corrects
+    AS -> USR : findByEmail(email)
+    activate USR
+    USR --> AS : User
+    deactivate USR
+    
+    AS -> AS : checkUserCanLogin(user)
+    activate AS
+    deactivate AS
+    
+    alt Compte non actif
+        AS --> AC : AccountNotActivatedException
+        activate AC
+        AC --> LI : 403 Forbidden — Erreur : Compte bloqué
+        deactivate AC
+        LI --> U : Afficher erreur compte
+    else Compte actif
+        AS -> USR : save() — setLastLoginDate
+        activate USR
+        USR --> AS : void
+        deactivate USR
+        
+        AS -> JWT : generateToken(user)
+        activate JWT
+        JWT --> AS : JWT token
+        deactivate JWT
+        
+        AS --> AC : AuthResponse (token, role)
+        deactivate AS
+        AC --> LI : 200 OK
+        deactivate AC
+        LI -> LI : Stocker JWT
+        activate LI
+        deactivate LI
+        LI --> U : Succès : Connexion réussie (Rediriger tableau de bord)
+    end
+end
+
+deactivate LI
+deactivate U
+
+@enduml

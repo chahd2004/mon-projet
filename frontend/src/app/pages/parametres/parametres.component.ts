@@ -1,5 +1,5 @@
 // src/app/pages/parametres/parametres.component.ts
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, Renderer2, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -14,149 +14,258 @@ import { ToastModule } from 'primeng/toast';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { SelectButtonModule } from 'primeng/selectbutton';
 import { InputSwitchModule } from 'primeng/inputswitch';
-import { DropdownModule } from 'primeng/dropdown';
 import { AvatarModule } from 'primeng/avatar';
 import { FileUploadModule } from 'primeng/fileupload';
 import { TabViewModule } from 'primeng/tabview';
+import { DropdownModule } from 'primeng/dropdown';
 import { TooltipModule } from 'primeng/tooltip';
-import { MessageService } from 'primeng/api';
-import { ConfirmationService } from 'primeng/api';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { MessageService, ConfirmationService } from 'primeng/api';
+import { AuthService } from '../../core/services/auth.service';
+import { EmetteurService } from '../../core/services/emetteur.service';
 
 @Component({
   selector: 'app-parametres',
   standalone: true,
   imports: [
-    CommonModule,
-    FormsModule,
-    CardModule,
-    ButtonModule,
-    InputTextModule,
-    PasswordModule,
-    DividerModule,
-    ToastModule,
-    ConfirmDialogModule,
-    SelectButtonModule,
-    InputSwitchModule,
-    DropdownModule,
-    AvatarModule,
-    FileUploadModule,
-    TabViewModule,
-    TooltipModule
+    CommonModule, FormsModule,
+    CardModule, ButtonModule, InputTextModule, PasswordModule,
+    DividerModule, ToastModule, ConfirmDialogModule,
+    SelectButtonModule, InputSwitchModule, DropdownModule,
+    AvatarModule, FileUploadModule, TabViewModule, TooltipModule,
+    TranslateModule
   ],
   providers: [MessageService, ConfirmationService],
   templateUrl: './parametres.component.html',
   styleUrls: ['./parametres.component.scss']
 })
 export class ParametresComponent implements OnInit {
-  private router = inject(Router);
-  private messageService = inject(MessageService);
+  private router              = inject(Router);
+  private renderer            = inject(Renderer2);
+  private messageService      = inject(MessageService);
   private confirmationService = inject(ConfirmationService);
+  private translate           = inject(TranslateService);
+  private authService         = inject(AuthService);
+  private emetteurService     = inject(EmetteurService);
 
-  // ===== 1. PROFIL UTILISATEUR =====
+  get isViewer(): boolean {
+    return this.authService.hasRole('ENTREPRISE_VIEWER');
+  }
+
+  isReadOnly = computed(() => this.authService.hasRole('ENTREPRISE_VIEWER'));
+
+  // ===== PROFIL =====
   userProfile = {
-    nom: 'Admin',
-    prenom: '',
-    email: 'admin@example.com',
-    avatar: '',
-    role: 'Administrateur',
-    dateCreation: '01/01/2024',
-    derniereConnexion: new Date()
+    nom: '', prenom: '', email: '',
+    avatar: '', role: '',
+    dateCreation: '', derniereConnexion: new Date()
   };
+  fullEmetteur: any = null;
 
-  // ===== 2. SÉCURITÉ =====
-  passwordData = {
-    ancien: '',
-    nouveau: '',
-    confirmation: ''
-  };
-  
-  twoFA = {
-    active: false,
-    methode: 'app' // 'app' | 'sms' | 'email'
-  };
-  
+  // ===== SÉCURITÉ =====
+  passwordData = { ancien: '', nouveau: '', confirmation: '' };
+  twoFA = { active: false, methode: 'app' };
   sessions = [
-    { device: 'Chrome - Windows', location: 'Tunis, Tunisie', lastActive: new Date(), current: true },
-    { device: 'Firefox - MacOS', location: 'Sfax, Tunisie', lastActive: new Date(Date.now() - 86400000), current: false },
-    { device: 'Mobile - Android', location: 'Sousse, Tunisie', lastActive: new Date(Date.now() - 172800000), current: false }
+    { device: 'Chrome - Windows',  location: 'Tunis, Tunisie',  lastActive: new Date(),                       current: true  },
+    { device: 'Firefox - MacOS',   location: 'Sfax, Tunisie',   lastActive: new Date(Date.now() - 86400000),  current: false },
+    { device: 'Mobile - Android',  location: 'Sousse, Tunisie', lastActive: new Date(Date.now() - 172800000), current: false }
   ];
 
-  // ===== 3. PRÉFÉRENCES =====
+  // ===== PRÉFÉRENCES =====
   preferences = {
     langue: 'fr',
     devise: 'TND',
     formatDate: 'dd/MM/yyyy',
     theme: 'systeme',
-    notifications: {
-      email: true,
-      sms: false,
-      desktop: true,
-      marketing: false
-    }
+    notifications: { email: true, sms: false, desktop: true, marketing: false }
   };
 
-  // ===== 4. INFORMATIONS SOCIÉTÉ =====
+  // ===== SOCIÉTÉ =====
   societeInfo = {
-    raison_sociale: 'TRADENET',
-    adresse: '123 Rue de la Liberté, Tunis',
-    email: 'contact@tradenet.com.tn',
-    telephone: '71 86 11 41',
-    matricule_fiscal: '750230XAM001',
-    rc: 'B11 260100',
-    iban: 'TN59 1000 1234 5678 9012 3456',
-    banque: 'Banque de Tunisie',
-    forme_juridique: 'SARL',
-    capitale: '200000'
+    raison_sociale: '', adresse: '',
+    email: '', telephone: '',
+    matricule_fiscal: '', code: '',
+    forme_juridique: 'SARL', region: 'TUNIS',
+    iban: '', banque: '', site_web: ''
   };
 
-  // Options pour les sélecteurs
-  langues = [
-    { label: 'Français', value: 'fr' },
-    { label: 'العربية', value: 'ar' },
-    { label: 'English', value: 'en' }
+  // ===== OPTIONS =====
+  langues     = [{ label: 'Français', value: 'fr' }, { label: 'English', value: 'en' }];
+  themes      = [{ label: 'Clair', value: 'clair' }, { label: 'Sombre', value: 'sombre' }, { label: 'Système', value: 'systeme' }];
+  
+  formesJuridiques = [
+    { label: 'SARL', value: 'SARL' }, { label: 'SA', value: 'SA' }, 
+    { label: 'SUARL', value: 'SUARL' }, { label: 'PERSONNE_PHYSIQUE', value: 'PERSONNE_PHYSIQUE' }
   ];
-
-  devises = [
-    { label: 'TND', value: 'TND' },
-    { label: 'EUR', value: 'EUR' },
-    { label: 'USD', value: 'USD' }
+  
+  regions = [
+    { label: 'Tunis', value: 'TUNIS' }, { label: 'Ariana', value: 'ARIANA' },
+    { label: 'Ben Arous', value: 'BEN_AROUS' }, { label: 'Manouba', value: 'MANOUBA' },
+    { label: 'Sousse', value: 'SOUSSE' }, { label: 'Sfax', value: 'SFAX' },
+    { label: 'Bizerte', value: 'BIZERTE' }, { label: 'Gabès', value: 'GABES' }
   ];
+  // formatsDate removed from UI
 
-  formatsDate = [
-    { label: 'DD/MM/YYYY', value: 'dd/MM/yyyy' },
-    { label: 'MM/DD/YYYY', value: 'MM/dd/yyyy' },
-    { label: 'YYYY-MM-DD', value: 'yyyy-MM-dd' }
-  ];
-
-  themes = [
-    { label: 'Clair', value: 'clair' },
-    { label: 'Sombre', value: 'sombre' },
-    { label: 'Système', value: 'systeme' }
-  ];
-
+  // ===== INIT =====
   ngOnInit(): void {
+    this.translate.addLangs(['fr', 'en']);
+    this.translate.setDefaultLang('fr');
+    this.loadPreferences();
     this.loadUserData();
   }
 
   loadUserData(): void {
-    // Charger les données depuis l'API
+    const user = this.authService.currentUser();
+    if (user) {
+      this.userProfile.nom    = user.nom    || '';
+      this.userProfile.prenom = user.prenom || '';
+      this.userProfile.email  = user.email  || '';
+      this.userProfile.role   = user.role   || '';
+
+      // Charger les données de l'émetteur uniquement pour les rôles entreprise
+      if (!this.isSuperAdmin()) {
+        this.emetteurService.getMyProfile().subscribe({
+          next: (emetteur) => {
+            this.fullEmetteur = emetteur;
+            this.societeInfo.raison_sociale = emetteur.raisonSociale || '';
+            this.societeInfo.telephone      = emetteur.telephone      || '';
+            this.societeInfo.adresse        = emetteur.adresseComplete || '';
+            this.societeInfo.iban           = emetteur.iban            || '';
+            this.societeInfo.email          = emetteur.email           || '';
+            this.societeInfo.code           = emetteur.code            || '';
+            this.societeInfo.matricule_fiscal = emetteur.matriculeFiscal || '';
+            this.societeInfo.forme_juridique = emetteur.formeJuridique   || 'SARL';
+            this.societeInfo.region          = emetteur.region           || 'TUNIS';
+            this.societeInfo.banque          = emetteur.banque           || '';
+            this.societeInfo.site_web        = emetteur.siteWeb          || '';
+          },
+          error: (err) => {
+            console.error('Erreur chargement profil entreprise:', err);
+            // Fallback silencieux si l'API n'est pas disponible
+            if (user.telephone) this.societeInfo.telephone = user.telephone;
+          }
+        });
+      }
+    }
+  }
+
+  // ===== CHARGER DEPUIS LOCALSTORAGE =====
+  private loadPreferences(): void {
+    const saved = localStorage.getItem('app_preferences');
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        this.preferences = { ...this.preferences, ...parsed };
+      } catch {}
+    }
+    // Appliquer au démarrage
+    this.translate.use(this.preferences.langue).subscribe({
+      error: () => console.error('Erreur de chargement de la langue au démarrage')
+    });
+    this.applyLangue(this.preferences.langue, false);
+    this.applyTheme(this.preferences.theme, false);
+  }
+
+  // ===== LANGUE — appliquée immédiatement =====
+  onLangueChange(): void {
+    this.translate.use(this.preferences.langue).subscribe({
+      next: () => {
+        this.applyLangue(this.preferences.langue, true);
+        this.savePreferences();
+      },
+      error: () => {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Erreur',
+          detail: `Impossible de charger la langue : ${this.preferences.langue === 'en' ? 'English' : 'Français'}`
+        });
+      }
+    });
+  }
+
+  private applyLangue(langue: string, showToast: boolean): void {
+    const html = document.documentElement;
+
+    this.renderer.setAttribute(html, 'dir', 'ltr');
+    this.renderer.setAttribute(html, 'lang', langue);
+    this.renderer.removeClass(document.body, 'rtl');
+    document.body.style.fontFamily = '';
+
+    if (showToast) {
+      const detail = langue === 'en'
+          ? '🇬🇧 Language changed to English'
+          : '🇫🇷 Langue changée en Français';
+      this.messageService.add({ severity: 'success', summary: 'Langue', detail, life: 3000 });
+    }
+  }
+
+  // ===== THÈME — appliqué immédiatement =====
+  onThemeChange(): void {
+    this.applyTheme(this.preferences.theme, true);
+    this.savePreferences();
+  }
+
+  private applyTheme(theme: string, showToast: boolean): void {
+    const body = document.body;
+    this.renderer.removeClass(body, 'theme-clair');
+    this.renderer.removeClass(body, 'theme-sombre');
+
+    if (theme === 'sombre') {
+      this.renderer.addClass(body, 'theme-sombre');
+    } else if (theme === 'systeme') {
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      this.renderer.addClass(body, prefersDark ? 'theme-sombre' : 'theme-clair');
+    } else {
+      this.renderer.addClass(body, 'theme-clair');
+    }
+
+    if (showToast) {
+      const label = theme === 'sombre' ? '🌙 Mode sombre' : theme === 'clair' ? '☀️ Mode clair' : '💻 Thème système';
+      this.messageService.add({ severity: 'success', summary: 'Thème', detail: `${label} appliqué`, life: 3000 });
+    }
+  }
+
+  // Devise change removed
+
+  // Format date change removed
+
+  // ===== SAVE TO LOCALSTORAGE =====
+  private savePreferences(): void {
+    localStorage.setItem('app_preferences', JSON.stringify(this.preferences));
+  }
+
+  // ===== HELPERS =====
+  isSuperAdmin(): boolean {
+    return this.userProfile.role === 'SUPER_ADMIN';
   }
 
   // ===== PROFIL =====
   sauvegarderProfil(): void {
-    this.messageService.add({
-      severity: 'success',
-      summary: 'Succès',
-      detail: 'Profil mis à jour avec succès'
+    const request = {
+      nom: this.userProfile.nom,
+      prenom: this.userProfile.prenom
+    };
+
+    this.authService.updateProfile(request).subscribe({
+      next: () => {
+        this.messageService.add({
+          severity: 'success',
+          summary: this.translate.instant('TOAST.SUCCESS'),
+          detail: this.translate.instant('PARAMETRES.MSGS.PROFILE_SUCCESS') || 'Profil mis à jour'
+        });
+      },
+      error: (err) => {
+        this.messageService.add({
+          severity: 'error',
+          summary: this.translate.instant('TOAST.ERROR'),
+          detail: err.error?.message || 'Erreur lors de la mise à jour'
+        });
+      }
     });
   }
 
   onAvatarUpload(event: any): void {
-    this.messageService.add({
-      severity: 'info',
-      summary: 'Avatar',
-      detail: 'Avatar téléchargé avec succès'
-    });
+    this.messageService.add({ severity: 'info', summary: 'Avatar', detail: 'Avatar téléchargé avec succès' });
   }
 
   // ===== SÉCURITÉ =====
@@ -164,51 +273,57 @@ export class ParametresComponent implements OnInit {
     if (!this.passwordData.ancien || !this.passwordData.nouveau || !this.passwordData.confirmation) {
       this.messageService.add({
         severity: 'warn',
-        summary: 'Attention',
-        detail: 'Veuillez remplir tous les champs'
+        summary: this.translate.instant('TOAST.WARN'),
+        detail: this.translate.instant('PARAMETRES.MSGS.VALIDATION_REQUIRED') || 'Veuillez remplir tous les champs'
       });
       return;
     }
-
     if (this.passwordData.nouveau !== this.passwordData.confirmation) {
       this.messageService.add({
         severity: 'error',
-        summary: 'Erreur',
-        detail: 'Les mots de passe ne correspondent pas'
+        summary: this.translate.instant('TOAST.ERROR'),
+        detail: this.translate.instant('PARAMETRES.MSGS.PWD_MISMATCH') || 'Les mots de passe ne correspondent pas'
       });
       return;
     }
-
     if (this.passwordData.nouveau.length < 8) {
       this.messageService.add({
         severity: 'error',
-        summary: 'Erreur',
-        detail: 'Le mot de passe doit contenir au moins 8 caractères'
+        summary: this.translate.instant('TOAST.ERROR'),
+        detail: this.translate.instant('PARAMETRES.MSGS.PWD_MIN_LENGTH') || 'Minimum 8 caractères'
       });
       return;
     }
-
-    this.messageService.add({
-      severity: 'success',
-      summary: 'Succès',
-      detail: 'Mot de passe modifié avec succès'
+    this.authService.updatePassword({
+      oldPassword: this.passwordData.ancien,
+      newPassword: this.passwordData.nouveau,
+      confirmPassword: this.passwordData.confirmation
+    }).subscribe({
+      next: () => {
+        this.messageService.add({
+          severity: 'success',
+          summary: this.translate.instant('TOAST.SUCCESS'),
+          detail: this.translate.instant('PARAMETRES.MSGS.PWD_SUCCESS') || 'Mot de passe changé'
+        });
+        this.passwordData = { ancien: '', nouveau: '', confirmation: '' };
+      },
+      error: (err) => {
+        this.messageService.add({
+          severity: 'error',
+          summary: this.translate.instant('TOAST.ERROR'),
+          detail: err.error?.message || 'Erreur lors du changement'
+        });
+      }
     });
-
-    this.passwordData = { ancien: '', nouveau: '', confirmation: '' };
   }
 
   activer2FA(): void {
     this.confirmationService.confirm({
-      message: 'Activer l\'authentification à deux facteurs renforcera la sécurité de votre compte.',
-      header: 'Activer la 2FA',
-      icon: 'pi pi-shield',
+      message: "Activer l'authentification à deux facteurs renforcera la sécurité de votre compte.",
+      header: 'Activer la 2FA', icon: 'pi pi-shield',
       accept: () => {
         this.twoFA.active = true;
-        this.messageService.add({
-          severity: 'success',
-          summary: 'Succès',
-          detail: '2FA activée avec succès'
-        });
+        this.messageService.add({ severity: 'success', summary: 'Succès', detail: '2FA activée avec succès' });
       }
     });
   }
@@ -216,105 +331,99 @@ export class ParametresComponent implements OnInit {
   deconnecterAppareil(session: any): void {
     this.confirmationService.confirm({
       message: `Déconnecter l'appareil "${session.device}" ?`,
-      header: 'Confirmation',
-      icon: 'pi pi-exclamation-triangle',
+      header: 'Confirmation', icon: 'pi pi-exclamation-triangle',
       accept: () => {
         this.sessions = this.sessions.filter(s => s !== session);
-        this.messageService.add({
-          severity: 'success',
-          summary: 'Succès',
-          detail: 'Appareil déconnecté'
-        });
+        this.messageService.add({ severity: 'success', summary: 'Succès', detail: 'Appareil déconnecté' });
       }
     });
   }
 
   // ===== SOCIÉTÉ =====
   sauvegarderSociete(): void {
-    this.messageService.add({
-      severity: 'success',
-      summary: 'Succès',
-      detail: 'Informations société mises à jour'
+    const user = this.authService.currentUser();
+    if (!user?.emetteurId) {
+      this.messageService.add({ severity: 'error', summary: 'Erreur', detail: 'ID Émetteur non trouvé' });
+      return;
+    }
+
+    const request = {
+      ...this.fullEmetteur,
+      code: this.societeInfo.code,
+      raisonSociale: this.societeInfo.raison_sociale,
+      matriculeFiscal: this.societeInfo.matricule_fiscal,
+      formeJuridique: this.societeInfo.forme_juridique,
+      region: this.societeInfo.region,
+      telephone: this.societeInfo.telephone,
+      adresseComplete: this.societeInfo.adresse,
+      iban: this.societeInfo.iban,
+      email: this.societeInfo.email,
+      banque: this.societeInfo.banque,
+      siteWeb: this.societeInfo.site_web
+    };
+
+    this.emetteurService.updateMyProfile(request).subscribe({
+      next: () => {
+        this.messageService.add({
+          severity: 'success',
+          summary: this.translate.instant('TOAST.SUCCESS'),
+          detail: this.translate.instant('PARAMETRES.MSGS.SOCIETE_SUCCESS') || 'Société mise à jour'
+        });
+      },
+      error: (err) => {
+        this.messageService.add({
+          severity: 'error',
+          summary: this.translate.instant('TOAST.ERROR'),
+          detail: err.error?.message || 'Erreur lors de la mise à jour de la société'
+        });
+      }
     });
   }
 
   // ===== PRÉFÉRENCES =====
   sauvegarderPreferences(): void {
-    this.messageService.add({
-      severity: 'success',
-      summary: 'Succès',
-      detail: 'Préférences enregistrées'
-    });
+    this.savePreferences();
+    this.messageService.add({ severity: 'success', summary: 'Succès', detail: 'Préférences enregistrées' });
   }
 
   // ===== ZONE DE DANGER =====
   confirmReset(): void {
     this.confirmationService.confirm({
       message: 'Êtes-vous absolument sûr de vouloir réinitialiser TOUS les paramètres ?',
-      header: '⚠️ ZONE DE DANGER ⚠️',
-      icon: 'pi pi-exclamation-triangle',
-      acceptLabel: 'OUI, TOUT RÉINITIALISER',
-      rejectLabel: 'NON, ANNULER',
-      acceptButtonStyleClass: 'p-button-danger',
-      rejectButtonStyleClass: 'p-button-text',
-      
+      header: '⚠️ ZONE DE DANGER ⚠️', icon: 'pi pi-exclamation-triangle',
+      acceptLabel: 'OUI, TOUT RÉINITIALISER', rejectLabel: 'NON, ANNULER',
+      acceptButtonStyleClass: 'p-button-danger', rejectButtonStyleClass: 'p-button-text',
       accept: () => {
-        // Réinitialiser à zéro
         this.resetToDefaults();
-        this.messageService.add({
-          severity: 'success',
-          summary: 'Réinitialisation',
-          detail: 'Tous les paramètres ont été réinitialisés'
-        });
+        this.messageService.add({ severity: 'success', summary: 'Réinitialisation', detail: 'Tous les paramètres ont été réinitialisés' });
       }
     });
   }
 
   cancelReset(): void {
-    this.messageService.add({
-      severity: 'info',
-      summary: 'Annulé',
-      detail: 'La réinitialisation a été annulée'
-    });
+    this.messageService.add({ severity: 'info', summary: 'Annulé', detail: 'La réinitialisation a été annulée' });
   }
 
   resetToDefaults(): void {
-    this.userProfile = {
-      nom: '',
-      prenom: '',
-      email: '',
-      avatar: '',
-      role: 'Utilisateur',
-      dateCreation: new Date().toLocaleDateString(),
-      derniereConnexion: new Date()
-    };
-    
     this.preferences = {
-      langue: 'fr',
-      devise: 'TND',
-      formatDate: 'dd/MM/yyyy',
-      theme: 'systeme',
+      langue: 'fr', devise: 'TND', formatDate: 'dd/MM/yyyy', theme: 'systeme',
       notifications: { email: true, sms: false, desktop: true, marketing: false }
     };
+    localStorage.removeItem('app_preferences');
+    this.applyLangue('fr', false);
+    this.applyTheme('systeme', false);
   }
 
-  // ===== ACTIONS GLOBALES =====
-  retourDashboard(): void {
-    this.router.navigate(['/dashboard']);
-  }
+  // ===== GLOBAL =====
+  retourDashboard(): void { this.router.navigate(['/dashboard']); }
 
   annulerTout(): void {
     this.confirmationService.confirm({
       message: 'Annuler toutes les modifications non enregistrées ?',
-      header: 'Confirmation',
-      icon: 'pi pi-question-circle',
+      header: 'Confirmation', icon: 'pi pi-question-circle',
       accept: () => {
-        this.loadUserData();
-        this.messageService.add({
-          severity: 'info',
-          summary: 'Annulé',
-          detail: 'Modifications annulées'
-        });
+        this.loadPreferences();
+        this.messageService.add({ severity: 'info', summary: 'Annulé', detail: 'Modifications annulées' });
       }
     });
   }

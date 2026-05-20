@@ -1,0 +1,106 @@
+<div class="bl-detail-page" *ngIf="!loading && livraison; else loadingOrError">
+  <button class="back-link" (click)="retourAuxBL()">&larr; Retour aux bons de livraison</button>
+
+  <section class="header-card">
+    <div class="header-main">
+      <h1>BON DE LIVRAISON #{{ referenceBL }}</h1>
+    </div>
+  </section>
+
+
+  <section class="card">
+    <h2>Informations</h2>
+
+    <div class="mini-grid">
+      <div class="mini-card">
+        <h3>Commande liee</h3>
+        <p><strong>N°:</strong> {{ commandeReference }}</p>
+      </div>
+
+      <div class="mini-card">
+        <h3>Livraison</h3>
+        <p><strong>Date:</strong> {{ livraison.dateCreation | date:'dd/MM/yyyy' }}</p>
+      </div>
+    </div>
+
+    <div class="full-card">
+      <h3>Client</h3>
+      <p class="strong">{{ client?.raisonSociale || livraison.acheteurNom }}</p>
+      <p>{{ client?.adresseComplete || '-' }}</p>
+      <p>{{ client?.email || '-' }} | {{ client?.telephone || '-' }}</p>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>Produits livres</h2>
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Designation</th>
+            <th>Qte livre</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let ligne of lignes">
+            <td>{{ ligne.index }}</td>
+            <td>{{ ligne.designation }}</td>
+            <td>{{ ligne.quantiteLivree }}</td>
+          </tr>
+          <tr *ngIf="!lignes.length">
+            <td colspan="3" class="empty">Aucun produit trouve.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <div class="message error" *ngIf="errorMessage">{{ errorMessage }}</div>
+  <div class="message info" *ngIf="infoMessage">{{ infoMessage }}</div>
+</div>
+
+<ng-template #loadingOrError>
+  <div class="loading" *ngIf="loading">Chargement du bon de livraison...</div>
+  <div class="message error" *ngIf="!loading && errorMessage">{{ errorMessage }}</div>
+</ng-template>
+
+<div class="modal-backdrop" *ngIf="displayFactureModal" (click)="fermerFactureModal()">
+  <div class="modal-card" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>Générer une Facture</h3>
+      <button type="button" class="modal-close" (click)="fermerFactureModal()">x</button>
+    </div>
+
+    <p class="modal-subtitle">Générer une facture à partir du bon de livraison {{ livraison?.numBonLivraison }}</p>
+
+    <div class="field">
+      <label>Date du document</label>
+      <input type="date" [(ngModel)]="factureDateDocument" [ngModelOptions]="{ standalone: true }" />
+    </div>
+
+    <div class="field">
+      <label>Mode de paiement</label>
+      <select [(ngModel)]="factureModePaiement" [ngModelOptions]="{ standalone: true }">
+        <option value="ESPECES">Espèces</option>
+        <option value="CHEQUE">Chèque</option>
+        <option value="VIREMENT">Virement</option>
+        <option value="CARTE_BANCAIRE">Carte bancaire</option>
+        <option value="TRAITE">Traite</option>
+      </select>
+    </div>
+
+    <div class="field">
+      <label>Date de paiement</label>
+      <input type="date" [(ngModel)]="factureDatePaiement" [ngModelOptions]="{ standalone: true }" />
+    </div>
+
+    <div class="modal-actions">
+      <button type="button" class="btn btn-neutral" (click)="fermerFactureModal()">Annuler</button>
+      <button type="button" class="btn btn-primary" [disabled]="generatingFacture"
+        (click)="genererFactureDepuiBL()">
+        {{ generatingFacture ? 'Génération...' : 'Générer Facture' }}
+      </button>
+    </div>
+  </div>
+</div>

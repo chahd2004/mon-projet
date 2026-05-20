@@ -1,179 +1,169 @@
-import { Injectable } from '@angular/core';
+import { Injectable, signal, computed } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { Observable, tap, catchError, throwError } from 'rxjs';
+import { tap } from 'rxjs/operators';
+import { Observable } from 'rxjs';
+import { AuthResponse, LoginRequest, RegisterRequest } from '../../models/auth.models';
+import { UpdatePasswordRequest } from '../../models/user.models';
+import { UserDTO } from '../../models/user.models';
+import { ADMIN_ROLES, UserRole, normalizeUserRole } from '../../models/enums';
+
 import { environment } from '../../../environments/environment';
 
-// Interfaces pour les types (à déplacer dans models/user.model.ts)
-export interface LoginRequest {
-  email: string;
-  password: string;
-}
-
-export interface RegisterRequest {
-  nom: string;
-  prenom: string;
-  email: string;
-  password: string;
-  telephone?: string;
-  typeUser?: 'CLIENT' | 'EMETTEUR' | null;
-  role?: 'ADMIN' | 'USER';
-}
-
-export interface AuthResponse {
-  token: string;
-  type?: string;
-  id: number;
-  email: string;
-  role: 'ADMIN' | 'USER';
-  typeUser?: 'CLIENT' | 'EMETTEUR' | null;
-  nom: string;
-  prenom?: string | null;
-  telephone?: string | null;
-}
-
-export interface UserDTO {
-  id: number;
-  email: string;
-  nom: string;
-  prenom?: string | null;
-  telephone?: string | null;
-  role: 'ADMIN' | 'USER';
-  typeUser?: 'CLIENT' | 'EMETTEUR' | null;
-  enabled: boolean;
-  clientId?: number;
-  emetteurId?: number;
-}
-
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable({ providedIn: 'root' })
 export class AuthService {
-  private apiUrl = `${environment.apiUrl}/auth`; // http://localhost:8080/api/auth
-  private tokenKey = 'auth_token';
-  private userKey = 'current_user';
 
-  constructor(
-    private http: HttpClient,
-    private router: Router
-  ) {}
+  private readonly API_URL = `${environment.apiUrl}/auth`;
+  private readonly TOKEN_KEY = 'jwt_token';
+  private readonly USER_KEY = 'current_user';
 
-  /**
-   * Connexion - Appel API réel
-   */
+  // ── Signals ───────────────────────────────────────────────
+  private _currentUser = signal<UserDTO | null>(this.getUserFromStorage());
+  currentUser = this._currentUser.asReadonly();
+
+  isLoggedIn = computed(() => this._currentUser() !== null);
+  isAdmin = computed(() => this.hasAnyRole(ADMIN_ROLES));
+  isClient = computed(() => this._currentUser()?.role === 'CLIENT');
+  isEmetteur = computed(() => this._currentUser()?.role === 'EMETTEUR');
+
+  constructor(private http: HttpClient, private router: Router) {
+    this.checkTokenExpiry();
+  }
+
+  // ── LOGIN ───────────────────────────────────────────────
   login(request: LoginRequest): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>(`${this.apiUrl}/login`, request).pipe(
-      tap(response => {
-        // Stocker le token JWT
-        if (response?.token) {
-          localStorage.setItem(this.tokenKey, response.token);
-        }
-        // Stocker les infos utilisateur (gère les champs null du backend)
-        localStorage.setItem(this.userKey, JSON.stringify({
-          id: response?.id,
-          email: response?.email ?? '',
-          role: response?.role ?? 'USER',
-          typeUser: response?.typeUser ?? null,
-          nom: response?.nom ?? '',
-          prenom: response?.prenom ?? ''
-        }));
-      }),
-      catchError(error => {
-        console.error('Erreur de connexion', error);
-        return throwError(() => error);
-      })
+    return this.http.post<AuthResponse>(`${this.API_URL}/login`, request).pipe(
+      tap(response => this.saveSession(response))
     );
   }
 
-  /**
-   * Inscription - Appel API réel (stocke le token si succès)
-   */
+  // ── REGISTER ────────────────────────────────────────────
   register(request: RegisterRequest): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>(`${this.apiUrl}/register`, request).pipe(
-      tap(response => {
-        if (response?.token) {
-          localStorage.setItem(this.tokenKey, response.token);
-          localStorage.setItem(this.userKey, JSON.stringify({
-            id: response?.id,
-            email: response?.email ?? '',
-            role: response?.role ?? 'USER',
-            typeUser: response?.typeUser ?? null,
-            nom: response?.nom ?? '',
-            prenom: response?.prenom ?? ''
-          }));
+    return this.http.post<AuthResponse>(`${this.API_URL}/register`, request).pipe(
+      tap(response => this.saveSession(response))
+    );
+  }
+
+  updatePassword(request: UpdatePasswordRequest): Observable<void> {
+    return this.http.post<void>(`${this.API_URL}/change-password`, request).pipe(
+      tap(() => this.markFirstLoginAsCompleted())
+    );
+  }
+
+  updateProfile(request: any): Observable<UserDTO> {
+    return this.http.put<UserDTO>(`${this.API_URL}/profile`, request).pipe(
+      tap(updatedUser => {
+        const current = this._currentUser();
+        if (current) {
+          const newUser = { ...current, ...updatedUser };
+          localStorage.setItem(this.USER_KEY, JSON.stringify(newUser));
+          this._currentUser.set(newUser);
         }
-      }),
-      catchError(error => {
-        console.error('Erreur d\'inscription', error);
-        return throwError(() => error);
       })
     );
   }
 
-  /**
-   * Récupérer l'utilisateur courant
-   */
-  getCurrentUser(): Observable<UserDTO> {
-    return this.http.get<UserDTO>(`${this.apiUrl}/me`).pipe(
-      catchError(error => {
-        console.error('Erreur récupération utilisateur', error);
-        return throwError(() => error);
-      })
-    );
-  }
-
-  /**
-   * Déconnexion
-   */
+  // ── LOGOUT ──────────────────────────────────────────────
   logout(): void {
-    localStorage.removeItem(this.tokenKey);
-    localStorage.removeItem(this.userKey);
+    localStorage.removeItem(this.TOKEN_KEY);
+    localStorage.removeItem(this.USER_KEY);
+    this._currentUser.set(null);
     this.router.navigate(['/login']);
   }
 
-  /**
-   * Vérifier si l'utilisateur est connecté
-   */
-  isLoggedIn(): boolean {
-    return !!this.getToken();
-  }
-
-  /**
-   * Récupérer le token JWT
-   */
+  // ── TOKEN ───────────────────────────────────────────────
   getToken(): string | null {
-    return localStorage.getItem(this.tokenKey);
+    return localStorage.getItem(this.TOKEN_KEY);
   }
 
-  /**
-   * Récupérer les infos utilisateur du localStorage
-   */
-  getUser(): any | null {
-    const user = localStorage.getItem(this.userKey);
-    return user ? JSON.parse(user) : null;
+  hasRole(role: UserRole): boolean {
+    return this._currentUser()?.role === role;
   }
 
-  /**
-   * Vérifier si l'utilisateur est ADMIN
-   */
-  isAdmin(): boolean {
-    const user = this.getUser();
-    return user?.role === 'ADMIN';
+  hasAnyRole(roles: readonly UserRole[]): boolean {
+    const role = this._currentUser()?.role;
+    return !!role && roles.includes(role);
   }
 
-  /**
-   * Vérifier si l'utilisateur est CLIENT
-   */
-  isClient(): boolean {
-    const user = this.getUser();
-    return user?.typeUser === 'CLIENT';
+  requiresPasswordChange(): boolean {
+    return this._currentUser()?.firstLogin === true;
   }
 
-  /**
-   * Vérifier si l'utilisateur est EMETTEUR
-   */
-  isEmetteur(): boolean {
-    const user = this.getUser();
-    return user?.typeUser === 'EMETTEUR';
+  // ── PRIVÉS ──────────────────────────────────────────────
+  private saveSession(response: AuthResponse): void {
+    localStorage.setItem(this.TOKEN_KEY, response.token);
+
+    const normalizedRole = normalizeUserRole(response.role);
+    const typeUser = response.typeUser ?? (normalizedRole === 'CLIENT' || normalizedRole === 'EMETTEUR' ? normalizedRole : null);
+
+    const user: UserDTO = {
+      id: response.id,
+      nom: response.nom,
+      prenom: response.prenom,
+      email: response.email,
+      telephone: response.telephone,
+      role: normalizedRole,
+      typeUser,
+      accountStatus: response.accountStatus,
+      firstLogin: response.firstLogin,
+      enabled: true,
+      clientId: response.clientId ?? undefined,
+      emetteurId: response.emetteurId ?? (response as any).entrepriseId ?? undefined,
+      entrepriseId: (response as any).entrepriseId ?? undefined
+    };
+
+    localStorage.setItem(this.USER_KEY, JSON.stringify(user));
+    this._currentUser.set(user);
+  }
+
+  private getUserFromStorage(): UserDTO | null {
+    const stored = localStorage.getItem(this.USER_KEY);
+    if (!stored) return null;
+
+    try {
+      const parsed = JSON.parse(stored) as UserDTO & { role?: string | null };
+      const normalizedRole = normalizeUserRole(parsed.role);
+      const typeUser = parsed.typeUser ?? (normalizedRole === 'CLIENT' || normalizedRole === 'EMETTEUR' ? normalizedRole : null);
+      return {
+        ...parsed,
+        role: normalizedRole,
+        typeUser,
+        enabled: parsed.enabled ?? true
+      };
+    } catch {
+      return null;
+    }
+  }
+
+  private markFirstLoginAsCompleted(): void {
+    const user = this._currentUser();
+    if (!user) return;
+
+    const updatedUser: UserDTO = {
+      ...user,
+      firstLogin: false
+    };
+
+    localStorage.setItem(this.USER_KEY, JSON.stringify(updatedUser));
+    this._currentUser.set(updatedUser);
+  }
+
+  private checkTokenExpiry(): void {
+    const token = this.getToken();
+    if (!token) return;
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      const isExpired = payload.exp * 1000 < Date.now();
+      if (isExpired) {
+        console.warn('🔒 Token expiré détecté — déconnexion automatique');
+        localStorage.removeItem(this.TOKEN_KEY);
+        localStorage.removeItem(this.USER_KEY);
+        this._currentUser.set(null);
+      }
+    } catch {
+      localStorage.removeItem(this.TOKEN_KEY);
+      localStorage.removeItem(this.USER_KEY);
+      this._currentUser.set(null);
+    }
   }
 }

@@ -1,0 +1,51 @@
+@startuml
+title Diagramme de séquence — Assistant Intelligent Chatbot IA
+
+skinparam backgroundColor #FFFFFF
+skinparam sequenceArrowThickness 1.5
+skinparam roundcorner 5
+skinparam LifeLineBorderColor #333333
+skinparam SequenceGroupBorderColor #888888
+
+actor "Manager / Admin / Consultant" as User
+boundary "Interface (Angular)" as UI
+control "ChatController" as CC
+control "ChatService" as CS
+control "Groq API (LLM)" as LLM
+database "Base de Données" as DB
+
+== Assistant Intelligent Chatbot IA — Poser des questions ==
+
+User -> UI : Poser une question en langage naturel
+activate UI
+UI -> CC : POST /api/chat {message}
+activate CC
+note right of CC : Extraction de entrepriseId\ndepuis le SecurityContext
+CC -> CS : getGroqResponse(message, entrepriseId)
+activate CS
+
+CS -> LLM : Générer requête SQL\n(question + schéma BD + règles sécurité)
+activate LLM
+LLM -> CS : generatedSQL
+deactivate LLM
+
+note right of CS : Vérification : SELECT uniquement\nfiltré par entrepriseId
+
+CS -> DB : Exécuter requête SQL
+activate DB
+DB -> CS : Résultats
+deactivate DB
+
+CS -> LLM : Formuler réponse en langage naturel
+activate LLM
+LLM -> CS : Réponse formatée (FR / EN)
+deactivate LLM
+
+CS -> CC : responseString
+deactivate CS
+CC -> UI : 200 OK
+deactivate CC
+UI -> User : Afficher la réponse
+deactivate UI
+
+@enduml

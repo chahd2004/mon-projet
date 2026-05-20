@@ -1,0 +1,126 @@
+<div class="devis-page">
+  <h1 class="title">{{ 'DEVIS.TITLE' | translate }}</h1>
+
+  <div class="action-bar">
+    <button class="btn btn-primary" *ngIf="!isViewer" (click)="nouveauDevis()">{{ 'DEVIS.ACTIONS.NEW' | translate }}</button>
+  </div>
+
+  <div class="filters-row">
+    <select [(ngModel)]="selectedStatus" [ngModelOptions]="{ standalone: true }">
+      <option value="ALL">{{ 'DEVIS.FILTER_STATUS' | translate }}</option>
+      <option *ngFor="let status of statusOptions" [ngValue]="status">{{ 'STATUS.' + status | translate }}</option>
+    </select>
+  </div>
+
+  <div *ngIf="errorMessage" class="error-box">{{ errorMessage }}</div>
+
+  <div class="table-wrapper" *ngIf="!loading; else loadingTpl">
+    <table>
+      <thead>
+        <tr>
+          <th>{{ 'DEVIS.TABLE.NUM' | translate }}</th>
+          <th>{{ 'DEVIS.TABLE.CLIENT' | translate }}</th>
+          <th>{{ 'DEVIS.TABLE.DATE' | translate }}</th>
+          <th>{{ 'DEVIS.TABLE.TOTAL' | translate }}</th>
+          <th>{{ 'DEVIS.TABLE.STATUS' | translate }}</th>
+          <th>{{ 'DEVIS.TABLE.ACTIONS' | translate }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let d of filteredDevis" [ngClass]="'status-' + getStatutClass(getEffectiveStatut(d))">
+          <td class="strong">{{ formatDevisReference(d) }}</td>
+          <td>{{ d.acheteurNom || '-' }}</td>
+          <td>{{ d.dateCreation | date:'dd/MM/yyyy' }}</td>
+          <td class="strong">{{ d.totalTTC | number:'1.3-3' }} TND</td>
+          <td>
+            <span class="status" [ngClass]="getStatutClass(getEffectiveStatut(d))">{{ 'STATUS.' + getEffectiveStatut(d) | translate }}</span>
+          </td>
+          <td>
+            <div class="row-actions">
+              <button class="icon-btn" (click)="voirDevis(d.id)" title="Voir"><i class="pi pi-eye"></i></button>
+              
+              <button class="icon-btn" *ngIf="!isViewer && getEffectiveStatut(d) === 'DRAFT'" (click)="modifierDevis(d.id)"
+                title="Modifier"><i class="pi pi-pencil"></i></button>
+                
+              <button class="icon-btn" *ngIf="!isViewer && isEnvoyable(d)" (click)="envoyerDevis(d.id)" 
+                title="Envoyer"><i class="pi pi-send"></i></button>
+              
+              <button class="icon-btn" *ngIf="!isViewer && canConvertir(d)" (click)="ouvrirConversionFacture(d.id)" 
+                [title]="'DEVIS.ACTIONS.GENERATE_INVOICE' | translate">
+                <i class="pi pi-file-plus"></i>
+              </button>
+            </div>
+          </td>
+        </tr>
+        <tr *ngIf="!filteredDevis.length">
+          <td colspan="6" class="empty">{{ 'DEVIS.EMPTY' | translate }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p-dialog [header]="'DEVIS.CONVERT_MODAL.TITLE' | translate" [(visible)]="displayConvertDialog" 
+    [modal]="true" [style]="{width: '450px'}" [draggable]="false" [resizable]="false">
+    <div class="convert-dialog-content" *ngIf="conversionForm" [formGroup]="conversionForm">
+      <p class="subtitle">{{ 'DEVIS.CONVERT_MODAL.SUBTITLE' | translate }}</p>
+
+      <div class="field mt-4">
+        <label for="dateDoc">{{ 'DEVIS.CONVERT_MODAL.DATE_DOC' | translate }}</label>
+        <p-calendar id="dateDoc" formControlName="dateDocument" [showIcon]="true" appendTo="body" styleClass="w-full"></p-calendar>
+      </div>
+
+      <div class="field mt-3">
+        <label for="modeP">{{ 'DEVIS.CONVERT_MODAL.MODE_PAIEMENT' | translate }}</label>
+        <p-dropdown id="modeP" formControlName="modePaiement" [options]="paymentModes" 
+          optionLabel="label" optionValue="value" styleClass="w-full" appendTo="body"></p-dropdown>
+      </div>
+
+      <div class="field mt-3">
+        <label for="dateP">{{ 'DEVIS.CONVERT_MODAL.DATE_PAIEMENT' | translate }}</label>
+        <p-calendar id="dateP" formControlName="datePaiement" [showIcon]="true" appendTo="body" styleClass="w-full"></p-calendar>
+      </div>
+    </div>
+
+    <ng-template pTemplate="footer">
+      <button pButton [label]="'DEVIS.CONVERT_MODAL.CANCEL' | translate" class="p-button-text" (click)="displayConvertDialog = false"></button>
+      <button pButton [label]="'DEVIS.CONVERT_MODAL.SUBMIT' | translate" (click)="confirmerConversionFacture()" 
+        [loading]="isConverting" [disabled]="conversionForm.invalid"></button>
+    </ng-template>
+  </p-dialog>
+
+  <p-toast></p-toast>
+
+  <div class="stats-card">
+    <h2>{{ 'DEVIS.STATS_TITLE' | translate }}</h2>
+    <div class="stats-container">
+      <div class="stat-badge draft">
+        <span class="stat-label">{{ 'STATUS.DRAFT' | translate }}</span>
+        <span class="stat-count">{{ draftCount }}</span>
+      </div>
+      <div class="stat-badge sent">
+        <span class="stat-label">{{ 'STATUS.SENT' | translate }}</span>
+        <span class="stat-count">{{ pendingCount }}</span>
+      </div>
+      <div class="stat-badge accepted">
+        <span class="stat-label">{{ 'STATUS.ACCEPTED' | translate }}</span>
+        <span class="stat-count">{{ acceptedCount }}</span>
+      </div>
+      <div class="stat-badge rejected">
+        <span class="stat-label">{{ 'STATUS.REJECTED' | translate }}</span>
+        <span class="stat-count">{{ rejectedCount }}</span>
+      </div>
+      <div class="stat-badge expired">
+        <span class="stat-label">{{ 'STATUS.EXPIRED' | translate }}</span>
+        <span class="stat-count">{{ expiredCount }}</span>
+      </div>
+      <div class="stat-badge converted">
+        <span class="stat-label">{{ 'STATUS.CONVERTED' | translate }}</span>
+        <span class="stat-count">{{ convertedCount }}</span>
+      </div>
+    </div>
+  </div>
+
+  <ng-template #loadingTpl>
+    <div class="loading">{{ 'DEVIS.LOADING' | translate }}</div>
+  </ng-template>
+</div>

@@ -1,0 +1,71 @@
+<p-toast></p-toast>
+<div class="form-container">
+  <div class="form-header">
+    <h1>Ajouter Collaborateur</h1>
+  </div>
+
+  <p-card class="form-card">
+    <div class="global-error" *ngIf="globalError">
+      <i class="pi pi-exclamation-circle"></i>
+      {{ globalError }}
+    </div>
+    <form [formGroup]="form">
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="prenom">Prénom *</label>
+          <input id="prenom" type="text" pInputText formControlName="prenom" placeholder="Prénom" />
+          <small class="error" *ngIf="form.get('prenom')?.invalid && form.get('prenom')?.touched">
+            {{ getErrorMessage('prenom') }}
+          </small>
+          <small class="error" *ngIf="fieldErrors['prenom']">{{ fieldErrors['prenom'] }}</small>
+        </div>
+
+        <div class="form-group">
+          <label for="nom">Nom *</label>
+          <input id="nom" type="text" pInputText formControlName="nom" placeholder="Nom" />
+          <small class="error" *ngIf="form.get('nom')?.invalid && form.get('nom')?.touched">
+            {{ getErrorMessage('nom') }}
+          </small>
+          <small class="error" *ngIf="fieldErrors['nom']">{{ fieldErrors['nom'] }}</small>
+        </div>
+
+        <div class="form-group">
+          <label for="email">Email *</label>
+          <input id="email" type="email" pInputText formControlName="email" placeholder="Email" />
+          <small class="error" *ngIf="form.get('email')?.invalid && form.get('email')?.touched">
+            {{ getErrorMessage('email') }}
+          </small>
+          <small class="error" *ngIf="fieldErrors['email']">{{ fieldErrors['email'] }}</small>
+        </div>
+
+        <div class="form-group">
+          <label for="telephone">Téléphone *</label>
+          <input id="telephone" type="tel" pInputText formControlName="telephone" placeholder="Téléphone" />
+          <small class="error" *ngIf="form.get('telephone')?.invalid && form.get('telephone')?.touched">
+            Téléphone est requis
+          </small>
+          <small class="error" *ngIf="fieldErrors['telephone']">{{ fieldErrors['telephone'] }}</small>
+        </div>
+
+        <div class="form-group">
+          <label for="role">Rôle *</label>
+          <p-dropdown id="role" [options]="roleOptions" formControlName="role" optionLabel="label" optionValue="value"
+            placeholder="Sélectionner un rôle"></p-dropdown>
+          <small class="error" *ngIf="form.get('role')?.invalid && form.get('role')?.touched">
+            Rôle est requis
+          </small>
+          <small class="error" *ngIf="fieldErrors['role']">{{ fieldErrors['role'] }}</small>
+        </div>
+
+      </div>
+
+
+
+      <div class="form-actions">
+        <button pButton type="button" label="Annuler" class="p-button-text" (click)="cancel()"></button>
+        <button *ngIf="!isViewer" pButton type="button" label="Sauvegarder" icon="pi pi-check" class="btn-green" [loading]="isSubmitting"
+          [disabled]="!form.valid || isSubmitting" (click)="save()"></button>
+      </div>
+    </form>
+  </p-card>
+</div>

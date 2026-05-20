@@ -1,0 +1,85 @@
+<div class="produits-container">
+  <div class="page-header">
+    <div>
+      <h1>Produits</h1>
+      <p class="subtitle">Gérez votre catalogue de produits</p>
+    </div>
+    <a *ngIf="!isReadOnly()" routerLink="ajouter" pButton type="button" icon="pi pi-plus" label="Ajouter Produit" class="p-button-lg"></a>
+  </div>
+
+  <div class="filters-section">
+    <span class="p-input-icon-left">
+      <i class="pi pi-search"></i>
+      <input type="text" pInputText placeholder="Rechercher par nom ou code..." [(ngModel)]="searchTerm" (keyup)="onSearch()" />
+    </span>
+  </div>
+
+  <p-table
+    [value]="filteredProduits"
+    [loading]="isLoading"
+    [paginator]="true"
+    [rows]="10"
+    responsiveLayout="scroll"
+    [globalFilterFields]="['designation', 'reference']"
+  >
+    <ng-template pTemplate="header">
+      <tr>
+        <th pSortableColumn="reference">Référence <p-sortIcon field="reference"></p-sortIcon></th>
+        <th pSortableColumn="designation">Désignation <p-sortIcon field="designation"></p-sortIcon></th>
+        <th pSortableColumn="prixUnitaire" style="text-align: right">Prix HT <p-sortIcon field="prixUnitaire"></p-sortIcon></th>
+        <th pSortableColumn="tauxTVA" style="text-align: center">TVA <p-sortIcon field="tauxTVA"></p-sortIcon></th>
+        <th style="text-align: right">Prix TTC</th>
+        <th pSortableColumn="quantiteStock" style="text-align: center">Stock <p-sortIcon field="quantiteStock"></p-sortIcon></th>
+        <th *ngIf="!isReadOnly()" style="width: 10%">Actions</th>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="body" let-prod>
+      <tr>
+        <td><strong>{{ prod.reference }}</strong></td>
+        <td>{{ prod.designation }}</td>
+        <td style="text-align: right">{{ prod.prixUnitaire | number: '1.2-2' }} TND</td>
+        <td style="text-align: center">{{ prod.tauxTVA }}%</td>
+        <td style="text-align: right; font-weight: 600">{{ getPrixTTC(prod.prixUnitaire, prod.tauxTVA) | number: '1.2-2' }} TND</td>
+        <td style="text-align: center">
+          <span [ngClass]="{ 'stock-badge': true, 'low-stock': prod.quantiteStock < 50 }">
+            {{ prod.quantiteStock }}
+          </span>
+        </td>
+        <td *ngIf="!isReadOnly()">
+          <div class="action-buttons">
+            <a
+              [routerLink]="[prod.id]"
+              pButton
+              type="button"
+              icon="pi pi-pencil"
+              class="p-button-rounded p-button-text p-button-sm"
+              pTooltip="Modifier"
+              tooltipPosition="top"
+            ></a>
+            <button
+              pButton
+              type="button"
+              icon="pi pi-trash"
+              class="p-button-rounded p-button-text p-button-sm p-button-danger"
+              pTooltip="Supprimer"
+              tooltipPosition="top"
+              (click)="deleteProduit(prod.id)"
+            ></button>
+          </div>
+        </td>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="emptymessage">
+      <tr>
+        <td colspan="8" style="text-align: center; padding: 2rem;">
+          <div style="display: flex; flex-direction: column; align-items: center; gap: 1rem; color: #6b7280;">
+            <i class="pi pi-inbox" style="font-size: 2.5rem;"></i>
+            <span>Aucun produit n'est disponible pour le moment.</span>
+          </div>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>

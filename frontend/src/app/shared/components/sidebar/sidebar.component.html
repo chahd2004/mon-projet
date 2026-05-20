@@ -1,0 +1,41 @@
+<div class="sidebar" [class.collapsed]="isCollapsed">
+  <div class="sidebar-header">
+    <button
+      pButton
+      type="button"
+      text
+      icon="pi pi-bars"
+      (click)="toggleSidebar()"
+      class="toggle-btn"
+    ></button>
+  </div>
+
+  <nav class="sidebar-nav">
+    <ul class="nav-list">
+      <li *ngFor="let item of sidebarItems()" class="nav-item">
+        <!-- Navigation classique -->
+        <a *ngIf="!item.action"
+           [routerLink]="item.route"
+           routerLinkActive="active"
+           class="nav-link"
+           [routerLinkActiveOptions]="{ exact: true }">
+          <span class="nav-icon">
+            <i [class]="item.icon"></i>
+          </span>
+          <span class="nav-label">{{ item.label | translate }}</span>
+        </a>
+
+        <!-- Action spéciale (Déconnexion) -->
+        <a *ngIf="item.action === 'logout'"
+           href="javascript:void(0)"
+           (click)="onItemClick($event, item)"
+           class="nav-link logout-link">
+          <span class="nav-icon">
+            <i [class]="item.icon"></i>
+          </span>
+          <span class="nav-label">{{ item.label | translate }}</span>
+        </a>
+      </li>
+    </ul>
+  </nav>
+</div>

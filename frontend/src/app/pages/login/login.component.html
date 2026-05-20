@@ -46,14 +46,6 @@
 
       <!-- Ligne "Se souvenir de moi" et "Mot de passe oublié" -->
       <div class="remember-forgot">
-        <div class="remember-me">
-          <p-checkbox 
-            [(ngModel)]="rememberMe" 
-            [binary]="true" 
-            inputId="rememberMe">
-          </p-checkbox>
-          <label for="rememberMe">Se souvenir de moi</label>
-        </div>
         <a href="#" class="forgot-password" (click)="forgotPassword($event)">
           Mot de passe oublié ?
         </a>
@@ -68,12 +60,6 @@
         (click)="login()"
         [disabled]="loading">
       </button>
-
-      <!-- Lien vers l'inscription -->
-      <div class="register-link">
-        <span>Nouveau ici ?</span>
-        <a href="#" (click)="goToRegister($event)">Créer un compte</a>
-      </div>
 
     </div>
 

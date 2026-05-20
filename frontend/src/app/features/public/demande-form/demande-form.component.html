@@ -1,0 +1,139 @@
+<div class="demande-page">
+  <p-toast></p-toast>
+
+  <p-card class="demande-card">
+    <ng-template pTemplate="header">
+      <div class="card-header">
+        <h1>Demande de création d'entreprise</h1>
+        <p>Remplissez le formulaire pour demander un accès entreprise</p>
+      </div>
+    </ng-template>
+
+    <div class="form-container">
+      <fieldset>
+        <legend>Informations entreprise</legend>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="code">Code entreprise *</label>
+            <input pInputText id="code" [(ngModel)]="code" type="text" placeholder="Ex: ENT001" [disabled]="loading" [class.p-invalid]="fieldErrors['code']" />
+            <small class="error" *ngIf="fieldErrors['code']">{{ fieldErrors['code'] }}</small>
+          </div>
+
+          <div class="form-group">
+            <label for="raisonSociale">Raison sociale *</label>
+            <input pInputText id="raisonSociale" [(ngModel)]="raisonSociale" type="text"
+              placeholder="Ex: Acme Corporation SARL" [disabled]="loading" [class.p-invalid]="fieldErrors['raisonSociale']" />
+            <small class="error" *ngIf="fieldErrors['raisonSociale']">{{ fieldErrors['raisonSociale'] }}</small>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="matriculeFiscal">Matricule fiscal *</label>
+            <input pInputText id="matriculeFiscal" [(ngModel)]="matriculeFiscal" type="text" placeholder="Ex: 1234567"
+              [disabled]="loading" [class.p-invalid]="fieldErrors['matriculeFiscal']" />
+            <small class="error" *ngIf="fieldErrors['matriculeFiscal']">{{ fieldErrors['matriculeFiscal'] }}</small>
+          </div>
+
+          <div class="form-group">
+            <label for="formeJuridique">Forme juridique *</label>
+            <p-dropdown id="formeJuridique" [(ngModel)]="formeJuridique" [options]="formeJuridiqueOptions"
+              optionLabel="label" optionValue="value" placeholder="Sélectionnez une forme"
+              [disabled]="loading" [styleClass]="fieldErrors['formeJuridique'] ? 'p-invalid w-full' : 'w-full'"></p-dropdown>
+            <small class="error" *ngIf="fieldErrors['formeJuridique']">{{ fieldErrors['formeJuridique'] }}</small>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="telephone">Téléphone</label>
+            <input pInputText id="telephone" [(ngModel)]="telephone" type="text" placeholder="+216 XX XXX XXX"
+              [disabled]="loading" [class.p-invalid]="fieldErrors['telephone']" />
+            <small class="error" *ngIf="fieldErrors['telephone']">{{ fieldErrors['telephone'] }}</small>
+          </div>
+
+          <div class="form-group">
+            <label for="region">Région *</label>
+            <p-dropdown id="region" [(ngModel)]="region" [options]="regions" optionLabel="label" optionValue="value"
+              placeholder="Sélectionnez une région" [disabled]="loading" [styleClass]="fieldErrors['region'] ? 'p-invalid w-full' : 'w-full'"></p-dropdown>
+            <small class="error" *ngIf="fieldErrors['region']">{{ fieldErrors['region'] }}</small>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="email">Email professionnel *</label>
+          <input pInputText id="email" [(ngModel)]="email" type="email" placeholder="contact@monentreprise.tn"
+            [disabled]="loading" [class.p-invalid]="fieldErrors['email']" />
+          <small class="error" *ngIf="fieldErrors['email']">{{ fieldErrors['email'] }}</small>
+        </div>
+
+        <div class="form-group">
+          <label for="adresseComplete">Adresse complète *</label>
+          <textarea pInputTextarea id="adresseComplete" [(ngModel)]="adresseComplete"
+            placeholder="Votre adresse complète" rows="3" [disabled]="loading" [class.p-invalid]="fieldErrors['adresseComplete']"></textarea>
+          <small class="error" *ngIf="fieldErrors['adresseComplete']">{{ fieldErrors['adresseComplete'] }}</small>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="siteWeb">Site Web</label>
+            <input pInputText id="siteWeb" [(ngModel)]="siteWeb" type="url" placeholder="https://www.votresite.tn"
+              [disabled]="loading" />
+          </div>
+
+          <div class="form-group">
+            <label for="banque">Banque</label>
+            <input pInputText id="banque" [(ngModel)]="banque" type="text" placeholder="Ex: BNA, BIAT, etc."
+              [disabled]="loading" />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="iban">IBAN</label>
+          <input pInputText id="iban" [(ngModel)]="iban" type="text" placeholder="Votre numéro IBAN"
+            [disabled]="loading" />
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Responsable de l'entreprise</legend>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="prenomResponsable">Prénom *</label>
+            <input pInputText id="prenomResponsable" [(ngModel)]="prenomResponsable" type="text" placeholder="Prénom"
+              [disabled]="loading" [class.p-invalid]="fieldErrors['prenomResponsable']" />
+            <small class="error" *ngIf="fieldErrors['prenomResponsable']">{{ fieldErrors['prenomResponsable'] }}</small>
+          </div>
+
+          <div class="form-group">
+            <label for="nomResponsable">Nom *</label>
+            <input pInputText id="nomResponsable" [(ngModel)]="nomResponsable" type="text" placeholder="Nom"
+              [disabled]="loading" [class.p-invalid]="fieldErrors['nomResponsable']" />
+            <small class="error" *ngIf="fieldErrors['nomResponsable']">{{ fieldErrors['nomResponsable'] }}</small>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="fonctionResponsable">Fonction *</label>
+          <input pInputText id="fonctionResponsable" [(ngModel)]="fonctionResponsable" type="text"
+            placeholder="Ex: Directeur Général" [disabled]="loading" [class.p-invalid]="fieldErrors['fonctionResponsable']" />
+          <small class="error" *ngIf="fieldErrors['fonctionResponsable']">{{ fieldErrors['fonctionResponsable'] }}</small>
+        </div>
+      </fieldset>
+
+
+      <p-button label="Soumettre la demande" icon="pi pi-send" (click)="submitDemande()" [loading]="loading"
+        [disabled]="loading" styleClass="w-full p-button-primary"></p-button>
+    </div>
+
+    <ng-template pTemplate="footer">
+      <div class="card-footer">
+        <p>
+          <a (click)="navigateToHome()" class="link">← Retour à l'accueil</a>
+        </p>
+      </div>
+    </ng-template>
+  </p-card>
+</div>

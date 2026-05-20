@@ -1,0 +1,201 @@
+@startuml
+skinparam backgroundColor White
+skinparam shadowing false
+skinparam classAttributeIconSize 0
+hide empty members
+
+skinparam class {
+    BackgroundColor White
+    BorderColor #1565C0
+    HeaderBackgroundColor #BBDEFB
+    FontName Arial
+    FontSize 10
+}
+skinparam package {
+    BackgroundColor #F0F8FF
+    BorderColor #1565C0
+    FontName Arial
+    FontSize 11
+}
+skinparam ArrowColor #263238
+skinparam ArrowThickness 1.2
+
+' ═══ COMPTES ═══
+package "Comptes" {
+    class User {
+        id : Long
+        email : String
+        role : UserRole
+        + authentifier() : void
+    }
+    class SuperAdmin {
+    }
+    class EntrepriseAdmin {
+    }
+    class EntrepriseManager {
+    }
+    class EntrepriseViewer {
+    }
+
+    User <|-- SuperAdmin
+    User <|-- EntrepriseAdmin
+    User <|-- EntrepriseManager
+    User <|-- EntrepriseViewer
+
+    class DemandeEmetteur {
+        id : Long
+        raisonSociale : String
+        status : AccountStatus
+        + approuver() : void
+        + rejeter() : void
+        + notifierClient() : void
+    }
+    
+    class Emetteur {
+        id : Long
+        code : String
+        raisonSociale : String
+        + getRaisonSociale() : String
+    }
+    class Client {
+        id : Long
+        code : String
+        raisonSociale : String
+        email : String
+        + calculerSolde() : void
+    }
+}
+
+' ═══ DOCUMENTS ═══
+package "Documents" {
+    abstract class DocumentCommercial {
+        id : Long
+        dateCreation : LocalDate
+        statut : StatutDoc
+        totalTTC : BigDecimal
+        + calculerTotaux() : void
+        + valider() : void
+    }
+    class Devis {
+        numDevis : String
+        + convertirEnFactureDirect() : void
+        + devisVersFacture() : void
+    }
+    class Facture {
+        numFact : String
+        dateEmission : LocalDate
+        + envoyerParEmail() : void
+        + envoyer() : void
+        + genererXml() : void
+        + signer() : void
+    }
+    class BonCommande {
+        numBonCommande : String
+        + bonCommandeVersCommande() : void
+        + bonCommandeVersBonLivraison() : void
+        + signerParClient() : void
+    }
+    class Commande {
+        numCommande : String
+        + commandeVersBonLivraison() : void
+        + commandeVersFacture() : void
+    }
+    class BonLivraison {
+        numBonLivraison : String
+        dateLivraison : LocalDate
+        + genererFacture() : void
+        + bonLivraisonVersFacture() : void
+        + signerParClient() : void
+    }
+    class Avoir {
+        numAvoir : String
+        motif : String
+        + creerDepuisFactureAnnulee() : void
+        + createFromCancelled() : void
+    }
+    
+    DocumentCommercial <|-- Devis
+    DocumentCommercial <|-- Facture
+    DocumentCommercial <|-- BonCommande
+    DocumentCommercial <|-- Commande
+    DocumentCommercial <|-- BonLivraison
+    DocumentCommercial <|-- Avoir
+}
+
+' ═══ LIGNES ═══
+package "Lignes" {
+    abstract class LigneDocument {
+        id : Long
+        quantite : Integer
+        prixUnitaire : BigDecimal
+        + calculerSousTotal() : void
+    }
+    class LigneDevis
+    class LigneFacture
+    class LigneBonCommande
+    class LigneCommande
+    class LigneBonLivraison
+    class LigneAvoir
+    
+    LigneDocument <|-- LigneDevis
+    LigneDocument <|-- LigneFacture
+    LigneDocument <|-- LigneBonCommande
+    LigneDocument <|-- LigneCommande
+    LigneDocument <|-- LigneBonLivraison
+    LigneDocument <|-- LigneAvoir
+}
+
+' ═══ CATALOGUE ═══
+package "Catalogue" {
+    class Produit {
+        id : Long
+        reference : String
+        designation : String
+        prixUnitaire : BigDecimal
+        + isDisponible(qty: Integer) : boolean
+        + diminuerStock(qty: Integer) : void
+        + augmenterStock(qty: Integer) : void
+    }
+}
+
+' ═══════════════════════════════════
+' RELATIONS LOGIQUES
+' ═══════════════════════════════════
+
+' Logique de création
+EntrepriseAdmin --> DemandeEmetteur : soumet
+SuperAdmin ..> DemandeEmetteur : valide
+DemandeEmetteur ..> Emetteur : crée auto
+
+' Lien Utilisateurs - Entreprise
+Emetteur "1" <-- "1" EntrepriseAdmin : gère
+Emetteur "1" <-- "0..*" EntrepriseManager : gère
+Emetteur "1" <-- "0..*" EntrepriseViewer : gère
+
+' Catalogue & Clientèle
+Emetteur "1" --> "0..*" Client : gère
+Emetteur "1" --> "0..*" Produit : gère
+
+' Liens Documents
+Emetteur "1" --> "0..*" DocumentCommercial : émet
+Client "0..1" --> "0..*" DocumentCommercial 
+
+' Composition des Lignes
+Devis "1" *--> "0..*" LigneDevis
+Facture "1" *--> "0..*" LigneFacture
+BonCommande "1" *--> "0..*" LigneBonCommande
+Commande "1" *--> "0..*" LigneCommande
+BonLivraison "1" *--> "0..*" LigneBonLivraison
+Avoir "1" *--> "0..*" LigneAvoir
+
+' Liens Produits 
+LigneDocument "0..*" --> "1" Produit : référencé
+
+' Flux métier Documents
+Devis ..> BonCommande : génère
+BonCommande ..> Commande : génère
+Commande ..> BonLivraison : expédie
+BonLivraison ..> Facture : transforme
+Facture ..> Avoir : annule
+
+@enduml

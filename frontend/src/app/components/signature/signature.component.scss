@@ -1,0 +1,213 @@
+@use "sass:color";
+
+$primary-blue: #3b82f6;
+$dark-blue: #1e293b;
+$success: #10b981;
+$warning: #f59e0b;
+$danger: #ef4444;
+$border: #e2e8f0;
+
+.signature-popup-content {
+  padding: 1.5rem;
+  text-align: center;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+
+  .signature-header {
+    margin-bottom: 2rem;
+
+    h3 {
+      font-size: 1.4rem;
+      color: #1e293b;
+      font-weight: 800;
+      letter-spacing: 1px;
+      margin: 0;
+      text-transform: uppercase;
+    }
+
+    .divider {
+      width: 150px;
+      height: 2px;
+      background: #e2e8f0;
+      margin: 1.5rem auto 0;
+    }
+  }
+
+  .signature-body {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    text-align: left;
+
+    .input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+
+      label {
+        font-weight: 700;
+        color: #475569;
+        font-size: 0.9rem;
+      }
+
+      .file-picker-wrapper {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        background: #f8fafc;
+        border: 2px dashed #cbd5e1;
+        padding: 0.5rem 1rem;
+        border-radius: 10px;
+
+        &:hover {
+          border-color: #3b82f6;
+          background: #f1f7ff;
+        }
+
+        ::ng-deep .custom-file-upload .p-button {
+          background: #1e293b !important;
+          border: none !important;
+          font-size: 0.8rem !important;
+          padding: 0.4rem 1rem !important;
+        }
+
+        .selected-filename {
+          color: #3b82f6;
+          font-weight: 600;
+          font-size: 0.85rem;
+        }
+
+        .placeholder-filename {
+          color: #94a3b8;
+          font-style: italic;
+          font-size: 0.85rem;
+        }
+      }
+
+      .password-wrapper input {
+        width: 100%;
+        padding: 0.8rem;
+        border: 2px solid #e2e8f0;
+        border-radius: 10px;
+
+        &:focus {
+          border-color: #3b82f6;
+          outline: none;
+        }
+      }
+    }
+  }
+
+  .btn-signer {
+    margin-top: 0.5rem;
+    background: #ffffff;
+    color: #1e293b;
+    border: 2px solid #1e293b;
+    padding: 0.8rem;
+    border-radius: 10px;
+    font-weight: 800;
+    font-size: 1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    transition: all 0.2s;
+
+    &:hover:not(:disabled) {
+      background: #1e293b;
+      color: #ffffff;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  }
+
+  .btn-annuler {
+    margin-top: 0.5rem;
+    background: #f3f4f6;
+    color: #6b7280;
+    border: 2px solid #e5e7eb;
+    padding: 0.8rem;
+    border-radius: 10px;
+    font-weight: 700;
+    font-size: 1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    transition: all 0.2s;
+
+    &:hover:not(:disabled) {
+      background: #e5e7eb;
+      color: #374151;
+      border-color: #d1d5db;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  }
+
+  .btn-ok {
+    margin-top: 1rem;
+    width: 100%;
+    background: #10b981;
+    color: #ffffff;
+    border: none;
+    padding: 0.8rem;
+    border-radius: 10px;
+    font-weight: 800;
+    font-size: 1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    transition: all 0.2s;
+
+    &:hover:not(:disabled) {
+      background: color.adjust(#10b981, $lightness: -10%);
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+    }
+  }
+
+  .signature-success-state {
+    padding: 1rem;
+
+    h3 {
+      font-size: 1.4rem;
+      color: #10b981;
+      font-weight: 800;
+      margin-bottom: 1rem;
+    }
+
+    .success-icon {
+      font-size: 4rem;
+      color: #10b981;
+    }
+
+    .divider {
+      width: 150px;
+      height: 2px;
+      background: #e2e8f0;
+      margin: 1rem auto;
+    }
+  }
+
+  .message.erreur {
+    background: #fce8e6;
+    color: #c62828;
+    padding: 0.6rem;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+}

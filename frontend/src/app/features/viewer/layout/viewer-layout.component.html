@@ -1,0 +1,16 @@
+<div class="viewer-layout">
+  <header class="viewer-header">
+    <h1>Lecteur de Documents</h1>
+    <nav class="viewer-nav">
+      <ul>
+        <li><a routerLink="/viewer/factures">Factures</a></li>
+        <li><a routerLink="/viewer/clients">Clients</a></li>
+        <li><a routerLink="/viewer/produits">Produits</a></li>
+      </ul>
+    </nav>
+  </header>
+  <main class="viewer-content">
+    <router-outlet></router-outlet>
+  </main>
+  <app-chat-widget></app-chat-widget>
+</div>

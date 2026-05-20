@@ -1,0 +1,88 @@
+@startuml
+title Diagramme de séquence — Premier login & Changement de mot de passe (ECB)
+
+skinparam backgroundColor #FFFFFF
+skinparam sequenceArrowThickness 1.5
+skinparam roundcorner 5
+skinparam LifeLineBorderColor #333333
+skinparam SequenceGroupBorderColor #888888
+skinparam SequenceGroupFontColor #333333
+skinparam SequenceGroupBackgroundColor #F5F5F5
+
+' ECB Stereotypes
+actor "Utilisateur" as U
+boundary "Interface\nLogin" as LI <<Boundary>>
+boundary "Page Changer\nMot de Passe" as PI <<Boundary>>
+control "AuthController" as AC <<Control>>
+control "AuthService" as AS <<Control>>
+entity "User" as USR <<Entity>>
+control "JwtService" as JWT <<Control>>
+
+== Login ==
+
+U -> LI : Saisir email + mot de passe temporaire
+activate U
+activate LI
+LI -> AC : POST /api/auth/login
+activate AC
+AC -> AS : authenticate(request)
+activate AS
+AS -> USR : findByEmail(email)
+activate USR
+USR --> AS : User (firstLogin=true)
+deactivate USR
+AS -> USR : save() — setLastLoginDate
+activate USR
+USR --> AS : void
+deactivate USR
+AS -> JWT : generateToken(user)
+activate JWT
+JWT --> AS : JWT token
+deactivate JWT
+AS --> AC : AuthResponse (requirePasswordChange=true)
+deactivate AS
+AC --> LI : 200 OK
+deactivate AC
+LI --> U : Rediriger vers "Changer mot de passe"
+deactivate LI
+deactivate U
+
+== Changer mot de passe ==
+
+U -> PI : Saisir ancien + nouveau mot de passe
+activate U
+activate PI
+PI -> AC : POST /api/auth/change-password + JWT
+activate AC
+AC -> AS : changePassword(request)
+activate AS
+AS -> USR : findByEmail(email)
+activate USR
+USR --> AS : User
+deactivate USR
+
+alt Incorrect
+    AS --> AC : BadCredentialsException
+    activate AC
+    AC --> PI : 401 — Erreur : Ancien mot de passe incorrect
+    deactivate AC
+    PI --> U : Afficher erreur
+else Correct
+    AS -> AS : encode(newPassword)\nsetFirstLogin(false)\nsetStatus(ACTIVE)
+    activate AS
+    deactivate AS
+    AS -> USR : save(user)
+    activate USR
+    USR --> AS : void
+    deactivate USR
+    AS --> AC : 200 OK
+    deactivate AS
+    AC --> PI : Succès : Mot de passe changé
+    deactivate AC
+    PI --> U : Rediriger vers tableau de bord
+end
+
+deactivate PI
+deactivate U
+
+@enduml

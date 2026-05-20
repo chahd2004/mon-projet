@@ -1,0 +1,77 @@
+@startuml "Plateforme de Facturation - Use Cases"
+
+left to right direction
+skinparam packageStyle rectangle
+
+' Acteurs
+actor "Super Administrateur" as SuperAdmin
+actor "Administrateur Entreprise" as AdminEnt
+actor "Collaborateur (Viewer)" as Viewer
+actor "Client" as Client
+
+rectangle "Plateforme de Facturation" {
+    
+    usecase "Gérer les Utilisateurs" as UC_ManageUsers
+    usecase "Consulter Tableau de bord global" as UC_Dashboard
+    usecase "Gérer les Demandes d'inscription" as UC_ManageDemandes
+    usecase "Gérer les Commandes et BL" as UC_ManageOrders
+    usecase "Gérer les Clients et Produits" as UC_ManageClientsProducts
+    usecase "Signer numériquement - XAdES" as UC_Sign
+    usecase "Gérer les Paramètres" as UC_ManageParams
+    usecase "S'authentifier" as UC_Auth
+    usecase "Consulter Statistiques Entreprise" as UC_StatsEnterprise
+    usecase "Gérer les Factures et Avoirs" as UC_ManageInvoices
+    usecase "Gérer les Devis" as UC_ManageQuotes
+    usecase "Consulter les Documents" as UC_ViewDocs
+    usecase "Signer le Bon de Livraison et Bon de Commande" as UC_SignBL_BC
+    usecase "Accepter ou Rejeter un Devis" as UC_AcceptRejectQuote
+    usecase "Soumettre demande création" as UC_SubmitDemande
+    
+    usecase "Envoyer mail rejet" as UC_SendRejectMail
+    usecase "Envoyer mail approbation" as UC_SendApproveMail
+    usecase "Envoyer mail confirmation réception" as UC_SendConfirmMail
+    usecase "Envoyer demande signature BC & BL" as UC_SendSignRequestMail
+    usecase "Envoyer mail rejet demande (Admin Entreprise)" as UC_SendRejectDemandeMail
+    usecase "Envoyer mail approbation demande (Admin Entreprise)" as UC_SendApproveDemandeMail
+    usecase "Envoyer demande d'acceptation devis (Client)" as UC_SendDevisRequestMail
+}
+
+' Liens Super Administrateur
+SuperAdmin --> UC_ManageUsers
+SuperAdmin --> UC_Dashboard
+SuperAdmin --> UC_ManageDemandes
+SuperAdmin --> UC_Auth
+SuperAdmin --> UC_SendConfirmMail
+
+' Liens Administrateur Entreprise
+AdminEnt --> UC_ManageOrders
+AdminEnt --> UC_ManageClientsProducts
+AdminEnt --> UC_ManageParams
+AdminEnt --> UC_Auth
+AdminEnt --> UC_ManageInvoices
+AdminEnt --> UC_ManageQuotes
+AdminEnt --> UC_Sign
+AdminEnt --> UC_SubmitDemande
+
+' Liens Collaborateur (Viewer)
+Viewer --> UC_Auth
+Viewer --> UC_ViewDocs
+Viewer --> UC_StatsEnterprise
+
+' Liens Client
+Client --> UC_SignBL_BC
+Client --> UC_AcceptRejectQuote
+
+' Relations d'extension pour le mailing
+UC_ManageDemandes ..> UC_SendConfirmMail : <<include>>
+UC_ManageDemandes ..> UC_SendApproveDemandeMail : <<include>>
+UC_ManageDemandes ..> UC_SendRejectDemandeMail : <<include>>
+UC_ManageQuotes ..> UC_SendDevisRequestMail : <<include>>
+UC_ManageOrders ..> UC_SendSignRequestMail : <<include>>
+
+' Authentification requise pour tous les administrateurs
+AdminEnt ..> UC_Auth : <<include>>
+SuperAdmin ..> UC_Auth : <<include>>
+Viewer ..> UC_Auth : <<include>>
+
+@enduml

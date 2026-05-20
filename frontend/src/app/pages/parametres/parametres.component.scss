@@ -1,36 +1,21 @@
 // src/app/pages/parametres/parametres.component.scss
-@use "sass:color";
-// ===== VARIABLES =====
+@use 'sass:color';
+
 $primary-blue: #3b82f6;
-$primary-dark: #2563eb;
-$primary-light: #60a5fa;
-$success: #10b981;
-$warning: #f59e0b;
-$danger: #ef4444;
-$danger-dark: #dc2626;
-$dark: #1e293b;
-$gray-50: #f8fafc;
-$gray-100: #f1f5f9;
-$gray-200: #e2e8f0;
-$gray-300: #cbd5e1;
-$gray-400: #94a3b8;
-$gray-500: #64748b;
-$gray-600: #475569;
-$gray-700: #334155;
-$gray-800: #1e293b;
-$border-radius: 12px;
-$box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+$success:      #10b981;
+$warning:      #f59e0b;
+$danger:       #ef4444;
+$dark-blue:    #1e293b;
+$gray-light:   #f8fafc;
+$gray-text:    #64748b;
+$border:       #e2e8f0;
 
 // ===== CONTENEUR PRINCIPAL =====
 .parametres-container {
-  padding: 2rem;
+  padding: 1rem 1.5rem 3rem;
   min-height: 100vh;
-  background: linear-gradient(135deg, $gray-50 0%, $gray-100 100%);
-  font-family: 'Inter', sans-serif;
-
-  @media (max-width: 768px) {
-    padding: 1rem;
-  }
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  box-sizing: border-box;
 }
 
 // ===== EN-TÊTE =====
@@ -38,9 +23,9 @@ $box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 2rem;
+  margin-bottom: 1.5rem;
   flex-wrap: wrap;
-  gap: 1rem;
+  gap: 0.75rem;
 
   .header-left {
     display: flex;
@@ -48,725 +33,508 @@ $box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
     gap: 1rem;
 
     .back-btn {
-      width: 44px;
-      height: 44px;
-      border-radius: 12px;
-      border: none;
-      background: white;
-      color: $gray-600;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      transition: all 0.3s;
-      box-shadow: $box-shadow;
-
-      i {
-        font-size: 1.2rem;
-      }
-
-      &:hover {
-        background: $primary-blue;
-        color: white;
-        transform: translateX(-3px);
-        box-shadow: 0 6px 12px rgba($primary-blue, 0.2);
-      }
+      width: 38px; height: 38px;
+      border-radius: 10px; border: none;
+      background: white; color: $dark-blue;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; transition: all 0.2s;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      flex-shrink: 0;
+      i { font-size: 1.1rem; }
+      &:hover { background: $dark-blue; color: white; transform: translateX(-3px); }
     }
 
     h1 {
-      color: $gray-800;
-      font-size: 1.8rem;
-      font-weight: 700;
-      margin: 0;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-
-      i {
-        color: $primary-blue;
-        font-size: 1.8rem;
-      }
+      color: $dark-blue; font-weight: 700;
+      font-size: 1.5rem; margin: 0;
+      display: flex; align-items: center; gap: 0.5rem;
+      i { color: $primary-blue; }
     }
   }
 
   .header-actions {
-    display: flex;
-    gap: 0.5rem;
-
-    button {
-      min-width: 100px;
-    }
+    display: flex; align-items: center; gap: 0.75rem;
   }
 }
 
-// ===== STYLES COMMUNS POUR LES TABS =====
+// ===== TABS =====
 ::ng-deep .p-tabview {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+  overflow: hidden;
+
   .p-tabview-nav {
-    background: transparent;
-    border: none;
-    margin-bottom: 1.5rem;
+    background: white;
+    border-bottom: 2px solid $border;
+    padding: 0 1.5rem;
 
-    li {
-      .p-tabview-nav-link {
-        background: transparent;
-        border: none;
-        color: $gray-500;
-        font-weight: 600;
-        padding: 1rem 2rem;
-        transition: all 0.3s;
-        border-radius: $border-radius $border-radius 0 0;
+    li .p-tabview-nav-link {
+      color: $gray-text;
+      font-weight: 600;
+      font-size: 0.9rem;
+      padding: 1rem 1.25rem;
+      border: none !important;
+      border-bottom: 2px solid transparent !important;
+      background: transparent !important;
+      transition: all 0.2s;
+      display: flex; align-items: center; gap: 0.4rem;
 
-        &:hover {
-          color: $primary-blue;
-          background: rgba($primary-blue, 0.05);
-        }
-      }
+      &:hover { color: $primary-blue; }
+    }
 
-      &.p-highlight {
-        .p-tabview-nav-link {
-          color: $primary-blue;
-          border-bottom: 3px solid $primary-blue;
-          background: white;
-        }
-      }
+    li.p-highlight .p-tabview-nav-link {
+      color: $primary-blue !important;
+      border-bottom-color: $primary-blue !important;
     }
   }
 
   .p-tabview-panels {
     background: white;
-    border-radius: $border-radius;
-    padding: 2rem;
-    box-shadow: $box-shadow;
+    padding: 0;
   }
 }
 
-// ===== CONTENU DES TABS =====
+// ===== CONTENU ONGLET =====
 .tab-content {
-  .profile-header {
-    display: flex;
-    gap: 2rem;
-    margin-bottom: 2rem;
-    padding-bottom: 2rem;
-    border-bottom: 1px solid $gray-200;
-    flex-wrap: wrap;
+  padding: 2rem;
 
-    @media (max-width: 768px) {
-      flex-direction: column;
-      align-items: center;
-      text-align: center;
-    }
-
-    .avatar-section {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 1rem;
-
-      .profile-avatar {
-        width: 120px;
-        height: 120px;
-        background: linear-gradient(135deg, $primary-blue, $primary-dark);
-        color: white;
-        font-size: 3rem;
-        box-shadow: 0 8px 15px rgba($primary-blue, 0.3);
-        border: 4px solid white;
-      }
-
-      .avatar-upload {
-        ::ng-deep .p-button {
-          background: $gray-100;
-          border: 1px dashed $gray-300;
-          color: $gray-600;
-          padding: 0.5rem 1rem;
-          border-radius: 20px;
-          font-size: 0.85rem;
-
-          &:hover {
-            background: $primary-blue;
-            border-color: $primary-blue;
-            color: white;
-          }
-        }
-      }
-    }
-
-    .profile-info {
-      flex: 1;
-
-      h3 {
-        color: $gray-800;
-        font-size: 1.5rem;
-        margin: 0 0 0.5rem 0;
-      }
-
-      .user-email {
-        color: $gray-500;
-        margin: 0 0 0.25rem 0;
-        font-size: 0.95rem;
-      }
-
-      .user-role {
-        display: inline-block;
-        background: rgba($primary-blue, 0.1);
-        color: $primary-blue;
-        padding: 0.3rem 1rem;
-        border-radius: 20px;
-        font-size: 0.85rem;
-        font-weight: 600;
-        margin: 0 0 0.5rem 0;
-      }
-
-      .user-meta {
-        color: $gray-400;
-        font-size: 0.85rem;
-        margin: 0;
-      }
-    }
+  h3 {
+    color: $dark-blue;
+    font-size: 1.05rem;
+    font-weight: 700;
+    margin: 0 0 1.25rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid $border;
+    display: flex; align-items: center; gap: 0.5rem;
   }
 }
 
-// ===== FORMULAIRES =====
+// ===== PROFIL TAB LAYOUT =====
+.profile-tab-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.profile-card {
+  background: white;
+  border-radius: 14px;
+  border: 1px solid $border;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.04);
+  overflow: hidden;
+
+  .profile-card-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem 1.5rem;
+    background: linear-gradient(135deg, #f8fafc, #f1f5f9);
+    border-bottom: 2px solid $border;
+
+    .header-icon {
+      font-size: 1.2rem;
+      color: $primary-blue;
+      background: rgba($primary-blue, 0.1);
+      width: 36px; height: 36px;
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+    }
+
+    h3 {
+      margin: 0;
+      font-size: 0.95rem;
+      font-weight: 800;
+      color: $dark-blue;
+      letter-spacing: 0.05em;
+      border: none;
+      padding: 0;
+    }
+  }
+
+  .profile-card-body {
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.1rem;
+  }
+}
+
+// Email field with lock icon
+.email-field {
+  position: relative;
+
+  .lock-icon {
+    position: absolute;
+    right: 0.9rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: $gray-text;
+    font-size: 0.9rem;
+  }
+
+  input { padding-right: 2.5rem; }
+}
+
+// Profile save button
+.profile-save-btn {
+  align-self: flex-end;
+  min-width: 160px;
+  font-weight: 600;
+}
+
+// ===== PROFIL HEADER =====
+.profile-header {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  margin-bottom: 2rem;
+  padding: 1.5rem;
+  background: $gray-light;
+  border-radius: 14px;
+  border: 1px solid $border;
+
+  .avatar-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+
+    ::ng-deep .profile-avatar {
+      width: 80px !important; height: 80px !important;
+      font-size: 2rem !important;
+      background: $primary-blue !important;
+      color: white !important;
+      box-shadow: 0 4px 12px rgba($primary-blue, 0.3);
+    }
+
+    .avatar-upload {
+      ::ng-deep .p-button {
+        font-size: 0.78rem; padding: 0.4rem 0.9rem;
+        border-radius: 6px; background: white;
+        border: 1px solid $border; color: $dark-blue;
+        &:hover { border-color: $primary-blue; color: $primary-blue; }
+      }
+    }
+  }
+
+  .profile-info {
+    flex: 1;
+    h3 {
+      color: $dark-blue; font-size: 1.25rem; font-weight: 700;
+      margin: 0 0 0.25rem; border: none; padding: 0;
+    }
+    .user-email  { color: $gray-text; margin: 0.15rem 0; font-size: 0.9rem; }
+    .user-role   { color: $primary-blue; font-weight: 600; font-size: 0.85rem; margin: 0.15rem 0; }
+    .user-meta   { color: color.adjust($gray-text, $lightness: 15%); font-size: 0.8rem; margin: 0; }
+  }
+}
+
+// ===== GRILLE FORMULAIRE =====
 .form-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 1.5rem;
-  margin-bottom: 2rem;
-
-  @media (max-width: 768px) {
-    grid-template-columns: 1fr;
-  }
-
-  .full-width {
-    grid-column: span 2;
-
-    @media (max-width: 768px) {
-      grid-column: span 1;
-    }
-  }
+  grid-template-columns: 1fr 1fr;
+  gap: 1.25rem;
 
   .form-group {
-    label {
-      display: block;
-      margin-bottom: 0.5rem;
-      font-weight: 600;
-      color: $gray-700;
-      font-size: 0.9rem;
+    &.full-width { grid-column: 1 / -1; }
+  }
+}
+
+.form-group-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.25rem;
+  
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+    gap: 1.1rem;
+  }
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+
+  label {
+    font-size: 0.85rem; font-weight: 600;
+    color: $dark-blue;
+  }
+
+  .field-hint {
+    font-size: 0.78rem; color: $gray-text;
+    margin-top: 0.2rem;
+  }
+}
+
+.param-input {
+  width: 100%;
+  padding: 0.65rem 0.9rem;
+  border: 2px solid $border;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  color: $dark-blue;
+  background: white;
+  box-sizing: border-box;
+  transition: all 0.2s;
+
+  &:focus { border-color: $primary-blue; outline: none; box-shadow: 0 0 0 3px rgba($primary-blue, 0.1); }
+  &:disabled { background: $gray-light; color: $gray-text; cursor: not-allowed; }
+}
+
+::ng-deep .param-input-dropdown {
+  width: 100%;
+  .p-dropdown {
+    width: 100%;
+    border: 2px solid $border;
+    border-radius: 8px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    background: white;
+    &:not(.p-disabled).p-focus {
+      border-color: $primary-blue;
+      box-shadow: 0 0 0 3px rgba($primary-blue, 0.1);
+    }
+  }
+  .p-dropdown-label { font-size: 0.95rem; color: $dark-blue; padding-left: 0.9rem; }
+}
+
+// ===== BOUTON SECTION =====
+.save-section-btn {
+  margin-top: 1.5rem;
+}
+
+// ===== SÉCURITÉ =====
+::ng-deep .password-field {
+  width: 100% !important;
+  .p-password-input {
+    width: 100% !important;
+    border: 2px solid $border !important;
+    border-radius: 8px !important;
+    padding: 0.65rem 0.9rem !important;
+    &:focus { border-color: $primary-blue !important; box-shadow: 0 0 0 3px rgba($primary-blue, 0.1) !important; }
+  }
+}
+
+.twofa-section {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.25rem;
+  background: $gray-light;
+  border-radius: 12px;
+  border: 1px solid $border;
+  gap: 1rem;
+
+  .twofa-info {
+    display: flex; align-items: center; gap: 1rem;
+
+    i.pi-shield {
+      font-size: 2rem; color: $primary-blue;
+      background: rgba($primary-blue, 0.1);
+      width: 50px; height: 50px;
+      border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
     }
 
-    .param-input {
-      width: 100%;
-      padding: 0.75rem 1rem;
-      border: 2px solid $gray-200;
-      border-radius: 10px;
-      font-size: 0.95rem;
-      transition: all 0.3s;
-
-      &:focus {
-        border-color: $primary-blue;
-        outline: none;
-        box-shadow: 0 0 0 3px rgba($primary-blue, 0.1);
-      }
-
-      &:disabled {
-        background: $gray-100;
-        color: $gray-500;
-        cursor: not-allowed;
-      }
-    }
-
-    .field-hint {
-      display: block;
-      margin-top: 0.3rem;
-      color: $gray-400;
-      font-size: 0.8rem;
-      font-style: italic;
-    }
-
-    ::ng-deep .password-field {
-      width: 100%;
-
-      input {
-        width: 100%;
-        padding: 0.75rem 1rem;
-        border: 2px solid $gray-200;
-        border-radius: 10px;
-
-        &:focus {
-          border-color: $primary-blue;
-          box-shadow: 0 0 0 3px rgba($primary-blue, 0.1);
-        }
-      }
-    }
-
+    p    { margin: 0; color: $dark-blue; font-weight: 600; font-size: 0.95rem; }
     small {
-      display: block;
-      margin-top: 0.3rem;
-      color: $gray-500;
-      font-size: 0.8rem;
+      color: $gray-text; font-size: 0.82rem;
+      &.active { color: $success; font-weight: 600; }
     }
   }
 }
 
-// ===== SÉCURITÉ - 2FA =====
-.twofa-section {
+// ===== SESSIONS =====
+.sessions-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.session-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1.5rem;
-  background: $gray-50;
-  border-radius: $border-radius;
-  margin: 1.5rem 0;
+  padding: 1rem 1.25rem;
+  background: $gray-light;
+  border-radius: 10px;
+  border: 1px solid $border;
+  gap: 1rem;
 
-  @media (max-width: 768px) {
-    flex-direction: column;
-    gap: 1rem;
-    text-align: center;
+  .session-info {
+    display: flex; align-items: center; gap: 1rem;
+    i.pi-desktop { font-size: 1.4rem; color: $primary-blue; }
+    .session-device   { display: block; font-weight: 600; color: $dark-blue; font-size: 0.9rem; }
+    .session-location { display: block; color: $gray-text; font-size: 0.8rem; }
   }
 
-  .twofa-info {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
+  .session-meta {
+    display: flex; align-items: center; gap: 0.75rem;
+    .session-date { color: $gray-text; font-size: 0.8rem; }
 
-    i {
-      font-size: 2rem;
-      color: $primary-blue;
+    .session-badge.current {
+      background: rgba($success, 0.1); color: $success;
+      padding: 0.25rem 0.75rem; border-radius: 20px;
+      font-size: 0.78rem; font-weight: 600;
     }
 
-    p {
-      color: $gray-700;
-      margin: 0 0 0.25rem 0;
-      font-weight: 500;
-    }
-
-    small {
-      color: $gray-500;
-      
-      &.active {
-        color: $success;
-        font-weight: 600;
-      }
-    }
-  }
-}
-
-// ===== SESSIONS (APPAREILS CONNECTÉS) =====
-.sessions-list {
-  margin-top: 1rem;
-
-  .session-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 1rem;
-    border: 1px solid $gray-200;
-    border-radius: 10px;
-    margin-bottom: 0.5rem;
-    transition: all 0.3s;
-
-    &:hover {
-      background: $gray-50;
-      border-color: $primary-blue;
-    }
-
-    .session-info {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-
-      i {
-        font-size: 1.5rem;
-        color: $primary-blue;
-        background: rgba($primary-blue, 0.1);
-        padding: 0.5rem;
-        border-radius: 8px;
-      }
-
-      .session-device {
-        display: block;
-        font-weight: 600;
-        color: $gray-700;
-        margin-bottom: 0.25rem;
-      }
-
-      .session-location {
-        font-size: 0.85rem;
-        color: $gray-500;
-      }
-    }
-
-    .session-meta {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-
-      .session-date {
-        font-size: 0.85rem;
-        color: $gray-500;
-      }
-
-      .session-badge {
-        padding: 0.3rem 0.8rem;
-        border-radius: 20px;
-        font-size: 0.8rem;
-        font-weight: 600;
-
-        &.current {
-          background: rgba($success, 0.1);
-          color: $success;
-        }
-      }
-
-      .session-delete {
-        width: 32px;
-        height: 32px;
-        border: none;
-        background: rgba($danger, 0.1);
-        color: $danger;
-        border-radius: 8px;
-        cursor: pointer;
-        transition: all 0.3s;
-
-        &:hover {
-          background: $danger;
-          color: white;
-        }
-      }
+    .session-delete {
+      width: 30px; height: 30px; border-radius: 6px;
+      border: none; background: rgba($danger, 0.1);
+      color: $danger; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: all 0.2s;
+      &:hover { background: $danger; color: white; }
     }
   }
 }
 
 // ===== PRÉFÉRENCES =====
 .preferences-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 2rem;
-  margin-bottom: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.75rem;
+}
 
-  @media (max-width: 768px) {
-    grid-template-columns: 1fr;
+.pref-item {
+  background: $gray-light;
+  border-radius: 12px;
+  padding: 1.25rem 1.5rem;
+  border: 1px solid $border;
+
+  .pref-label {
+    display: flex; align-items: center; gap: 0.75rem;
+    margin-bottom: 0.9rem;
+
+    .pref-icon { font-size: 1.1rem; color: $primary-blue; }
+
+    .pref-title {
+      font-weight: 700; color: $dark-blue;
+      font-size: 0.95rem; display: block;
+    }
+
+    .pref-hint {
+      font-size: 0.75rem; color: $gray-text;
+      display: block; margin-top: 0.1rem;
+    }
   }
 
-  .pref-item {
-    label {
-      display: block;
-      margin-bottom: 0.5rem;
+  ::ng-deep .p-selectbutton {
+    .p-button {
+      font-size: 0.85rem;
+      padding: 0.5rem 1rem;
+      border-color: $border !important;
+      color: $gray-text;
+      background: white;
       font-weight: 600;
-      color: $gray-700;
+      transition: all 0.2s;
+
+      &:hover { border-color: $primary-blue !important; color: $primary-blue; }
+    }
+    .p-button.p-highlight {
+      background: $primary-blue !important;
+      border-color: $primary-blue !important;
+      color: white !important;
+      box-shadow: 0 2px 8px rgba($primary-blue, 0.3);
     }
   }
 }
 
+.pref-preview {
+  margin-top: 0.75rem;
+  padding: 0.6rem 1rem;
+  background: white;
+  border: 1px solid $border;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  color: $gray-text;
+
+  strong { color: $dark-blue; }
+
+  &.rtl-preview { direction: rtl; text-align: right; }
+}
+
 // ===== NOTIFICATIONS =====
 .notifications-grid {
-  .notif-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 1rem 0;
-    border-bottom: 1px solid $gray-200;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
 
-    &:last-child {
-      border-bottom: none;
-    }
+.notif-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.25rem;
+  background: $gray-light;
+  border-radius: 10px;
+  border: 1px solid $border;
 
-    .notif-info {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-
-      i {
-        font-size: 1.2rem;
-        color: $primary-blue;
-        width: 24px;
-      }
-
-      span {
-        color: $gray-700;
-        font-size: 0.95rem;
-      }
-    }
+  .notif-info {
+    display: flex; align-items: center; gap: 0.75rem;
+    i { font-size: 1.1rem; color: $primary-blue; }
+    span { font-weight: 600; color: $dark-blue; font-size: 0.9rem; }
   }
 }
 
 // ===== ZONE DE DANGER =====
 .danger-zone {
-  margin-top: 3rem;
-  border: 2px solid $danger;
-  border-radius: $border-radius;
+  margin-top: 2rem;
+  background: #fff5f5;
+  border: 2px solid #fecaca;
+  border-radius: 16px;
   overflow: hidden;
-  box-shadow: 0 4px 15px rgba($danger, 0.1);
 
   .danger-header {
-    background: linear-gradient(135deg, $danger, $danger-dark);
-    padding: 1.2rem 1.5rem;
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-
-    i {
-      color: white;
-      font-size: 1.4rem;
-      animation: pulse 2s infinite;
-    }
-
-    h3 {
-      color: white;
-      margin: 0;
-      font-size: 1.1rem;
-      font-weight: 700;
-      letter-spacing: 1px;
-    }
+    background: linear-gradient(135deg, #fee2e2, #fecaca);
+    padding: 1rem 1.5rem;
+    display: flex; align-items: center; gap: 0.75rem;
+    i { font-size: 1.5rem; color: $danger; }
+    h3 { margin: 0; color: $danger; font-size: 1rem; font-weight: 700; }
   }
 
   .danger-content {
-    padding: 2rem;
-    background: #fff5f5;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 2rem;
+    padding: 1.5rem;
 
     .danger-info {
-      margin-bottom: 2rem;
-
-      h4 {
-        color: $danger-dark;
-        margin: 0 0 0.75rem 0;
-        font-size: 1.2rem;
-        font-weight: 600;
-      }
-
-      p {
-        color: $gray-600;
-        margin: 0 0 1rem 0;
-        font-size: 0.95rem;
-        line-height: 1.5;
-      }
-
+      flex: 1;
+      h4 { color: $danger; font-size: 0.95rem; margin: 0 0 0.5rem; }
+      p  { color: #7f1d1d; font-size: 0.88rem; margin: 0 0 0.5rem; }
       ul {
-        color: $gray-600;
-        margin: 0;
-        padding-left: 1.5rem;
-
-        li {
-          margin-bottom: 0.5rem;
-          font-size: 0.95rem;
-          
-          &::marker {
-            color: $danger;
-          }
-        }
+        margin: 0; padding-left: 1.2rem;
+        li { color: #7f1d1d; font-size: 0.85rem; margin-bottom: 0.2rem; }
       }
     }
 
     .danger-actions {
-      display: flex;
-      justify-content: flex-end;
-      gap: 1rem;
-      border-top: 1px solid rgba($danger, 0.2);
-      padding-top: 1.5rem;
-
-      @media (max-width: 768px) {
-        flex-direction: column;
-        
-        button {
-          width: 100%;
-        }
-      }
+      display: flex; flex-direction: column; gap: 0.5rem;
+      align-items: flex-end; flex-shrink: 0;
     }
   }
 }
 
-// ===== BOUTONS PERSONNALISÉS =====
-::ng-deep .p-button {
-  border-radius: 10px;
-  font-weight: 600;
-  padding: 0.75rem 1.5rem;
-
-  &.p-button-success {
-    background: $success;
-    border: none;
-    
-    &:hover {
-      background: color.adjust($success, $lightness: -10%);
-    }
-  }
-
-  &.p-button-danger {
-    background: $danger;
-    border: none;
-    
-    &:hover {
-      background: $danger-dark;
-    }
-  }
-
-  &.p-button-outlined {
-    border: 2px solid $primary-blue;
-    color: $primary-blue;
-    background: transparent;
-
-    &:hover {
-      background: rgba($primary-blue, 0.1);
-    }
-  }
-
-  &.p-button-text {
-    color: $gray-600;
-
-    &:hover {
-      background: $gray-100;
-      color: $primary-blue;
-    }
-  }
+// ===== RESPONSIVE =====
+@media (max-width: 900px) {
+  .form-grid { grid-template-columns: 1fr; }
+  .form-grid .form-group.full-width { grid-column: 1; }
+  .profile-header { flex-direction: column; text-align: center; }
+  .twofa-section { flex-direction: column; align-items: flex-start; }
+  .session-item { flex-direction: column; align-items: flex-start; }
+  .danger-content { flex-direction: column; }
+  .danger-actions { align-items: stretch; width: 100%; }
 }
 
-// ===== ANIMATIONS =====
-@keyframes pulse {
-  0% {
-    opacity: 1;
-    transform: scale(1);
-  }
-  50% {
-    opacity: 0.8;
-    transform: scale(1.1);
-  }
-  100% {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
-// ===== MESSAGES TOAST =====
-::ng-deep .p-toast {
-  .p-toast-message {
-    border-radius: 10px;
-    
-    .p-toast-message-content {
-      padding: 1rem;
-      
-      .p-toast-detail {
-        margin-top: 0.25rem;
-      }
-    }
-  }
-}
-
-// ===== DIALOGUE DE CONFIRMATION =====
-::ng-deep .p-confirm-dialog {
-  .p-dialog-header {
-    padding: 1.5rem;
-    
-    .p-dialog-title {
-      font-weight: 700;
-      color: $gray-800;
-    }
-  }
-
-  .p-dialog-content {
-    padding: 0 1.5rem 1.5rem;
-    
-    .p-confirm-dialog-message {
-      margin-left: 1rem;
-      color: $gray-600;
-    }
-  }
-
-  .p-dialog-footer {
-    padding: 1rem 1.5rem;
-    border-top: 1px solid $gray-200;
-  }
-}
-
-// ===== LOADING SPINNER =====
-.loading-center {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 300px;
-}
-
-// ===== EMPTY STATE =====
-.empty-state {
-  text-align: center;
-  padding: 3rem;
-
-  i {
-    font-size: 4rem;
-    color: $gray-400;
-    margin-bottom: 1rem;
-  }
-
-  p {
-    color: $gray-500;
-    font-size: 1.1rem;
-  }
-}
-
-// ===== MEDIA QUERIES =====
-@media (max-width: 1200px) {
-  .parametres-container {
-    padding: 1.5rem;
-  }
-}
-
-@media (max-width: 992px) {
-  .header-section {
-    .header-left {
-      h1 {
-        font-size: 1.5rem;
-      }
-    }
-  }
-}
-
-@media (max-width: 768px) {
-  .parametres-container {
-    padding: 1rem;
-  }
-
-  .header-section {
-    flex-direction: column;
-    align-items: stretch;
-
-    .header-left {
-      justify-content: space-between;
-    }
-
-    .header-actions {
-      justify-content: flex-end;
-    }
-  }
-
-  ::ng-deep .p-tabview {
-    .p-tabview-nav {
-      li {
-        .p-tabview-nav-link {
-          padding: 0.75rem 1rem;
-          font-size: 0.9rem;
-        }
-      }
-    }
-
-    .p-tabview-panels {
-      padding: 1.5rem;
-    }
-  }
-}
-
-// ===== SCROLLBAR PERSONNALISÉE =====
-::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
-
-::-webkit-scrollbar-track {
-  background: $gray-100;
-  border-radius: 10px;
-}
-
-::-webkit-scrollbar-thumb {
-  background: $gray-400;
-  border-radius: 10px;
-
-  &:hover {
-    background: $gray-500;
-  }
+@media (max-width: 600px) {
+  .parametres-container { padding: 0.75rem 1rem 2rem; }
+  .tab-content { padding: 1rem; }
+  .header-section h1 { font-size: 1.2rem; }
+  .pref-item { padding: 1rem; }
+  ::ng-deep .p-selectbutton .p-button { padding: 0.4rem 0.7rem; font-size: 0.8rem; }
 }

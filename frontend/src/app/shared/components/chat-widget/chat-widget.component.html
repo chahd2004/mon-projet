@@ -1,0 +1,53 @@
+<!-- Bouton flottant -->
+<button *ngIf="!isOpen" class="chat-toggle-btn" (click)="toggleChat()">
+    <i class="pi pi-comments"></i>
+</button>
+
+<!-- Fenêtre de chat -->
+<div class="chat-window" [class.open]="isOpen">
+    <!-- Header -->
+    <div class="chat-header">
+        <div class="header-info">
+            <div class="bot-status"></div>
+            <h3>{{ 'CHATBOT.TITLE' | translate }}</h3>
+        </div>
+        <button class="close-btn" (click)="toggleChat()">
+            <i class="pi pi-times"></i>
+        </button>
+    </div>
+
+    <!-- Messages List -->
+    <div class="chat-messages" #scrollMe>
+        <div *ngFor="let msg of messages" 
+             [ngClass]="{'message-user': msg.isUser, 'message-bot': !msg.isUser}"
+             class="message-bubble">
+            <div class="message-content">
+                {{ msg.text }}
+            </div>
+            <div class="message-time">
+                {{ msg.time | date:'HH:mm' }}
+            </div>
+        </div>
+
+        <!-- Indicateur de chargement -->
+        <div *ngIf="isLoading" class="message-bot message-bubble">
+            <div class="message-content typing">
+                <span>{{ 'CHATBOT.THINKING' | translate }}</span>
+                <div class="dot-typing"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Input Area -->
+    <div class="chat-input-area">
+        <textarea 
+            [(ngModel)]="newMessage" 
+            (keydown.enter)="$event.preventDefault(); sendMessage()" 
+            [placeholder]="'CHATBOT.PLACEHOLDER' | translate"
+            [disabled]="isLoading"></textarea>
+        
+        <button (click)="sendMessage()" [disabled]="isLoading || !newMessage.trim()" class="send-btn">
+            <i class="pi pi-send"></i>
+        </button>
+    </div>
+</div>

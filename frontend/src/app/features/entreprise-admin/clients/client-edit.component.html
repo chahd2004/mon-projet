@@ -1,0 +1,62 @@
+<div class="form-container">
+  <div class="form-header">
+    <h1>Modifier Client</h1>
+  </div>
+
+  <p-card class="form-card">
+    <form [formGroup]="form">
+      <h3 class="section-title">Informations Générales</h3>
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="raisonSociale">Raison Sociale *</label>
+          <input id="raisonSociale" type="text" pInputText formControlName="raisonSociale" />
+        </div>
+
+        <div class="form-group">
+          <label for="email">Email *</label>
+          <input id="email" type="email" pInputText formControlName="email" />
+        </div>
+
+        <div class="form-group">
+          <label for="telephone">Téléphone *</label>
+          <input id="telephone" type="tel" pInputText formControlName="telephone" />
+        </div>
+
+        <div class="form-group">
+          <label for="contactPrincipal">Contact Principal *</label>
+          <input id="contactPrincipal" type="text" pInputText formControlName="contactPrincipal" />
+        </div>
+      </div>
+
+      <h3 class="section-title">Adresse</h3>
+      <div class="form-grid">
+        <div class="form-group full-width">
+          <label for="adresse">Adresse *</label>
+          <input id="adresse" type="text" pInputText formControlName="adresse" />
+        </div>
+
+        <div class="form-group">
+          <label for="region">Région *</label>
+          <p-dropdown id="region" [options]="regionOptions" formControlName="region" optionLabel="label"
+            optionValue="value"></p-dropdown>
+        </div>
+
+        <div class="form-group">
+          <label for="codePostal">Code Postal *</label>
+          <input id="codePostal" type="text" pInputText formControlName="codePostal" />
+        </div>
+      </div>
+
+      <div class="form-group full-width">
+        <label for="notes">Notes</label>
+        <textarea id="notes" pInputText formControlName="notes" rows="3"></textarea>
+      </div>
+
+      <div class="form-actions">
+        <button pButton type="button" label="Annuler" class="p-button-text" (click)="cancel()"></button>
+        <button pButton type="button" label="Mettre à jour" icon="pi pi-check" [loading]="isSubmitting"
+          [disabled]="!form.valid || isSubmitting" (click)="save()"></button>
+      </div>
+    </form>
+  </p-card>
+</div>

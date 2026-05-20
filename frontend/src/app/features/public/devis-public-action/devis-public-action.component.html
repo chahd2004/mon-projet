@@ -1,0 +1,91 @@
+<div class="signature-page">
+  <p-toast></p-toast>
+
+  <!-- Loading -->
+  <div class="loading-state" *ngIf="loading">
+    <div class="spinner"></div>
+    <p>{{ 'DEVIS.LOADING' | translate:{Default: 'Chargement du devis...'} }}</p>
+  </div>
+
+  <!-- Error State -->
+  <div class="error-state" *ngIf="!loading && errorMessage && !dejaTraite && !actionReussie">
+    <div class="error-card">
+      <i class="pi pi-exclamation-triangle" style="font-size: 3rem; color: #ef4444; margin-bottom: 1rem;"></i>
+      <h2>Document introuvable</h2>
+      <p>{{ errorMessage }}</p>
+    </div>
+  </div>
+
+  <!-- Success State or Already Processed -->
+  <div class="success-state" *ngIf="actionReussie || dejaTraite">
+    <div class="success-card">
+      
+      <i *ngIf="actionType === 'ACCEPTED'" class="pi pi-check-circle" style="font-size: 4rem; color: #22c55e; margin-bottom: 1.5rem;"></i>
+      <i *ngIf="actionType === 'REJECTED'" class="pi pi-times-circle" style="font-size: 4rem; color: #ef4444; margin-bottom: 1.5rem;"></i>
+
+      <h2 *ngIf="actionReussie && actionType === 'ACCEPTED'">DEVIS ACCEPTÉ !</h2>
+      <h2 *ngIf="actionReussie && actionType === 'REJECTED'">DEVIS REJETÉ !</h2>
+      <h2 *ngIf="dejaTraite">DOCUMENT COMPLÉTÉ</h2>
+
+      <div class="divider"></div>
+      
+      <p *ngIf="actionReussie && actionType === 'ACCEPTED'">Vous avez accepté le devis {{ devis?.numDevis }} avec succès.</p>
+      <p *ngIf="actionReussie && actionType === 'REJECTED'">Vous avez rejeté le devis {{ devis?.numDevis }}.</p>
+      <p *ngIf="dejaTraite && actionType === 'ACCEPTED'">Ce devis ({{ devis?.numDevis }}) a déjà été accepté.</p>
+      <p *ngIf="dejaTraite && actionType === 'REJECTED'">Ce devis ({{ devis?.numDevis }}) a déjà été rejeté.</p>
+      
+      <button class="btn-close" (click)="fermer()">{{ 'PUBLIC_SIGNATURE.BTN_CLOSE' | translate }}</button>
+    </div>
+  </div>
+
+  <!-- Action Form -->
+  <div class="signature-container" *ngIf="!loading && devis && !actionReussie && !dejaTraite && !errorMessage">
+
+    <div class="signature-header">
+      <h1><i class="pi pi-file" style="font-size: 1.3rem; vertical-align: middle; margin-right: 8px;"></i> APPOBATION DEVIS</h1>
+      <div class="divider"></div>
+    </div>
+
+    <div class="bc-info">
+      <div class="info-row">
+        <span class="info-label">Devis N°</span>
+        <span class="info-value">{{ devis.numDevis }}</span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">Montant Total TTC</span>
+        <span class="info-value amount">{{ devis.totalTTC | number:'1.3-3' }} TND</span>
+      </div>
+    </div>
+
+    <div class="form-card">
+      <p style="text-align: center; color: #64748b; margin-bottom: 2rem; font-size: 0.95rem;">
+        Veuillez accepter ou rejeter ce devis pour informer l'émetteur de votre décision.
+      </p>
+
+      <button
+        class="btn-signer"
+        [disabled]="processing"
+        (click)="accepter()"
+        style="border-color: #22c55e; color: #166534; margin-bottom: 1rem;"
+      >
+        <i class="pi pi-check-circle" *ngIf="!processing"></i>
+        <i class="pi pi-spin pi-spinner" *ngIf="processing"></i>
+        {{ 'DEVIS.ACTIONS.APPROVE' | translate:{Default: 'Accepter le Devis'} }}
+      </button>
+
+      <button
+        class="btn-signer"
+        [disabled]="processing"
+        (click)="rejeter()"
+        style="border-color: #ef4444; color: #991b1b;"
+        onmouseover="this.style.backgroundColor='#ef4444'; this.style.color='#ffffff';"
+        onmouseout="this.style.backgroundColor='transparent'; this.style.color='#991b1b';"
+      >
+        <i class="pi pi-times-circle" *ngIf="!processing"></i>
+        <i class="pi pi-spin pi-spinner" *ngIf="processing"></i>
+        {{ 'DEVIS.ACTIONS.REJECT' | translate:{Default: 'Rejeter le Devis'} }}
+      </button>
+
+    </div>
+  </div>
+</div>

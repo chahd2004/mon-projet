@@ -1,0 +1,198 @@
+@startuml
+title Diagramme de Séquence - Bons de Commande
+
+skinparam style strictuml
+skinparam maxMessageSize 150
+skinparam sequence {
+    ParticipantPadding 30
+    MessageAlign center
+}
+
+actor "Manager" as Manager
+actor "Consultant" as Consultant
+
+boundary "Interface\n<<Boundary>>" as Interface
+control "ConversionController\n<<Control>>" as ConversionCtrl
+control "BonCommandeController\n<<Control>>" as Controller
+control "ConversionService\n<<Control>>" as ConversionSvc
+control "BonCommandeService\n<<Control>>" as Service
+control "DocumentEmailService\n<<Control>>" as EmailService
+entity "BonCommande\n<<Entity>>" as BC
+
+== Consultation (Manager & Consultant) ==
+
+Manager -> Interface : Accéder au menu "Bons de Commande"
+Consultant -> Interface : Accéder au menu "Bons de Commande"
+activate Interface
+Interface -> Controller : GET /api/bon-commandes
+activate Controller
+Controller -> Service : getAll()
+activate Service
+Service -> BC : findAll() [via Repository]
+activate BC
+BC --> Service : List<BonCommande>
+deactivate BC
+Service --> Controller : List<BonCommandeResponseDTO>
+deactivate Service
+Controller --> Interface : 200 OK (Affichage liste)
+deactivate Controller
+Interface --> Manager : Liste affichée
+Interface --> Consultant : Liste affichée
+deactivate Interface
+
+== Modification (Manager uniquement) ==
+
+Manager -> Interface : Sélectionner + Modifier
+activate Interface
+Interface -> Controller : PUT /api/bon-commandes/{id}
+activate Controller
+Controller -> Service : update(id, dto)
+activate Service
+Service -> BC : findById() + save()
+activate BC
+BC --> Service : BonCommande
+deactivate BC
+Service --> Controller : BonCommandeResponseDTO
+deactivate Service
+Controller --> Interface : 200 OK
+deactivate Controller
+Interface --> Manager : Succès : BC mis à jour
+deactivate Interface
+
+== Création Directe (Manager uniquement) ==
+
+Manager -> Interface : Saisir infos + cliquer sur "Enregistrer d'un coup"
+activate Interface
+
+Interface -> Controller : POST /api/bon-commandes
+activate Controller
+
+Controller -> Service : create(dto)
+activate Service
+
+Service -> BC : save(newBC, statut=DRAFT)
+activate BC
+BC --> Service : BonCommande
+deactivate BC
+
+Service --> Controller : BonCommandeResponseDTO
+deactivate Service
+
+Controller --> Interface : 201 Created
+deactivate Controller
+
+Interface --> Manager : Succès : Bon de commande généré (DRAFT)
+deactivate Interface
+
+== Génération depuis Devis (Manager uniquement) ==
+
+Manager -> Interface : cliquer sur "Générer Bon de Commande"
+activate Interface
+Interface -> ConversionCtrl : POST /api/conversions/devis/{id}/vers-bon-commande
+activate ConversionCtrl
+ConversionCtrl -> ConversionSvc : devisVersBonCommande(id, dto)
+activate ConversionSvc
+ConversionSvc -> BC : save(newBC, statut=DRAFT)
+activate BC
+BC --> ConversionSvc : BonCommande
+deactivate BC
+ConversionSvc --> ConversionCtrl : BonCommandeResponseDTO
+deactivate ConversionSvc
+ConversionCtrl --> Interface : 201 Created
+deactivate ConversionCtrl
+Interface --> Manager : Succès : Bon de commande généré (DRAFT)
+deactivate Interface
+
+Service --> Controller : BonCommandeResponseDTO
+deactivate Service
+
+Controller --> Interface : 201 Created
+deactivate Controller
+
+Interface --> Manager : Succès : Bon de commande généré (DRAFT)
+deactivate Interface
+
+== Envoyer demande de signature (Manager uniquement) ==
+
+Manager -> Interface : cliquer sur "Envoyer demande"
+activate Interface
+
+Interface -> Controller : PUT /api/bon-commandes/{id}/envoyer
+activate Controller
+
+Controller -> Service : envoyer(id)
+activate Service
+
+Service -> EmailService : sendBonCommandeEmail(...)
+activate EmailService
+note right : L'email (lien de signature) est envoyé au Client
+EmailService --> Service : void
+deactivate EmailService
+
+Service -> BC : setStatut(SENT)
+activate BC
+BC --> Service : void
+deactivate BC
+
+Service --> Controller : BonCommandeResponseDTO
+deactivate Service
+
+Controller --> Interface : 200 OK
+deactivate Controller
+
+Interface --> Manager : Succès : Mail envoyé au client
+deactivate Interface
+
+== Confirmation de Commande (Manager uniquement) ==
+
+Manager -> Interface : cliquer sur "Confirmer"
+activate Interface
+
+Interface -> Controller : PUT /api/bon-commandes/{id}/confirmer
+activate Controller
+
+Controller -> Service : confirmer(id)
+activate Service
+
+Service -> BC : setStatut(CONFIRMED)
+activate BC
+BC --> Service : void
+deactivate BC
+
+Service --> Controller : BonCommandeResponseDTO
+deactivate Service
+
+Controller --> Interface : 200 OK
+deactivate Controller
+
+Interface --> Manager : Succès : Bon de commande confirmé
+deactivate Interface
+
+== Annulation (Manager uniquement) ==
+
+Manager -> Interface : cliquer sur "Annuler"
+activate Interface
+Interface -> Manager : Demander raison
+Manager -> Interface : Saisir raison
+
+Interface -> Controller : PUT /api/bon-commandes/{id}/annuler
+activate Controller
+
+Controller -> Service : annuler(id, raison)
+activate Service
+
+Service -> BC : setStatut(CANCELLED)
+activate BC
+BC --> Service : void
+deactivate BC
+
+Service --> Controller : BonCommandeResponseDTO
+deactivate Service
+
+Controller --> Interface : 200 OK
+deactivate Controller
+
+Interface --> Manager : Succès : Bon de commande annulé
+deactivate Interface
+
+@enduml

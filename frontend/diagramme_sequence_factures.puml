@@ -1,0 +1,192 @@
+@startuml
+title Diagramme de séquence — Gestion des factures (ECB)
+
+skinparam backgroundColor #FFFFFF
+skinparam sequenceArrowThickness 1.5
+skinparam roundcorner 5
+skinparam LifeLineBorderColor #333333
+skinparam SequenceGroupBorderColor #888888
+skinparam SequenceGroupFontColor #333333
+skinparam SequenceGroupBackgroundColor #F5F5F5
+
+' ECB Stereotypes
+actor "Manager" as M
+actor "Consultant" as C
+boundary "Interface" as I <<Boundary>>
+control "FactureController" as FC <<Control>>
+control "FactureService" as FS <<Control>>
+entity "Facture" as E <<Entity>>
+
+== Consultation (Manager & Consultant) ==
+
+M -> I : Accéder au menu "Factures"
+C -> I : Accéder au menu "Factures"
+activate I
+I -> FC : GET /api/factures
+activate FC
+FC -> FS : getAll()
+activate FS
+FS -> E : findAll()
+activate E
+E --> FS : List<Facture>
+deactivate E
+FS --> FC : List<FactureDTO>
+deactivate FS
+FC --> I : Affichage de la liste
+deactivate FC
+I --> M : Liste affichée
+I --> C : Liste affichée
+deactivate I
+
+== Création Directe (Manager) ==
+
+M -> I : cliquer sur "Nouvelle facture"
+activate M
+activate I
+I -> FC : POST /api/factures
+activate FC
+FC -> FS : createFacture(details)
+activate FS
+FS -> E : save(newFacture, statut=DRAFT)
+activate E
+E --> FS : Facture
+deactivate E
+FS --> FC : FactureDTO
+deactivate FS
+FC --> I : Affichage Facture (Brouillon)
+deactivate FC
+I --> M : Succès : Facture ajoutée (DRAFT)
+deactivate I
+deactivate M
+
+== Création depuis Devis / BL (Manager) ==
+
+M -> I : cliquer sur "Générer Facture"
+activate M
+activate I
+I -> FC : POST /api/conversions/...
+activate FC
+note over FC : Utilise DevisService ou\nBonLivraisonService
+FC -> FS : create(fromSource)
+activate FS
+FS -> E : save(newFacture, statut=DRAFT)
+activate E
+E --> FS : Facture
+deactivate E
+FS --> FC : FactureDTO
+FC --> I : Facture créée (DRAFT)
+deactivate FS
+deactivate FC
+I --> M : Succès : Facture générée (DRAFT)
+deactivate I
+deactivate M
+
+== Modification (Manager) ==
+
+M -> I : cliquer sur "Modifier"
+activate M
+activate I
+I -> FC : PUT /api/factures/{id}
+activate FC
+FC -> FS : updateFacture(id, details)
+activate FS
+FS -> E : save(updatedFacture)
+activate E
+E --> FS : Facture
+deactivate E
+FS --> FC : FactureDTO
+FC --> I : Confirmation de modification
+deactivate FC
+I --> M : Succès : Facture modifiée
+deactivate I
+deactivate FS
+deactivate FC
+deactivate M
+
+== Émission et Envol (Manager) ==
+
+M -> I : cliquer sur "Émettre"
+activate M
+activate I
+I -> FC : PUT /api/factures/{id}/signer
+activate FC
+FC -> FS : signerFacture(id)
+activate FS
+FS -> E : updateStatus(id, statut=SIGNED)
+activate E
+E --> FS : void
+deactivate E
+FS --> FC : FactureDTO
+FC --> I : Facture signée (SIGNED)
+deactivate FC
+I --> M : Succès : Facture signée
+deactivate I
+deactivate FS
+deactivate FC
+deactivate M
+
+M -> I : cliquer sur "Envoyer"
+activate M
+activate I
+I -> FC : PUT /api/factures/{id}/envoyer
+activate FC
+FC -> FS : envoyerFacture(id)
+activate FS
+FS -> E : updateStatus(id, statut=SENT)
+activate E
+E --> FS : void
+deactivate E
+FS --> FC : FactureDTO
+FC --> I : Facture émise (SENT)
+deactivate FC
+I --> M : Succès : Facture émise et envoyée
+deactivate I
+deactivate FS
+deactivate FC
+deactivate M
+
+== Paiement (Manager) ==
+
+M -> I : cliquer sur "Payer"
+activate M
+activate I
+I -> FC : PUT /api/factures/{id}/payer
+activate FC
+FC -> FS : marquerPayee(id)
+activate FS
+FS -> E : updateStatus(id, statut=PAID)
+activate E
+E --> FS : void
+deactivate E
+FS --> FC : FactureDTO
+FC --> I : Facture marquée PAYÉE
+deactivate FC
+I --> M : Succès : Facture marquée payée
+deactivate I
+deactivate FS
+deactivate FC
+deactivate M
+
+== Annulation / Rejet (Manager) ==
+
+M -> I : cliquer sur "Annuler / Rejet"
+activate M
+activate I
+I -> FC : PUT /api/factures/{id}/annuler
+activate FC
+FC -> FS : annulerFacture(id)
+activate FS
+FS -> E : updateStatus(id, statut=CANCELLED)
+activate E
+E --> FS : void
+deactivate E
+FS --> FC : FactureDTO
+FC --> I : Statut mis à jour
+deactivate FC
+I --> M : Facture annulée
+deactivate I
+deactivate FS
+deactivate FC
+deactivate M
+
+@enduml

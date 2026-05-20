@@ -1,0 +1,42 @@
+<p-dialog
+  [(visible)]="visible"
+  (onHide)="onClose()"
+  [header]="title"
+  [modal]="true"
+  [style]="{ width: '24rem' }"
+  [draggable]="false"
+  [resizable]="false"
+  [closeOnEscape]="!isLoading"
+  [showHeader]="true"
+  styleClass="confirmation-dialog"
+>
+  <div class="dialog-content" [class]="getSeverityClass()">
+    <div class="icon-container">
+      <i [class]="icon"></i>
+    </div>
+    <p class="message">{{ message }}</p>
+  </div>
+
+  <ng-template pTemplate="footer">
+    <div class="dialog-footer">
+      <button
+        pButton
+        type="button"
+        label="{{ cancelLabel }}"
+        icon="pi pi-times"
+        (click)="onCancel()"
+        text
+        [disabled]="isLoading"
+      ></button>
+      <button
+        pButton
+        type="button"
+        label="{{ confirmLabel }}"
+        icon="pi pi-check"
+        (click)="onConfirm()"
+        [loading]="isLoading"
+        [class]="'p-button-' + severity"
+      ></button>
+    </div>
+  </ng-template>
+</p-dialog>

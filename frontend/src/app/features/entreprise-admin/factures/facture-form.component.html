@@ -1,0 +1,99 @@
+<p-toast></p-toast>
+
+<div class="form-container">
+  <div class="form-header">
+    <h1>Créer Facture</h1>
+  </div>
+
+  <p-card class="form-card">
+    <form [formGroup]="form">
+      <div class="form-grid">
+        <!-- CLIENT -->
+        <div class="form-group">
+          <label for="acheteurId">Client *</label>
+          <p-dropdown id="acheteurId" [options]="clientOptions" formControlName="acheteurId" optionLabel="label"
+            optionValue="value" placeholder="Sélectionner un client" [style]="{'width':'100%'}"
+            [class.ng-invalid]="form.get('acheteurId')?.invalid && form.get('acheteurId')?.touched"></p-dropdown>
+          <small class="p-error" *ngIf="form.get('acheteurId')?.invalid && form.get('acheteurId')?.touched">
+            Client obligatoire
+          </small>
+        </div>
+
+        <!-- MODE PAIEMENT -->
+        <div class="form-group">
+          <label for="modePaiement">Mode de Paiement *</label>
+          <p-dropdown id="modePaiement" [options]="modePaiementOptions" formControlName="modePaiement"
+            optionLabel="label" optionValue="value" placeholder="Sélectionner le mode"
+            [style]="{'width':'100%'}"></p-dropdown>
+          <small class="p-error" *ngIf="form.get('modePaiement')?.invalid && form.get('modePaiement')?.touched">
+            Mode de paiement obligatoire
+          </small>
+        </div>
+
+        <!-- DATE EMISSION -->
+        <div class="form-group">
+          <label for="dateEmission">Date d'Émission *</label>
+          <input id="dateEmission" type="date" pInputText formControlName="dateEmission" style="width:100%" />
+        </div>
+
+        <!-- DATE PAIEMENT -->
+        <div class="form-group">
+          <label for="datePaiement">Date d'Échéance *</label>
+          <input id="datePaiement" type="date" pInputText formControlName="datePaiement" style="width:100%" />
+        </div>
+      </div>
+
+      <!-- LIGNES -->
+      <h3 class="section-title">Lignes de Facture</h3>
+      <div class="lines-section">
+        <p-table [value]="lignes.controls" responsiveLayout="scroll">
+          <ng-template pTemplate="header">
+            <tr>
+              <th>Produit *</th>
+              <th style="text-align: center; width: 150px">Quantité *</th>
+              <th style="width: 50px">Action</th>
+            </tr>
+          </ng-template>
+
+          <ng-template pTemplate="body" let-ligne let-idx="rowIndex">
+            <tr [formGroup]="$any(ligne)">
+              <td>
+                <p-dropdown [options]="produitOptions" formControlName="produitId" optionLabel="label"
+                  optionValue="value" placeholder="Sélectionner un produit" [style]="{'width':'100%'}"
+                  (onChange)="onProduitChange(idx)"></p-dropdown>
+                <small class="info-produit">{{ getProduitLabel(idx) }}</small>
+              </td>
+              <td style="text-align: center">
+                <p-inputNumber formControlName="quantite" [min]="1" [step]="1"
+                  [style]="{'width':'100%'}"></p-inputNumber>
+              </td>
+              <td style="text-align: center">
+                <button pButton type="button" icon="pi pi-trash"
+                  class="p-button-rounded p-button-text p-button-sm p-button-danger" (click)="removeLigne(idx)"
+                  [disabled]="lignes.length === 1"></button>
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
+
+        <button pButton type="button" label="Ajouter une ligne" icon="pi pi-plus"
+          class="p-button-sm p-button-outlined mt-2" (click)="addLigne()"></button>
+      </div>
+
+      <!-- TOTAL -->
+      <div class="total-section">
+        <div class="total-item">
+          <span>Total TTC estimé :</span>
+          <strong>{{ calculateTotal() | number: '1.2-2' }} TND</strong>
+        </div>
+      </div>
+
+      <!-- ACTIONS -->
+      <div class="form-actions">
+        <button pButton type="button" label="Annuler" class="p-button-text" (click)="cancel()"></button>
+        <button pButton type="button" label="Créer la Facture" icon="pi pi-check" [loading]="isSubmitting"
+          [disabled]="form.invalid || isSubmitting || lignes.length === 0" (click)="save()"></button>
+      </div>
+    </form>
+  </p-card>
+</div>

@@ -1,0 +1,97 @@
+<div class="register-page">
+  <p-toast></p-toast>
+
+  <p-card class="register-card">
+    <ng-template pTemplate="header">
+      <div class="card-header">
+        <h1>📝 Inscription Entreprise</h1>
+      </div>
+    </ng-template>
+
+    <div class="form-container">
+      <div class="form-row">
+        <div class="form-group">
+          <label for="prenom">👤 Prénom</label>
+          <input pInputText id="prenom" [(ngModel)]="prenom" type="text" placeholder="Votre prénom" [disabled]="loading" />
+        </div>
+
+        <div class="form-group">
+          <label for="nom">👤 Nom</label>
+          <input pInputText id="nom" [(ngModel)]="nom" type="text" placeholder="Votre nom" [disabled]="loading" />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="email">📧 Email</label>
+        <input pInputText id="email" [(ngModel)]="email" type="email" placeholder="votre@email.com" [disabled]="loading" />
+      </div>
+
+      <div class="form-group">
+        <label for="telephone">📱 Téléphone (optionnel)</label>
+        <input pInputText id="telephone" [(ngModel)]="telephone" type="text" placeholder="+216 XX XXX XXX" [disabled]="loading" />
+      </div>
+
+      <div class="form-group">
+        <label>🔒 Rôle</label>
+        <div class="role-section">
+          <div class="role-option">
+            <input type="radio" id="roleEntrepriseAdmin" name="role" value="ENTREPRISE_ADMIN" [(ngModel)]="role" />
+            <label for="roleEntrepriseAdmin">
+              🏢 <strong>Entreprise Admin</strong>
+              <span class="role-desc">Gestion de l'entreprise</span>
+            </label>
+          </div>
+
+          <div class="role-option">
+            <input type="radio" id="roleCollaborateur" name="role" value="ENTREPRISE_VIEWER" [(ngModel)]="role" />
+            <label for="roleCollaborateur">
+              👥 <strong>Collaborateur</strong>
+              <span class="role-desc">Enregistré en tant que ENTREPRISE_VIEWER</span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="password">🔒 Mot de passe</label>
+          <input pInputText id="password" [(ngModel)]="password" type="password" placeholder="Entrez un mot de passe" [disabled]="loading" />
+        </div>
+
+        <div class="form-group">
+          <label for="confirmPassword">🔒 Confirmer mot de passe</label>
+          <input pInputText id="confirmPassword" [(ngModel)]="confirmPassword" type="password" placeholder="Confirmez votre mot de passe" [disabled]="loading" />
+        </div>
+      </div>
+
+      <div class="form-group checkbox">
+        <p-checkbox [(ngModel)]="acceptConditions" [binary]="true"></p-checkbox>
+        <label>
+          J'accepte les
+          <a href="#" class="link">conditions d'utilisation</a>
+        </label>
+      </div>
+
+      <p-button
+        label="S'inscrire"
+        icon="pi pi-user-plus"
+        (click)="register()"
+        [loading]="loading"
+        [disabled]="loading"
+        styleClass="w-full p-button-primary"
+      ></p-button>
+    </div>
+
+    <ng-template pTemplate="footer">
+      <div class="card-footer">
+        <p>
+          Vous avez déjà un compte?
+          <a (click)="navigateToLogin()" class="link">Se connecter</a>
+        </p>
+        <p>
+          <a (click)="navigateToHome()" class="link">← Retour à l'accueil</a>
+        </p>
+      </div>
+    </ng-template>
+  </p-card>
+</div>

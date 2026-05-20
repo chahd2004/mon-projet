@@ -1,0 +1,98 @@
+@startuml
+title Chatbot IA — Diagramme de Séquence
+
+skinparam backgroundColor #FFFFFF
+skinparam sequenceArrowThickness 1.5
+skinparam roundcorner 5
+
+actor "Utilisateur" as User
+boundary "Interface Angular" as UI
+control "ChatController" as CC
+control "SecurityContext" as Sec
+control "ChatService" as CS
+boundary "API Groq (LLM)" as LLM
+database "PostgreSQL" as DB
+
+== Envoi du message ==
+
+User -> UI : Envoyer message
+activate UI
+UI -> CC : POST /api/chat
+activate CC
+CC -> Sec : Vérifier rôle utilisateur
+activate Sec
+Sec --> CC : Authentification OK
+deactivate Sec
+
+note right of CC
+  Accès :
+  ✓ MANAGER / ADMIN
+  ✓ CONSULTANT (lecture)
+  ✗ autres refusés
+end note
+
+CC -> CS : getGroqResponse(message, entrepriseId)
+activate CS
+
+== Détection langue + génération SQL ==
+
+CS -> CS : detectLanguage()
+CS -> LLM : Générer SQL sécurisé
+activate LLM
+note right of LLM
+  Prompt :
+  • Schéma BDD
+  • Règles métier
+  • Filtres sécurité
+end note
+LLM --> CS : SQL brut
+deactivate LLM
+CS -> CS : Nettoyage + validation SQL
+
+alt SQL Invalide
+    CS --> CC : Requête refusée
+    CC --> UI : Message sécurité
+    UI --> User : Afficher erreur
+end
+
+== Exécution SQL ==
+
+CS -> DB : executeSQL()
+activate DB
+DB --> CS : Résultats
+deactivate DB
+
+CS -> CS : Classifier résultats\n(RESULT_VALUE, MANY_RESULTS...)
+CS -> CS : Vérifier limite tokens
+
+alt Limite dépassée
+    CS --> CC : Résultat trop volumineux
+    CC --> UI : Avertissement
+    UI --> User : Afficher message
+end
+
+== Génération réponse finale ==
+
+CS -> LLM : Générer réponse naturelle
+activate LLM
+note right of LLM
+  Réponse :
+  • même langue
+  • format TND
+  • SQL caché
+end note
+LLM --> CS : Réponse IA
+deactivate LLM
+
+CS --> CC : Réponse finale
+deactivate CS
+
+CC --> UI : 200 OK
+deactivate CC
+
+UI --> User : Afficher réponse
+deactivate UI
+
+note across : Temps estimé :\n~2 à ~5 secondes
+
+@enduml

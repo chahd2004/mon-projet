@@ -1,0 +1,49 @@
+@startuml
+title Diagramme de séquence — Login classique
+
+skinparam backgroundColor #FFFFFF
+skinparam sequenceArrowThickness 1.5
+skinparam roundcorner 5
+skinparam ParticipantPadding 20
+skinparam LifeLineBorderColor #333333
+skinparam SequenceGroupBorderColor #888888
+skinparam SequenceGroupFontColor #333333
+skinparam SequenceGroupBackgroundColor #F5F5F5
+
+actor "Utilisateur" as U
+boundary "Interface\nLogin" as UI
+control "AuthController" as AC
+control "AuthService" as AS
+control "UserRepository" as UR
+control "JwtService" as JS
+
+U -> UI : Saisir email + mot de passe
+UI -> AC : POST /api/auth/login
+AC -> AS : authenticate(request)
+AS -> AS : authenticationManager.authenticate()
+
+alt Incorrect
+  AS --> AC : BadCredentialsException
+  AC --> UI : 401 — Email ou mot de passe incorrect
+  UI --> U : Afficher erreur
+else Correct
+  AS -> UR : findByEmail(email)
+  UR --> AS : User
+  AS -> AS : checkUserCanLogin(user)
+
+  alt non actif
+    AS --> AC : AccountNotActivatedException
+    AC --> UI : 403 Forbidden
+    UI --> U : Afficher erreur compte
+  else actif
+    AS -> UR : save() — setLastLoginDate
+    AS -> JS : generateToken(user)
+    JS --> AS : JWT token
+    AS --> AC : AuthResponse (token, role)
+    AC --> UI : 200 OK
+    UI -> UI : Stocker JWT
+    UI --> U : Rediriger tableau de bord
+  end
+end
+
+@enduml

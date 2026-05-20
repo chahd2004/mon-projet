@@ -4,74 +4,97 @@ $dark-blue: #1e293b;
 $success: #10b981;
 $warning: #f59e0b;
 $danger: #ef4444;
-$info: #3b82f6;
+$border: #e2e8f0;
+$bg: #f8fafc;
 
 .factures-container {
-  padding: 2rem;
+  max-width: 1450px; // Élargir pour plus de contenu horizontal
+  margin: 0 auto;
+  padding: 0.5rem 1rem;
   min-height: 100vh;
   background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  box-sizing: border-box;
+  overflow-x: hidden;
+  width: 100%;
 }
 
-// En-tête
+// ===== EN-TÊTE =====
 .header-section {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 2rem;
+  flex-wrap: wrap;
+  gap: 0.75rem;
 
-  h2 {
-    color: $dark-blue;
-    font-weight: 700;
-    font-size: 2rem;
-    margin: 0;
+  .header-left {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: 1rem;
 
-    i {
-      color: $primary-blue;
-    }
-  }
 
-  .add-btn {
-    background: $success;
-    color: white;
-    border: none;
-    padding: 0.8rem 1.8rem;
-    border-radius: 12px;
-    font-weight: 600;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    cursor: pointer;
-    transition: all 0.3s;
-    box-shadow: 0 4px 12px rgba($success, 0.3);
+    h2 {
+      color: $dark-blue;
+      font-weight: 700;
+      font-size: 1.4rem;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
 
-    i {
-      font-size: 1.2rem;
-    }
-
-    &:hover {
-      background: #0d9668;
-      transform: translateY(-2px);
-      box-shadow: 0 6px 15px rgba($success, 0.4);
+      i {
+        color: $primary-blue;
+      }
     }
   }
 }
 
-// Statistiques
+// ===== BOUTON ACTION =====
+.add-btn {
+  background-color: $success;
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  padding: 0.65rem 1.4rem;
+  font-size: 0.95rem;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 2px 8px rgba($success, 0.35);
+  white-space: nowrap;
+  flex-shrink: 0;
+
+  i {
+    font-size: 0.95rem;
+  }
+
+  &:hover {
+    background-color: #0d9668;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba($success, 0.4);
+  }
+
+  &:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 6px rgba($success, 0.3);
+  }
+}
+
 .stats-section {
-  margin-bottom: 2rem;
+  margin-bottom: 1rem;
 
   .stats-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 1.5rem;
+    gap: 1rem;
 
     .stat-card {
       background: white;
       border-radius: 15px;
-      padding: 1.5rem;
+      padding: 1rem;
       display: flex;
       align-items: center;
       gap: 1rem;
@@ -80,17 +103,17 @@ $info: #3b82f6;
 
       &:hover {
         transform: translateY(-3px);
-        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
       }
 
       .stat-icon {
-        width: 50px;
-        height: 50px;
+        width: 46px;
+        height: 46px;
         border-radius: 12px;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 1.5rem;
+        font-size: 1.3rem;
+        flex-shrink: 0;
 
         &.total {
           background: rgba($primary-blue, 0.1);
@@ -116,14 +139,14 @@ $info: #3b82f6;
       .stat-details {
         .stat-label {
           display: block;
-          font-size: 0.85rem;
+          font-size: 0.82rem;
           color: #64748b;
-          margin-bottom: 0.3rem;
+          margin-bottom: 0.2rem;
         }
 
         .stat-value {
           display: block;
-          font-size: 1.3rem;
+          font-size: 1.2rem;
           font-weight: 700;
           color: $dark-blue;
         }
@@ -132,9 +155,9 @@ $info: #3b82f6;
   }
 }
 
-// Graphique
+// ===== GRAPHIQUE =====
 .chart-section {
-  margin-bottom: 2rem;
+  margin-bottom: 1rem;
 
   ::ng-deep .p-card {
     border-radius: 15px;
@@ -144,127 +167,152 @@ $info: #3b82f6;
       color: $dark-blue;
       font-weight: 600;
     }
+
+    .p-card-body {
+      padding: 1rem;
+    }
+  }
+
+  p-chart {
+    display: block;
+    max-height: 220px;
+  }
+
+  ::ng-deep canvas {
+    max-height: 220px !important;
   }
 }
 
-// Filtres
+// ===== FILTRES (Harmonisé avec Produits) =====
 .filters-section {
   background: white;
-  border-radius: 15px;
-  padding: 1.5rem;
-  margin-bottom: 2rem;
+  border-radius: 12px;
+  padding: 1rem 1.5rem;
+  margin-bottom: 1.5rem;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  display: flex;
+  gap: 1.5rem;
+  align-items: center;
 
-  .filters-grid {
-    display: grid;
-    grid-template-columns: 2fr 1fr 1fr 1fr auto;
-    gap: 1rem;
-    align-items: flex-end;
+  .search-box {
+    position: relative;
+    flex-grow: 1;
+    max-width: 420px;
 
-    .filter-item {
+    i {
+      position: absolute;
+      left: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #64748b;
+      font-size: 1rem;
+      z-index: 1;
+    }
+
+    input {
+      width: 100%;
+      padding: 0.75rem 1rem 0.75rem 2.5rem;
+      border: 2px solid #e2e8f0;
+      border-radius: 10px;
+      font-size: 0.95rem;
+      transition: all 0.2s;
+
+      &:focus {
+        border-color: #3b82f6;
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+      }
+    }
+
+    .clear-search {
+      position: absolute;
+      right: 0.5rem;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      color: #64748b;
+      cursor: pointer;
+      width: 30px;
+      height: 30px;
       display: flex;
-      flex-direction: column;
-      gap: 0.3rem;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      transition: all 0.2s;
 
-      label {
-        font-size: 0.85rem;
-        font-weight: 600;
-        color: $dark-blue;
+      &:hover {
+        background: rgba(239, 68, 68, 0.1);
+        color: #ef4444;
+      }
+    }
+  }
+
+  .status-filter {
+    min-width: 220px;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+
+    ::ng-deep .p-dropdown {
+      border: 2px solid #e2e8f0;
+      border-radius: 10px;
+      height: 100%;
+      min-height: 46px;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      transition: all 0.2s;
+
+      &:not(.p-disabled):hover {
+        border-color: #cbd5e1;
       }
 
-      .search-box {
-        position: relative;
+      &.p-focus {
+        border-color: #3b82f6;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+      }
+
+      .p-dropdown-label {
+        font-size: 0.95rem;
+        padding: 0 1rem;
         display: flex;
         align-items: center;
-
-        i.pi-search {
-          position: absolute;
-          left: 1rem;
-          color: #94a3b8;
-          font-size: 1rem;
-        }
-
-        input {
-          padding-left: 2.5rem;
-          padding-right: 2.5rem;
-          width: 100%;
-          height: 42px;
-          border-radius: 8px;
-          border: 1px solid #e2e8f0;
-          
-          &:focus {
-            border-color: $primary-blue;
-            box-shadow: 0 0 0 3px rgba($primary-blue, 0.1);
-          }
-        }
-
-        .clear-search {
-          position: absolute;
-          right: 1rem;
-          background: none;
-          border: none;
-          color: #94a3b8;
-          cursor: pointer;
-          
-          &:hover {
-            color: $danger;
-          }
-        }
       }
-
-      &.filter-actions {
-        .reset-btn {
-          height: 42px;
-          padding: 0 1.5rem;
-          border: 1px solid #e2e8f0;
-          background: white;
-          border-radius: 8px;
-          color: #64748b;
-          font-weight: 500;
-          display: flex;
-          align-items: center;
-          gap: 0.5rem;
-          cursor: pointer;
-          transition: all 0.2s;
-
-          &:hover {
-            background: #f8fafc;
-            color: $dark-blue;
-            border-color: $dark-blue;
-          }
-        }
+      
+      .p-dropdown-trigger {
+        width: 3rem;
       }
     }
   }
 }
 
-// Tableau
-::ng-deep .p-card {
-  border-radius: 20px;
-  border: 1px solid rgba(0, 0, 0, 0.05);
+// ===== TABLEAU =====
+.factures-table {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  border: 1px solid #e2e8f0;
   overflow: hidden;
-  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
-  
-  .p-card-body { 
-    padding: 0; 
-  }
+  margin-bottom: 2rem;
 }
 
 ::ng-deep .p-datatable {
-  .p-datatable-thead > tr > th {
+  .p-datatable-thead>tr>th {
     background: $dark-blue;
     color: white;
-    padding: 1rem;
-    font-size: 0.85rem;
-    border: none;
+    padding: 0.75rem 1rem;
     font-weight: 600;
+    font-size: 0.85rem;
+    white-space: nowrap;
+    border: none;
   }
 
-  .p-datatable-tbody > tr {
+  .p-datatable-tbody>tr {
     background: white;
-    
+
     td {
-      padding: 1rem;
+      padding: 0.65rem 1rem;
       border-bottom: 1px solid #f1f5f9;
       color: #334155;
 
@@ -276,20 +324,12 @@ $info: #3b82f6;
         font-weight: 600;
         color: $dark-blue;
       }
-    }
 
-    .client-info {
-      display: flex;
-      flex-direction: column;
-
-      .client-name {
-        font-weight: 600;
-        color: $dark-blue;
-      }
-
-      .client-email {
-        font-size: 0.85rem;
-        color: #64748b;
+      .client-info {
+        .client-name {
+          font-weight: 600;
+          color: $dark-blue;
+        }
       }
     }
 
@@ -297,83 +337,107 @@ $info: #3b82f6;
       background: #f8fafc;
     }
   }
+
+  .p-paginator {
+    background: $bg;
+    border-top: 1px solid #e5e7eb;
+    padding: 1rem;
+  }
 }
 
-// Actions
+// ===== BOUTONS D'ACTION =====
 .actions-cell {
   display: flex;
-  gap: 0.3rem;
+  gap: 0.5rem;
   justify-content: center;
-  flex-wrap: wrap;
 }
 
 .action-btn {
-  width: 32px;
-  height: 32px;
   border: none;
-  border-radius: 6px;
+  border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   transition: all 0.2s;
   color: white;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 
   i {
-    font-size: 0.9rem;
+    font-size: 1rem;
   }
 
   &:hover {
     transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
   }
 
   &.view-btn {
     background: $primary-blue;
-    &:hover { background: #2563eb; }
+
+    &:hover {
+      background: #2563eb;
+    }
   }
 
   &.edit-btn {
     background: $warning;
-    &:hover { background: #d97706; }
-  }
 
-  &.pdf-btn {
-    background: #dc2626;
-    &:hover { background: #b91c1c; }
-  }
-
-  &.email-btn {
-    background: #6366f1;
-    &:hover { background: #4f46e5; }
-  }
-
-  &.client-btn {
-    background: #8b5cf6;
-    &:hover { background: #7c3aed; }
-  }
-
-  &.pay-btn {
-    background: $success;
-    &:hover { background: #0d9668; }
-  }
-
-  &.cancel-btn {
-    background: $warning;
-    &:hover { background: #d97706; }
+    &:hover {
+      background: #d97706;
+    }
   }
 
   &.delete-btn {
     background: $danger;
-    &:hover { background: #dc2626; }
+
+    &:hover {
+      background: #dc2626;
+    }
   }
 }
 
-// Message vide
+.icon-btn {
+  border: 1px solid #e2e8f0; // Gris clair
+  background: #ffffff; // Blanc (au lieu du jaune/beige)
+  color: #475569; // Gris foncé
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  width: 38px;
+  height: 38px;
+  padding: 0;
+
+  i {
+    font-size: 1.1rem;
+    font-weight: 300; // Pour un look plus fin si supporté par la font
+  }
+
+  &:hover {
+    border-color: #cbd5e1;
+    background: #f8fafc; // Gris très clair (neutre)
+    transform: translateY(-1px);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+  }
+
+  &:active {
+    background: #f1f5f9; // Gris légèrement plus soutenu
+    transform: translateY(0);
+  }
+
+  &:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+}
+
+// ===== MESSAGE VIDE =====
 .empty-message {
   text-align: center;
-  padding: 2rem;
+  padding: 1.5rem;
 
   i {
     color: #94a3b8;
@@ -387,35 +451,16 @@ $info: #3b82f6;
 
   p {
     color: #64748b;
-    margin-bottom: 1.5rem;
-  }
-
-  .add-first-btn {
-    background: $primary-blue;
-    color: white;
-    border: none;
-    padding: 0.8rem 1.8rem;
-    border-radius: 10px;
-    font-weight: 600;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    cursor: pointer;
-    transition: all 0.2s;
-
-    &:hover {
-      background: #2563eb;
-      transform: scale(1.05);
-    }
+    margin-bottom: 1rem;
   }
 }
 
-// Pagination
+// ===== PAGINATION =====
 ::ng-deep .p-paginator {
   background: white;
-  padding: 1rem;
+  padding: 0.75rem 1rem;
   border-top: 1px solid #f1f5f9;
-  
+
   .p-paginator-page.p-highlight {
     background: $primary-blue;
     color: white;
@@ -423,7 +468,7 @@ $info: #3b82f6;
   }
 }
 
-// Responsive
+// ===== RESPONSIVE =====
 @media (max-width: 1200px) {
   .stats-section .stats-grid {
     grid-template-columns: repeat(2, 1fr);
@@ -434,27 +479,29 @@ $info: #3b82f6;
   }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 900px) {
   .factures-container {
-    padding: 1rem;
+    padding: 0.75rem;
   }
 
+  .header-section h2 {
+    font-size: 1.2rem;
+  }
+}
+
+@media (max-width: 768px) {
   .header-section {
     flex-direction: column;
-    gap: 1rem;
-    
-    h2 {
-      font-size: 1.5rem;
-    }
-    
-    .add-btn {
+    align-items: flex-start;
+
+    .nouvelle-facture-btn {
       width: 100%;
       justify-content: center;
     }
   }
 
   .stats-section .stats-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr 1fr;
   }
 
   .filters-section .filters-grid {
@@ -462,15 +509,376 @@ $info: #3b82f6;
   }
 
   .actions-cell {
-    gap: 0.2rem;
+    flex-direction: column;
+    align-items: stretch;
   }
 
   .action-btn {
-    width: 28px;
-    height: 28px;
-    
-    i {
-      font-size: 0.8rem;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .stats-section .stats-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+// =====================================================
+// ===== CONFIRM DIALOG — STYLE PERSONNALISÉ =====
+// =====================================================
+
+// Overlay : fond sombre + flou de fond
+::ng-deep .p-dialog-mask {
+  background: rgba(15, 23, 42, 0.65) !important;
+  backdrop-filter: blur(6px) !important;
+}
+
+::ng-deep p-confirmdialog .p-dialog {
+  border-radius: 20px !important;
+  overflow: hidden;
+  box-shadow: 0 30px 70px rgba(0, 0, 0, 0.45) !important;
+  min-width: 440px;
+  border: none !important;
+  font-family: 'Segoe UI', sans-serif;
+
+  // ── Header ──
+  .p-dialog-header {
+    background: $dark-blue !important;
+    color: white !important;
+    padding: 1.3rem 1.8rem !important;
+    border-bottom: none !important;
+
+    .p-dialog-title {
+      font-size: 1.05rem !important;
+      font-weight: 700 !important;
+      letter-spacing: 0.4px;
+      color: white !important;
     }
+
+    .p-dialog-header-icons .p-dialog-header-icon {
+      color: rgba(255, 255, 255, 0.55) !important;
+      border-radius: 50%;
+      width: 2rem;
+      height: 2rem;
+      transition: all 0.2s;
+
+      &:hover {
+        color: white !important;
+        background: rgba(255, 255, 255, 0.12) !important;
+      }
+    }
+  }
+
+  // ── Contenu ──
+  .p-dialog-content {
+    background: #ffffff !important;
+    padding: 2rem 1.8rem 1.6rem !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 1.2rem;
+
+    .p-confirm-dialog-icon {
+      font-size: 2.4rem !important;
+      color: $warning !important;
+      flex-shrink: 0;
+    }
+
+    .p-confirm-dialog-message {
+      font-size: 1rem !important;
+      color: $dark-blue !important;
+      font-weight: 500 !important;
+      line-height: 1.6;
+    }
+  }
+
+  // ── Footer ──
+  .p-dialog-footer {
+    background: #f8fafc !important;
+    padding: 1rem 1.8rem 1.4rem !important;
+    display: flex !important;
+    justify-content: flex-end !important;
+    gap: 0.8rem;
+    border-top: 1px solid $border !important;
+
+    // Bouton Non / Annuler
+    .p-confirm-dialog-reject.p-button {
+      background: transparent !important;
+      color: #64748b !important;
+      border: 2px solid $border !important;
+      border-radius: 10px !important;
+      padding: 0.55rem 1.4rem !important;
+      font-weight: 600 !important;
+      font-size: 0.9rem !important;
+      box-shadow: none !important;
+      transition: all 0.2s;
+
+      &:hover {
+        background: #f1f5f9 !important;
+        border-color: #94a3b8 !important;
+        color: $dark-blue !important;
+      }
+
+      .p-button-label {
+        font-weight: 600 !important;
+      }
+    }
+
+    // Bouton Oui / Confirmer
+    .p-confirm-dialog-accept.p-button {
+      background: $danger !important;
+      color: white !important;
+      border: 2px solid $danger !important;
+      border-radius: 10px !important;
+      padding: 0.55rem 1.4rem !important;
+      font-weight: 700 !important;
+      font-size: 0.9rem !important;
+      box-shadow: 0 4px 14px rgba($danger, 0.35) !important;
+      transition: all 0.2s;
+
+      &:hover {
+        background: #dc2626 !important;
+        border-color: #dc2626 !important;
+        transform: translateY(-1px);
+        box-shadow: 0 6px 18px rgba($danger, 0.45) !important;
+      }
+
+      .p-button-label {
+        font-weight: 700 !important;
+      }
+    }
+  }
+}
+
+// =====================================================
+// ===== SIGNATURE DIALOG — STYLE PREMIUM   =====
+// =====================================================
+
+::ng-deep .signature-dialog.p-dialog {
+  border-radius: 20px !important;
+  overflow: hidden;
+  box-shadow: 0 40px 100px rgba(0, 0, 0, 0.4) !important;
+  border: none !important;
+
+  .p-dialog-header {
+    display: none; // On utilise notre propre header stylisé
+  }
+
+  .p-dialog-content {
+    padding: 0 !important;
+    background: #ffffff !important;
+    border-radius: 20px !important;
+  }
+}
+
+.signature-popup-content {
+  padding: 3rem 2.5rem;
+  text-align: center;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+
+  .signature-header {
+    margin-bottom: 2.5rem;
+
+    .icon {
+      font-size: 3.5rem;
+      display: block;
+      margin-bottom: 1rem;
+    }
+
+    h3 {
+      font-size: 1.4rem;
+      color: #1e293b;
+      font-weight: 800;
+      letter-spacing: 1px;
+      margin: 0;
+      text-transform: uppercase;
+    }
+
+    .divider {
+      width: 150px;
+      height: 2px;
+      background: #e2e8f0;
+      margin: 1.5rem auto 0;
+    }
+  }
+
+  .signature-body {
+    display: flex;
+    flex-direction: column;
+    gap: 1.8rem;
+    text-align: left;
+
+    .input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
+
+      label {
+        font-weight: 700;
+        color: #475569;
+        font-size: 0.95rem;
+      }
+
+      .file-picker-wrapper {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        background: #f8fafc;
+        border: 2px dashed #cbd5e1;
+        padding: 0.6rem 1rem;
+        border-radius: 12px;
+        transition: all 0.2s;
+
+        &:hover {
+          border-color: #3b82f6;
+          background: #f1f7ff;
+        }
+
+        ::ng-deep .custom-file-upload .p-button {
+          background: #1e293b !important;
+          border: none !important;
+          border-radius: 8px !important;
+          font-size: 0.85rem !important;
+          padding: 0.5rem 1.2rem !important;
+          font-weight: 600 !important;
+        }
+
+        .selected-filename {
+          font-size: 0.9rem;
+          color: #3b82f6;
+          font-weight: 600;
+        }
+
+        .placeholder-filename {
+          font-size: 0.9rem;
+          color: #94a3b8;
+          font-style: italic;
+        }
+      }
+
+      .password-wrapper {
+        input {
+          width: 100%;
+          padding: 1rem;
+          border: 2px solid #e2e8f0;
+          border-radius: 12px;
+          font-size: 1rem;
+          transition: all 0.2s;
+
+          &:focus {
+            border-color: #3b82f6;
+            outline: none;
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+          }
+
+          &.masked-password-input {
+            -webkit-text-security: disc !important;
+            text-security: disc !important;
+          }
+        }
+      }
+    }
+
+    .btn-signer {
+      margin-top: 1rem;
+      background: #ffffff;
+      color: #1e293b;
+      border: 2px solid #1e293b;
+      padding: 1.1rem;
+      border-radius: 12px;
+      font-weight: 800;
+      font-size: 1.1rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.8rem;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+      &:hover:not(:disabled) {
+        background: #1e293b;
+        color: #ffffff;
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(30, 41, 59, 0.2);
+      }
+
+      &:active {
+        transform: translateY(0);
+      }
+
+      &:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+    }
+
+    .btn-annuler {
+      background: none;
+      border: none;
+      color: #64748b;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: underline;
+      padding: 0.5rem;
+
+      &:hover {
+        color: #1e293b;
+      }
+    }
+  }
+
+  .signature-success-state {
+    .success-icon {
+      font-size: 4.5rem;
+      margin-bottom: 1.5rem;
+      animation: scaleUp 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    h3 {
+      font-size: 1.6rem;
+      color: #10b981;
+      font-weight: 800;
+      margin: 0;
+    }
+
+    .divider {
+      width: 100px;
+      height: 2px;
+      background: #e2e8f0;
+      margin: 2rem auto;
+    }
+
+    .btn-fermer {
+      background: #10b981;
+      color: white;
+      border: none;
+      padding: 1rem 3rem;
+      border-radius: 12px;
+      font-weight: 700;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+
+      &:hover {
+        background: #059669;
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4);
+      }
+    }
+  }
+}
+
+@keyframes scaleUp {
+  from {
+    transform: scale(0);
+    opacity: 0;
+  }
+
+  to {
+    transform: scale(1);
+    opacity: 1;
   }
 }

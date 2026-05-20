@@ -1,0 +1,47 @@
+@startuml
+left to right direction
+skinparam packageStyle rectangle
+
+actor "Super Admin" as SA
+actor "Manager / Entreprise Admin\n / Consultant" as Utilisateur
+
+rectangle "Statistiques & Chatbot IA" {
+  usecase "S'authentifier" as Auth
+  
+  package "Tableau de Bord Global" {
+    usecase "Consulter les statistiques globales" as UC_Global
+  }
+
+  package "Tableau de Bord Émetteur" {
+    usecase "Consulter les indicateurs de performance" as UC_Indicateurs
+    usecase "Visualiser des graphiques interactifs" as UC_Graphiques
+    usecase "Rafraîchir manuellement le TdB" as UC_Refresh
+    usecase "Lister les factures en retard" as UC_Retard
+  }
+  
+  package "Assistant Intelligent Chatbot IA" {
+    usecase "Poser des questions en langage naturel" as UC_Chatbot
+    usecase "Traduire en requête SQL sécurisée" as UC_SQL
+    usecase "Exécuter et formuler réponse" as UC_Exec
+  }
+
+  UC_Global ..> Auth : <<include>>
+  UC_Indicateurs ..> Auth : <<include>>
+  UC_Graphiques ..> Auth : <<include>>
+  UC_Refresh ..> Auth : <<include>>
+  UC_Retard ..> Auth : <<include>>
+  UC_Chatbot ..> Auth : <<include>>
+  
+  UC_Chatbot ..> UC_SQL : <<include>>
+  UC_Chatbot ..> UC_Exec : <<include>>
+}
+
+SA --- UC_Global
+
+Utilisateur --- UC_Indicateurs
+Utilisateur --- UC_Graphiques
+Utilisateur --- UC_Refresh
+Utilisateur --- UC_Retard
+Utilisateur --- UC_Chatbot
+
+@enduml

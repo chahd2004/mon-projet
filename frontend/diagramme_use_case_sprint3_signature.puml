@@ -1,0 +1,57 @@
+@startuml "Use Case Sprint 3 - Signature Numérique"
+
+left to right direction
+skinparam packageStyle rectangle
+
+skinparam usecase {
+    BackgroundColor White
+    BorderColor Black
+    ArrowColor Black
+}
+
+actor "Manager" as Manager
+actor "Client" as Client
+
+rectangle "Sprint 3 : Signature Numérique" {
+
+    ' === Cas d'utilisation principaux ===
+    usecase "Signer électroniquement\nun Bon de Commande" as UC_SignBC
+    usecase "Signer électroniquement\nun Bon de Livraison" as UC_SignBL
+
+    ' === Cas d'utilisation techniques ===
+    usecase "Charger la clé (.p12)\n(Manager)" as UC_LoadKey_M
+    usecase "Charger la clé (.p12)\n(Client)" as UC_LoadKey_C
+    usecase "Appliquer signature\nXAdES-B sur le XML" as UC_ApplyXades
+    usecase "Télécharger le\nXML signé" as UC_DownloadXml
+    
+    ' === Cas d'utilisation transversaux ===
+    usecase "S'authentifier" as UC_Auth
+    usecase "Recevoir un mail\nde demande de signature" as UC_ReceiveMail
+
+}
+
+' === Liens Manager ===
+Manager --> UC_ApplyXades
+Manager --> UC_DownloadXml
+
+' === Liens Client ===
+Client --> UC_SignBC
+Client --> UC_SignBL
+
+' === Relations d'inclusion ===
+' Manager : Authentification requise pour tout
+UC_LoadKey_M ..> UC_Auth : <<include>>
+UC_ApplyXades ..> UC_Auth : <<include>>
+UC_DownloadXml ..> UC_Auth : <<include>>
+
+' Dépendances techniques (Inclusions)
+UC_ApplyXades ..> UC_LoadKey_M : <<include>>
+
+' Client : Pas d'authentification
+UC_SignBC ..> UC_ReceiveMail : <<include>>
+UC_SignBL ..> UC_ReceiveMail : <<include>>
+' Le client a besoin de charger la clé pour signer
+UC_SignBC ..> UC_LoadKey_C : <<include>>
+UC_SignBL ..> UC_LoadKey_C : <<include>>
+
+@enduml

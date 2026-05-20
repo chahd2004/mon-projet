@@ -1,0 +1,117 @@
+<mxGraphModel><root>
+  <mxCell id="0"/><mxCell id="1" parent="0"/>
+
+  <!-- ════ PACKAGE : Comptes ════ -->
+  <mxCell id="p1" value="Comptes" style="swimlane;startSize=25;fillColor=#f8f9fa;strokeColor=#000000;fontColor=#000000;" vertex="1" parent="1"><mxGeometry x="20" y="20" width="280" height="750" as="geometry"/></mxCell>
+
+  <mxCell id="DemandeEmetteur" value="DemandeEmetteur" style="swimlane;startSize=25;fillColor=#ffffff;strokeColor=#000000;fontColor=#000000;headerFillColor=#dae8fc;" vertex="1" parent="p1"><mxGeometry x="10" y="40" width="180" height="115" as="geometry"/></mxCell>
+  <mxCell id="de1" value="id : Long&#xa;raisonSociale : String&#xa;matriculeFiscal : String&#xa;status : AccountStatus&#xa;dateSoumission : DateTime" style="text;align=left;spacingLeft=4;fontColor=#000000;" vertex="1" parent="DemandeEmetteur"><mxGeometry x="0" y="25" width="180" height="90" as="geometry"/></mxCell>
+
+  <mxCell id="User" value="User" style="swimlane;startSize=25;fillColor=#ffffff;strokeColor=#000000;fontColor=#000000;headerFillColor=#dae8fc;" vertex="1" parent="p1"><mxGeometry x="10" y="185" width="180" height="135" as="geometry"/></mxCell>
+  <mxCell id="u1" value="id : Long&#xa;email : String&#xa;nom : String&#xa;prenom : String&#xa;role : UserRole&#xa;accountStatus : AccountStatus" style="text;align=left;spacingLeft=4;fontColor=#000000;" vertex="1" parent="User"><mxGeometry x="0" y="25" width="180" height="110" as="geometry"/></mxCell>
+
+  <mxCell id="Emetteur" value="Emetteur" style="swimlane;startSize=25;fillColor=#ffffff;strokeColor=#000000;fontColor=#000000;headerFillColor=#dae8fc;" vertex="1" parent="p1"><mxGeometry x="10" y="360" width="200" height="175" as="geometry"/></mxCell>
+  <mxCell id="e1" value="id : Long&#xa;raisonSociale : String&#xa;matriculeFiscal : String&#xa;formeJuridique : FormeJuridique&#xa;adresseComplete : String&#xa;region : RegionTunisie&#xa;email : String&#xa;telephone : String" style="text;align=left;spacingLeft=4;fontColor=#000000;" vertex="1" parent="Emetteur"><mxGeometry x="0" y="25" width="200" height="150" as="geometry"/></mxCell>
+
+  <mxCell id="Client" value="Client" style="swimlane;startSize=25;fillColor=#ffffff;strokeColor=#000000;fontColor=#000000;headerFillColor=#dae8fc;" vertex="1" parent="p1"><mxGeometry x="10" y="580" width="200" height="110" as="geometry"/></mxCell>
+  <mxCell id="c1" value="id : Long&#xa;raisonSociale : String&#xa;email : String&#xa;telephone : String&#xa;region : RegionTunisie" style="text;align=left;spacingLeft=4;fontColor=#000000;" vertex="1" parent="Client"><mxGeometry x="0" y="25" width="200" height="85" as="geometry"/></mxCell>
+
+  <!-- ════ PACKAGE : Documents ════ -->
+  <mxCell id="p2" value="Documents" style="swimlane;startSize=25;fillColor=#f8f9fa;strokeColor=#000000;fontColor=#000000;" vertex="1" parent="1"><mxGeometry x="350" y="20" width="245" height="1060" as="geometry"/></mxCell>
+
+  <mxCell id="Devis" value="Devis" style="swimlane;startSize=25;fillColor=#ffffff;strokeColor=#000000;" vertex="1" parent="p2"><mxGeometry x="15" y="40" width="215" height="140" as="geometry"/></mxCell>
+  <mxCell id="dv1" value="id : Long&#xa;numDevis : String&#xa;dateCreation : LocalDate&#xa;statut : StatutDevis&#xa;totalHT : BigDecimal&#xa;totalTTC : BigDecimal&#xa;calculerTotaux() : void" style="text;align=left;spacingLeft=4;fontColor=#000000;" vertex="1" parent="Devis"><mxGeometry x="0" y="25" width="215" height="115" as="geometry"/></mxCell>
+
+  <mxCell id="Facture" value="Facture" style="swimlane;startSize=25;fillColor=#ffffff;strokeColor=#000000;" vertex="1" parent="p2"><mxGeometry x="15" y="205" width="215" height="140" as="geometry"/></mxCell>
+  <mxCell id="f1" value="id : Long&#xa;numFact : String&#xa;dateEmission : LocalDate&#xa;statut : StatutFacture&#xa;totalHT : BigDecimal&#xa;totalTTC : BigDecimal&#xa;calculerTotaux() : void" style="text;align=left;spacingLeft=4;fontColor=#000000;" vertex="1" parent="Facture"><mxGeometry x="0" y="25" width="215" height="115" as="geometry"/></mxCell>
+
+  <mxCell id="BonCommande" value="BonCommande" style="swimlane;startSize=25;fillColor=#ffffff;strokeColor=#000000;" vertex="1" parent="p2"><mxGeometry x="15" y="370" width="215" height="140" as="geometry"/></mxCell>
+  <mxCell id="bc1" value="id : Long&#xa;numBonCommande : String&#xa;dateCreation : LocalDate&#xa;statut : StatutBonCommande&#xa;dateSignature : LocalDateTime&#xa;calculerTotaux() : void" style="text;align=left;spacingLeft=4;fontColor=#000000;" vertex="1" parent="BonCommande"><mxGeometry x="0" y="25" width="215" height="115" as="geometry"/></mxCell>
+
+  <mxCell id="Commande" value="Commande" style="swimlane;startSize=25;fillColor=#ffffff;strokeColor=#000000;" vertex="1" parent="p2"><mxGeometry x="15" y="535" width="215" height="140" as="geometry"/></mxCell>
+  <mxCell id="co1" value="id : Long&#xa;numCommande : String&#xa;dateCreation : LocalDate&#xa;statut : StatutCommande&#xa;totalTTC : BigDecimal&#xa;calculerTotaux() : void" style="text;align=left;spacingLeft=4;fontColor=#000000;" vertex="1" parent="Commande"><mxGeometry x="0" y="25" width="215" height="115" as="geometry"/></mxCell>
+
+  <mxCell id="BonLivraison" value="BonLivraison" style="swimlane;startSize=25;fillColor=#ffffff;strokeColor=#000000;" vertex="1" parent="p2"><mxGeometry x="15" y="700" width="215" height="135" as="geometry"/></mxCell>
+  <mxCell id="bl1" value="id : Long&#xa;numBonLivraison : String&#xa;dateCreation : LocalDate&#xa;dateLivraison : LocalDate&#xa;statut : StatutBonLivraison" style="text;align=left;spacingLeft=4;fontColor=#000000;" vertex="1" parent="BonLivraison"><mxGeometry x="0" y="25" width="215" height="110" as="geometry"/></mxCell>
+
+  <mxCell id="Avoir" value="Avoir" style="swimlane;startSize=25;fillColor=#ffffff;strokeColor=#000000;" vertex="1" parent="p2"><mxGeometry x="15" y="860" width="215" height="140" as="geometry"/></mxCell>
+  <mxCell id="av1" value="id : Long&#xa;numAvoir : String&#xa;dateCreation : LocalDate&#xa;statut : StatutAvoir&#xa;totalTTC : BigDecimal&#xa;calculerTotaux() : void" style="text;align=left;spacingLeft=4;fontColor=#000000;" vertex="1" parent="Avoir"><mxGeometry x="0" y="25" width="215" height="115" as="geometry"/></mxCell>
+
+  <!-- ════ PACKAGE : Lignes ════ -->
+  <mxCell id="p3" value="Lignes" style="swimlane;startSize=25;fillColor=#f8f9fa;strokeColor=#000000;fontColor=#000000;" vertex="1" parent="1"><mxGeometry x="645" y="20" width="185" height="1060" as="geometry"/></mxCell>
+
+  <mxCell id="LigneDevis" value="LigneDevis" style="swimlane;startSize=25;fillColor=#ffffff;strokeColor=#000000;" vertex="1" parent="p3"><mxGeometry x="10" y="40" width="165" height="100" as="geometry"/></mxCell>
+  <mxCell id="ld1" value="id : Long&#xa;quantite : Integer&#xa;prixUnitaire : BigDecimal&#xa;montantHT : BigDecimal" style="text;align=left;spacingLeft=4;fontColor=#000000;" vertex="1" parent="LigneDevis"><mxGeometry x="0" y="25" width="165" height="75" as="geometry"/></mxCell>
+
+  <mxCell id="LigneFacture" value="LigneFacture" style="swimlane;startSize=25;fillColor=#ffffff;strokeColor=#000000;" vertex="1" parent="p3"><mxGeometry x="10" y="205" width="165" height="100" as="geometry"/></mxCell>
+  <mxCell id="lf1" value="id : Long&#xa;quantite : Integer&#xa;prixUnitaire : BigDecimal" style="text;align=left;spacingLeft=4;fontColor=#000000;" vertex="1" parent="LigneFacture"><mxGeometry x="0" y="25" width="165" height="75" as="geometry"/></mxCell>
+
+  <mxCell id="LigneBonCommande" value="LigneBonCommande" style="swimlane;startSize=25;fillColor=#ffffff;strokeColor=#000000;" vertex="1" parent="p3"><mxGeometry x="10" y="370" width="165" height="100" as="geometry"/></mxCell>
+  <mxCell id="lb1" value="id : Long&#xa;quantite : Integer&#xa;prixUnitaire : BigDecimal&#xa;montantHT : BigDecimal" style="text;align=left;spacingLeft=4;fontColor=#000000;" vertex="1" parent="LigneBonCommande"><mxGeometry x="0" y="25" width="165" height="75" as="geometry"/></mxCell>
+
+  <mxCell id="LigneCommande" value="LigneCommande" style="swimlane;startSize=25;fillColor=#ffffff;strokeColor=#000000;" vertex="1" parent="p3"><mxGeometry x="10" y="535" width="165" height="100" as="geometry"/></mxCell>
+  <mxCell id="lc1" value="id : Long&#xa;quantite : Integer&#xa;prixUnitaire : BigDecimal&#xa;montantHT : BigDecimal" style="text;align=left;spacingLeft=4;fontColor=#000000;" vertex="1" parent="LigneCommande"><mxGeometry x="0" y="25" width="165" height="75" as="geometry"/></mxCell>
+
+  <mxCell id="LigneBonLivraison" value="LigneBonLivraison" style="swimlane;startSize=25;fillColor=#ffffff;strokeColor=#000000;" vertex="1" parent="p3"><mxGeometry x="10" y="700" width="165" height="80" as="geometry"/></mxCell>
+  <mxCell id="ll1" value="id : Long&#xa;quantite : Integer" style="text;align=left;spacingLeft=4;fontColor=#000000;" vertex="1" parent="LigneBonLivraison"><mxGeometry x="0" y="25" width="165" height="55" as="geometry"/></mxCell>
+
+  <mxCell id="LigneAvoir" value="LigneAvoir" style="swimlane;startSize=25;fillColor=#ffffff;strokeColor=#000000;" vertex="1" parent="p3"><mxGeometry x="10" y="860" width="165" height="100" as="geometry"/></mxCell>
+  <mxCell id="la1" value="id : Long&#xa;quantite : Integer&#xa;prixUnitaire : BigDecimal&#xa;montantHT : BigDecimal" style="text;align=left;spacingLeft=4;fontColor=#000000;" vertex="1" parent="LigneAvoir"><mxGeometry x="0" y="25" width="165" height="75" as="geometry"/></mxCell>
+
+  <!-- ════ CATALOGUE ════ -->
+  <mxCell id="Produit" value="Produit" style="swimlane;startSize=25;fillColor=#ffffff;strokeColor=#000000;fontColor=#000000;headerFillColor=#dae8fc;" vertex="1" parent="1"><mxGeometry x="880" y="60" width="200" height="200" as="geometry"/></mxCell>
+  <mxCell id="pr1" value="id : Long&#xa;reference : String&#xa;designation : String&#xa;prixUnitaire : BigDecimal&#xa;tauxTVA : BigDecimal&#xa;quantiteStock : Integer&#xa;seuilAlerteStock : Integer&#xa;isDisponible(qty) : boolean&#xa;diminuerStock(qty) : void" style="text;align=left;spacingLeft=4;fontColor=#000000;" vertex="1" parent="Produit"><mxGeometry x="0" y="25" width="200" height="175" as="geometry"/></mxCell>
+
+  <!-- ══════════════════════════════════════ -->
+  <!--          TOUTES LES RELATIONS          -->
+  <!-- ══════════════════════════════════════ -->
+
+  <!-- Comptes internes -->
+  <mxCell id="ri1" value="userCree&#xa;1" style="endArrow=open;html=1;strokeColor=#000000;fontSize=9;fontColor=#000000;exitX=1;exitY=0.3;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" source="User" target="DemandeEmetteur" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+  <mxCell id="ri2" value="administre&#xa;1" style="endArrow=block;endFill=0;html=1;strokeColor=#000000;fontSize=9;fontColor=#000000;" edge="1" source="User" target="Emetteur" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+  <mxCell id="ri3" value="emetteurCree&#xa;0..1" style="endArrow=open;html=1;strokeColor=#000000;fontSize=9;fontColor=#000000;" edge="1" source="DemandeEmetteur" target="Emetteur" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+  <mxCell id="ri4" value="gere&#xa;1 → 0..*" style="endArrow=open;html=1;strokeColor=#000000;fontSize=9;fontColor=#000000;" edge="1" source="Emetteur" target="Client" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+  <!-- Vendeur (Emetteur -> 6 documents) -->
+  <mxCell id="v1" value="vendeur  1 → 0..*" style="endArrow=open;html=1;strokeColor=#000000;fontSize=9;fontColor=#000000;" edge="1" source="Emetteur" target="Devis" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+  <mxCell id="v2" value="vendeur  1 → 0..*" style="endArrow=open;html=1;strokeColor=#000000;fontSize=9;fontColor=#000000;" edge="1" source="Emetteur" target="Facture" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+  <mxCell id="v3" value="vendeur  1 → 0..*" style="endArrow=open;html=1;strokeColor=#000000;fontSize=9;fontColor=#000000;" edge="1" source="Emetteur" target="BonCommande" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+  <mxCell id="v4" value="vendeur  1 → 0..*" style="endArrow=open;html=1;strokeColor=#000000;fontSize=9;fontColor=#000000;" edge="1" source="Emetteur" target="Commande" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+  <mxCell id="v5" value="vendeur  1 → 0..*" style="endArrow=open;html=1;strokeColor=#000000;fontSize=9;fontColor=#000000;" edge="1" source="Emetteur" target="BonLivraison" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+  <mxCell id="v6" value="vendeur  1 → 0..*" style="endArrow=open;html=1;strokeColor=#000000;fontSize=9;fontColor=#000000;" edge="1" source="Emetteur" target="Avoir" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+  <!-- Catalogue (Emetteur -> Produit) -->
+  <mxCell id="cat1" value="catalogue  0..*" style="endArrow=open;html=1;strokeColor=#000000;fontSize=9;fontColor=#000000;" edge="1" source="Emetteur" target="Produit" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+  <!-- Acheteur (Client -> 6 documents) -->
+  <mxCell id="a1" value="acheteur  0..1 → 1" style="endArrow=open;html=1;strokeColor=#000000;fontSize=9;fontColor=#000000;" edge="1" source="Client" target="Devis" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+  <mxCell id="a2" value="acheteur  0..1 → 1" style="endArrow=open;html=1;strokeColor=#000000;fontSize=9;fontColor=#000000;" edge="1" source="Client" target="Facture" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+  <mxCell id="a3" value="acheteur  0..1 → 1" style="endArrow=open;html=1;strokeColor=#000000;fontSize=9;fontColor=#000000;" edge="1" source="Client" target="BonCommande" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+  <mxCell id="a4" value="acheteur  0..1 → 1" style="endArrow=open;html=1;strokeColor=#000000;fontSize=9;fontColor=#000000;" edge="1" source="Client" target="Commande" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+  <mxCell id="a5" value="acheteur  0..1 → 1" style="endArrow=open;html=1;strokeColor=#000000;fontSize=9;fontColor=#000000;" edge="1" source="Client" target="BonLivraison" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+  <mxCell id="a6" value="acheteur  0..1 → 1" style="endArrow=open;html=1;strokeColor=#000000;fontSize=9;fontColor=#000000;" edge="1" source="Client" target="Avoir" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+  <!-- Compositions (Documents -> Lignes) -->
+  <mxCell id="c1" style="endArrow=diamond;endFill=1;startArrow=ERmandOne;startFill=1;strokeColor=#000000;" edge="1" source="Devis" target="LigneDevis" parent="1"><mxGeometry relative="1" as="geometry"><mxCell value="1" style="edgeLabel;fontSize=9;fontColor=#000000;" vertex="1" connectable="0" parent="c1"><mxGeometry x="-0.8" relative="1" as="geometry"/></mxCell><mxCell value="0..*" style="edgeLabel;fontSize=9;fontColor=#000000;" vertex="1" connectable="0" parent="c1"><mxGeometry x="0.8" relative="1" as="geometry"/></mxCell></mxGeometry></mxCell>
+  <mxCell id="c2" style="endArrow=diamond;endFill=1;startArrow=ERmandOne;startFill=1;strokeColor=#000000;" edge="1" source="Facture" target="LigneFacture" parent="1"><mxGeometry relative="1" as="geometry"><mxCell value="1" style="edgeLabel;fontSize=9;fontColor=#000000;" vertex="1" connectable="0" parent="c2"><mxGeometry x="-0.8" relative="1" as="geometry"/></mxCell><mxCell value="0..*" style="edgeLabel;fontSize=9;fontColor=#000000;" vertex="1" connectable="0" parent="c2"><mxGeometry x="0.8" relative="1" as="geometry"/></mxCell></mxGeometry></mxCell>
+  <mxCell id="c3" style="endArrow=diamond;endFill=1;startArrow=ERmandOne;startFill=1;strokeColor=#000000;" edge="1" source="BonCommande" target="LigneBonCommande" parent="1"><mxGeometry relative="1" as="geometry"><mxCell value="1" style="edgeLabel;fontSize=9;fontColor=#000000;" vertex="1" connectable="0" parent="c3"><mxGeometry x="-0.8" relative="1" as="geometry"/></mxCell><mxCell value="0..*" style="edgeLabel;fontSize=9;fontColor=#000000;" vertex="1" connectable="0" parent="c3"><mxGeometry x="0.8" relative="1" as="geometry"/></mxCell></mxGeometry></mxCell>
+  <mxCell id="c4" style="endArrow=diamond;endFill=1;startArrow=ERmandOne;startFill=1;strokeColor=#000000;" edge="1" source="Commande" target="LigneCommande" parent="1"><mxGeometry relative="1" as="geometry"><mxCell value="1" style="edgeLabel;fontSize=9;fontColor=#000000;" vertex="1" connectable="0" parent="c4"><mxGeometry x="-0.8" relative="1" as="geometry"/></mxCell><mxCell value="0..*" style="edgeLabel;fontSize=9;fontColor=#000000;" vertex="1" connectable="0" parent="c4"><mxGeometry x="0.8" relative="1" as="geometry"/></mxCell></mxGeometry></mxCell>
+  <mxCell id="c5" style="endArrow=diamond;endFill=1;startArrow=ERmandOne;startFill=1;strokeColor=#000000;" edge="1" source="BonLivraison" target="LigneBonLivraison" parent="1"><mxGeometry relative="1" as="geometry"><mxCell value="1" style="edgeLabel;fontSize=9;fontColor=#000000;" vertex="1" connectable="0" parent="c5"><mxGeometry x="-0.8" relative="1" as="geometry"/></mxCell><mxCell value="0..*" style="edgeLabel;fontSize=9;fontColor=#000000;" vertex="1" connectable="0" parent="c5"><mxGeometry x="0.8" relative="1" as="geometry"/></mxCell></mxGeometry></mxCell>
+  <mxCell id="c6" style="endArrow=diamond;endFill=1;startArrow=ERmandOne;startFill=1;strokeColor=#000000;" edge="1" source="Avoir" target="LigneAvoir" parent="1"><mxGeometry relative="1" as="geometry"><mxCell value="1" style="edgeLabel;fontSize=9;fontColor=#000000;" vertex="1" connectable="0" parent="c6"><mxGeometry x="-0.8" relative="1" as="geometry"/></mxCell><mxCell value="0..*" style="edgeLabel;fontSize=9;fontColor=#000000;" vertex="1" connectable="0" parent="c6"><mxGeometry x="0.8" relative="1" as="geometry"/></mxCell></mxGeometry></mxCell>
+
+  <!-- Lignes -> Produit (toutes les 6) -->
+  <mxCell id="lp1" value="0..*" style="endArrow=block;endFill=0;strokeColor=#000000;fontSize=9;fontColor=#000000;" edge="1" source="LigneDevis" target="Produit" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+  <mxCell id="lp2" value="0..*" style="endArrow=block;endFill=0;strokeColor=#000000;fontSize=9;fontColor=#000000;" edge="1" source="LigneFacture" target="Produit" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+  <mxCell id="lp3" value="0..*" style="endArrow=block;endFill=0;strokeColor=#000000;fontSize=9;fontColor=#000000;" edge="1" source="LigneBonCommande" target="Produit" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+  <mxCell id="lp4" value="0..*" style="endArrow=block;endFill=0;strokeColor=#000000;fontSize=9;fontColor=#000000;" edge="1" source="LigneCommande" target="Produit" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+  <mxCell id="lp5" value="0..*" style="endArrow=block;endFill=0;strokeColor=#000000;fontSize=9;fontColor=#000000;" edge="1" source="LigneBonLivraison" target="Produit" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+  <mxCell id="lp6" value="0..*" style="endArrow=block;endFill=0;strokeColor=#000000;fontSize=9;fontColor=#000000;" edge="1" source="LigneAvoir" target="Produit" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+  <!-- Flux métier (Devis -> BC -> Commande -> BL -> Facture -> Avoir) -->
+  <mxCell id="fl1" value="génère" style="endArrow=open;dashed=1;strokeColor=#AA0000;fontColor=#AA0000;fontSize=9;" edge="1" source="Devis" target="BonCommande" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+  <mxCell id="fl2" value="génère" style="endArrow=open;dashed=1;strokeColor=#AA0000;fontColor=#AA0000;fontSize=9;" edge="1" source="BonCommande" target="Commande" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+  <mxCell id="fl3" value="expédie" style="endArrow=open;dashed=1;strokeColor=#AA0000;fontColor=#AA0000;fontSize=9;" edge="1" source="Commande" target="BonLivraison" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+  <mxCell id="fl4" value="transforme" style="endArrow=open;dashed=1;strokeColor=#AA0000;fontColor=#AA0000;fontSize=9;" edge="1" source="BonLivraison" target="Facture" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+  <mxCell id="fl5" value="annule" style="endArrow=open;dashed=1;strokeColor=#AA0000;fontColor=#AA0000;fontSize=9;" edge="1" source="Facture" target="Avoir" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+</root></mxGraphModel>

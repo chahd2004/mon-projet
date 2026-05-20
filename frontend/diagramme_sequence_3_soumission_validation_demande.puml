@@ -1,0 +1,95 @@
+@startuml
+title Diagramme de séquence — Gestion des comptes
+
+skinparam backgroundColor #FFFFFF
+skinparam sequenceArrowThickness 1.5
+skinparam roundcorner 5
+skinparam ParticipantPadding 20
+skinparam LifeLineBorderColor #333333
+skinparam SequenceGroupBorderColor #888888
+skinparam SequenceGroupFontColor #333333
+skinparam SequenceGroupBackgroundColor #F5F5F5
+
+actor "Entreprise" as E
+actor "SuperAdmin" as SA
+participant "Formulaire\nInscription" as FI
+participant "PublicDemandeController\n/api/public/demandes" as PDC
+participant "Interface\nDemandes" as IDem
+participant "SuperAdminDemande\nController\n/api/super-admin/demandes" as SADC
+participant "DemandeEmetteur\nService" as DS
+participant "DemandeRepository" as DR
+participant "EmailService" as ES
+
+== Soumettre une demande ==
+
+E -> FI : Remplir le formulaire\n(raison sociale, email, téléphone, etc.)
+FI -> FI : Vérification des champs
+
+alt [Champs invalides]
+  FI --> E : Afficher erreurs de validation
+else [Champs valides]
+  FI -> PDC : POST /api/public/demandes/emetteur\n(EmetteurDemandeRequest)
+  PDC -> DS : soumettreDemande(request, httpRequest)
+  DS -> DR : save(demandeEmetteur)\n— statut: REQUESTED
+  DR --> DS : DemandeEmetteur sauvegardée
+  DS -> ES : sendAcknowledgmentEmail(email)
+  ES --> E : Email "Accusé de réception"
+  DS --> PDC : EmetteurDemandeResponse
+  PDC --> FI : 200 OK — EmetteurDemandeResponse
+  FI --> E : Afficher confirmation\n("Demande soumise avec succès")
+end
+
+== Consulter les demandes (SuperAdmin) ==
+
+SA -> IDem : Accéder à "Gestion des Demandes"
+IDem -> SADC : GET /api/super-admin/demandes
+SADC -> DS : getAllDemandes()
+DS -> DR : findAll()
+DR --> DS : List<DemandeEmetteur>
+DS --> SADC : List<DemandeDetailResponse>
+SADC --> IDem : 200 OK — Liste des demandes
+IDem --> SA : Afficher la liste des demandes
+
+SA -> IDem : Sélectionner une demande
+IDem -> SADC : GET /api/super-admin/demandes/{id}
+SADC -> DS : getDemandeDetails(id)
+DS -> DR : findById(id)
+DR --> DS : DemandeEmetteur
+DS --> SADC : DemandeDetailResponse
+SADC --> IDem : 200 OK — Détails de la demande
+IDem --> SA : Afficher les détails
+
+== Approuver une demande ==
+
+SA -> IDem : Cliquer "Approuver"
+
+IDem -> SADC : POST /api/super-admin/demandes/{id}/approuver\n(TraiterDemandeRequest)
+SADC -> DS : approuverDemande(id, request)
+DS -> DR : findById(id)
+DR --> DS : DemandeEmetteur
+DS -> DS : Créer compte User (Entreprise Admin)\nstatut: PENDING → APPROVED\nmot de passe temporaire généré
+DS -> DR : save(demande) — statut: APPROVED
+DS -> ES : sendAccountCreatedEmail(\n  email, motDePasseTemp)
+ES --> E : Email avec mot de passe temporaire
+DS --> SADC : void
+SADC --> IDem : 200 OK\n{message: "Demande approuvée avec succès", status: "APPROVED"}
+IDem --> SA : Afficher confirmation
+
+== Rejeter une demande ==
+
+SA -> IDem : Cliquer "Rejeter" + saisir raison
+IDem -> IDem : Vérifier que le commentaire est renseigné
+
+IDem -> SADC : POST /api/super-admin/demandes/{id}/rejeter\n(TraiterDemandeRequest)
+SADC -> DS : rejeterDemande(id, request)
+DS -> DR : findById(id)
+DR --> DS : DemandeEmetteur
+DS -> DS : statut: REQUESTED → REJECTED
+DS -> DR : save(demande) — statut: REJECTED
+DS -> ES : sendRejectionEmail(email, commentaire)
+ES --> E : Email de rejet avec motif
+DS --> SADC : void
+SADC --> IDem : 200 OK\n{message: "Demande rejetée", status: "REJECTED"}
+IDem --> SA : Afficher confirmation de rejet
+
+@enduml

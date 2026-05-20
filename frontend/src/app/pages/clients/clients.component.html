@@ -2,52 +2,45 @@
 
   <!-- En-tête -->
   <div class="header-section">
-    <h2>
-      <i class="pi pi-users"></i>
-      Liste des clients
-    </h2>
-    <div class="header-actions">
-      <div class="search-box">
-        <i class="pi pi-search"></i>
-        <input
-          type="text"
-          pInputText
-          placeholder="Rechercher..."
-          [(ngModel)]="searchText"
-          (keyup.enter)="onSearch()"
-        >
-        <button *ngIf="searchText" class="clear-search" (click)="clearSearch()">
-          <i class="pi pi-times"></i>
-        </button>
-      </div>
-      <button class="add-btn" (click)="ajouterClient()">
-        <i class="pi pi-user-plus"></i>
-        Nouveau client
+    <div class="header-left">
+      <h2>
+        <i class="pi pi-id-card"></i>
+        {{ 'CLIENTS.TITLE' | translate }}
+      </h2>
+    </div>
+    <button *ngIf="!isViewer" class="add-btn" (click)="ajouterClient()">
+      <i class="pi pi-plus"></i>
+      {{ 'CLIENTS.NEW' | translate }}
+    </button>
+  </div>
+
+  <!-- Filtres (Mise en forme identique aux Produits) -->
+  <div class="filters-section">
+    <div class="search-box">
+      <i class="pi pi-search"></i>
+      <input type="text" pInputText [placeholder]="'CLIENTS.SEARCH_PLACEHOLDER' | translate" [(ngModel)]="searchText"
+        (keyup.enter)="onSearch()">
+      <button *ngIf="searchText" class="clear-search" (click)="clearSearch()">
+        <i class="pi pi-times"></i>
       </button>
     </div>
   </div>
 
   <!-- Tableau -->
-  <p-card>
-    <p-table
-      [value]="clientsFiltered"
-      [paginator]="true"
-      [rows]="rowsPerPage"
-      [totalRecords]="clientsFiltered.length"
-      [loading]="loading"
-      [lazy]="false"
-      (onPageChange)="onPageChange($event)"
-      responsiveLayout="scroll"
-    >
+  <p-table [value]="clientsFiltered" [rows]="rowsPerPage" [totalRecords]="clientsFiltered.length" [loading]="loading"
+    [lazy]="true" [paginator]="true" [rowsPerPageOptions]="rowsOptions"
+    (onLazyLoad)="loadClientsLazy($event)" responsiveLayout="scroll" 
+    styleClass="p-datatable-sm p-datatable-striped clients-table">
       <ng-template pTemplate="header">
         <tr>
-          <th>Raison Sociale</th>
-          <th>Email</th>
-          <th>Téléphone</th>
-          <th>Adresse</th>
-          <th>Pays</th>
-          <th>Région</th>
-          <th style="text-align: center;">Actions</th>
+          <th>{{ 'CLIENTS.TABLE.RAISON_SOCIALE' | translate }}</th>
+          <th>{{ 'CLIENTS.TABLE.EMAIL' | translate }}</th>
+          <th>{{ 'CLIENTS.TABLE.TELEPHONE' | translate }}</th>
+          <th>{{ 'CLIENTS.TABLE.ADRESSE' | translate }}</th>
+          <th>{{ 'CLIENTS.TABLE.PAYS' | translate }}</th>
+          <th>{{ 'CLIENTS.TABLE.REGION' | translate }}</th>
+          <th *ngIf="!isViewer" style="text-align: center; min-width: 160px;">{{ 'CLIENTS.TABLE.ACTIONS' | translate }}
+          </th>
         </tr>
       </ng-template>
 
@@ -59,22 +52,14 @@
           <td>{{ client.adresseComplete }}</td>
           <td>{{ client.pays }}</td>
           <td>{{ client.region }}</td>
-          <td>
+          <td *ngIf="!isViewer">
             <div class="actions-cell">
-              <button
-                class="action-btn edit-btn"
-                (click)="modifierClient(client)"
-                pTooltip="Modifier"
-                tooltipPosition="top"
-              >
+              <button class="icon-btn icon-btn-edit" (click)="modifierClient(client)"
+                [pTooltip]="'CLIENTS.ACTIONS.EDIT_TOOLTIP' | translate" tooltipPosition="top">
                 <i class="pi pi-pencil"></i>
               </button>
-              <button
-                class="action-btn delete-btn"
-                (click)="supprimerClient(client.id)"
-                pTooltip="Supprimer"
-                tooltipPosition="top"
-              >
+              <button class="icon-btn icon-btn-delete" (click)="supprimerClient(client.id)"
+                [pTooltip]="'CLIENTS.ACTIONS.DELETE_TOOLTIP' | translate" tooltipPosition="top">
                 <i class="pi pi-trash"></i>
               </button>
             </div>
@@ -83,111 +68,62 @@
       </ng-template>
 
       <ng-template pTemplate="emptymessage">
-  <tr>
-    <td colspan="7" class="empty-message">
-      <i class="pi pi-users"></i>
-      <h3>Aucun client</h3>
-      <p>Commencez par ajouter votre premier client via le bouton <strong>"Nouveau client"</strong>.</p>
-    </td>
-  </tr>
-</ng-template>
+        <tr>
+          <td [attr.colspan]="isViewer ? 6 : 7" class="empty-message">
+            <i class="pi pi-users"></i>
+            <h3>{{ 'CLIENTS.EMPTY.MESSAGE' | translate }}</h3>
+            <p *ngIf="!isViewer">{{ 'CLIENTS.EMPTY.SUBTITLE_ADD' | translate }}</p>
+            <p *ngIf="isViewer">{{ 'CLIENTS.EMPTY.SUBTITLE_VIEW' | translate }}</p>
+          </td>
+        </tr>
+      </ng-template>
     </p-table>
-  </p-card>
 
   <!-- DIALOGUE AJOUT / MODIFICATION -->
-  <p-dialog
-    [(visible)]="displayDialog"
-    [header]="dialogMode === 'add' ? 'Nouveau client' : 'Modifier le client'"
-    [style]="{width: '520px'}"
-    [modal]="true"
-    [draggable]="false"
-    [resizable]="false"
-    [closeOnEscape]="true"
-    (onHide)="resetForm()"
-  >
+  <p-dialog [(visible)]="displayDialog" styleClass="client-dialog"
+    [header]="dialogMode === 'add' ? ('CLIENTS.DIALOG.ADD_TITLE' | translate) : ('CLIENTS.DIALOG.EDIT_TITLE' | translate)"
+    [style]="{width: '520px'}" [modal]="true" [draggable]="false" [resizable]="false" [closeOnEscape]="true"
+    (onHide)="resetForm()">
     <div class="dialog-content">
 
       <div class="form-group">
         <label for="raisonSociale">
-          Raison sociale <span class="required">*</span>
+          {{ 'CLIENTS.FORM.RAISON_SOCIALE' | translate }} <span class="required">*</span>
         </label>
-        <input
-          id="raisonSociale"
-          type="text"
-          pInputText
-          [(ngModel)]="clientForm.raisonSociale"
-          placeholder="Nom de l'entreprise"
-          class="client-input"
-          autofocus
-        >
+        <input id="raisonSociale" type="text" pInputText [(ngModel)]="clientForm.raisonSociale"
+          [placeholder]="'CLIENTS.FORM.PLACEHOLDERS.RAISON_SOCIALE' | translate" class="client-input" autofocus>
       </div>
 
       <div class="form-row">
         <div class="form-group half">
-          <label for="email">
-            Email <span class="required">*</span>
-          </label>
-          <input
-            id="email"
-            type="email"
-            pInputText
-            [(ngModel)]="clientForm.email"
-            placeholder="exemple@email.com"
-            class="client-input"
-          >
+          <label for="email">{{ 'CLIENTS.FORM.EMAIL' | translate }} <span class="required">*</span></label>
+          <input id="email" type="email" pInputText [(ngModel)]="clientForm.email"
+            [placeholder]="'CLIENTS.FORM.PLACEHOLDERS.EMAIL' | translate" class="client-input">
         </div>
         <div class="form-group half">
-          <label for="telephone">
-            Téléphone <span class="required">*</span>
-          </label>
-          <input
-            id="telephone"
-            type="text"
-            pInputText
-            [(ngModel)]="clientForm.telephone"
-            placeholder="71 234 567"
-            class="client-input"
-          >
+          <label for="telephone">{{ 'CLIENTS.FORM.TELEPHONE' | translate }} <span class="required">*</span></label>
+          <input id="telephone" type="text" pInputText [(ngModel)]="clientForm.telephone"
+            [placeholder]="'CLIENTS.FORM.PLACEHOLDERS.TELEPHONE' | translate" class="client-input">
         </div>
       </div>
 
       <div class="form-group">
-        <label for="adresse">Adresse</label>
-        <input
-          id="adresse"
-          type="text"
-          pInputText
-            [(ngModel)]="clientForm.adresseComplete"
-          placeholder="Rue, ville, code postal"
-          class="client-input"
-        >
+        <label for="adresse">{{ 'CLIENTS.FORM.ADRESSE' | translate }}</label>
+        <input id="adresse" type="text" pInputText [(ngModel)]="clientForm.adresseComplete"
+          [placeholder]="'CLIENTS.FORM.PLACEHOLDERS.ADRESSE' | translate" class="client-input">
       </div>
 
       <div class="form-row">
         <div class="form-group half">
-          <label for="pays">Pays</label>
-          <input
-            id="pays"
-            type="text"
-            pInputText
-            [(ngModel)]="clientForm.pays"
-            placeholder="TUNISIE"
-            class="client-input"
-          >
+          <label for="pays">{{ 'CLIENTS.FORM.PAYS' | translate }}</label>
+          <input id="pays" type="text" pInputText [(ngModel)]="clientForm.pays"
+            [placeholder]="'CLIENTS.FORM.PLACEHOLDERS.PAYS' | translate" class="client-input">
         </div>
         <div class="form-group half">
-          <label for="region">Région</label>
-          <p-dropdown
-            id="region"
-            [options]="regions"
-            [(ngModel)]="clientForm.region"
-            optionLabel="label"
-            optionValue="value"
-            placeholder="Sélectionner"
-            [showClear]="true"
-            [style]="{'width':'100%'}"
-            appendTo="body"
-          ></p-dropdown>
+          <label for="region">{{ 'CLIENTS.FORM.REGION' | translate }}</label>
+          <p-dropdown id="region" [options]="regions" [(ngModel)]="clientForm.region" optionLabel="label"
+            optionValue="value" [placeholder]="'CLIENTS.FORM.PLACEHOLDERS.REGION_SELECT' | translate" [showClear]="true"
+            [style]="{'width':'100%'}" appendTo="body"></p-dropdown>
         </div>
       </div>
 
@@ -196,10 +132,10 @@
     <ng-template pTemplate="footer">
       <div class="dialog-footer">
         <button type="button" class="dialog-footer-btn cancel" (click)="displayDialog = false">
-          <i class="pi pi-times"></i> Annuler
+          <i class="pi pi-times"></i> {{ 'COMMON.CANCEL' | translate }}
         </button>
         <button type="button" class="dialog-footer-btn" (click)="sauvegarderClient()" [disabled]="loading">
-          <i class="pi pi-check"></i> {{ dialogMode === 'add' ? 'Ajouter' : 'Enregistrer' }}
+          <i class="pi pi-check"></i> {{ (dialogMode === 'add' ? 'COMMON.SAVE' : 'COMMON.SAVE') | translate }}
         </button>
       </div>
     </ng-template>

@@ -1,1 +1,165 @@
-/* You can add global styles to this file, and also import other style files */
+/* Global styles */
+html,
+body {
+  margin: 0;
+  padding: 0;
+  height: 100vh;
+  overflow-y: auto;
+}
+
+/* ===== IMPORTS PRIMENG Moved to angular.json ===== */
+
+:root {
+  --brand-primary: #0b163f;
+  --brand-secondary: #102452;
+  --brand-gradient-vertical: linear-gradient(180deg, var(--brand-primary) 0%, var(--brand-secondary) 100%);
+  --brand-gradient-diagonal: linear-gradient(135deg, var(--brand-primary) 0%, var(--brand-secondary) 100%);
+  --app-surface: #f9fafb;
+  --app-surface-soft: #f3f4f6;
+  --app-text-light: rgba(255, 255, 255, 0.85);
+}
+
+/* ===== OVERLAY ===== */
+.p-dialog-mask {
+  background: rgba(15, 23, 42, 0.65) !important;
+  backdrop-filter: blur(6px) !important;
+}
+
+/* ===== CONFIRM DIALOG ===== */
+.p-confirm-dialog {
+  border-radius: 20px !important;
+  overflow: hidden !important;
+  box-shadow: 0 30px 70px rgba(0, 0, 0, 0.45) !important;
+  min-width: 440px !important;
+  border: none !important;
+}
+
+/* ===== COMPACT CALENDAR OVERRIDES ===== */
+.p-datepicker {
+  padding: 0.4rem !important;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15) !important;
+  border-radius: 12px !important;
+}
+.p-datepicker table { font-size: 0.82rem !important; }
+.p-datepicker table th { padding: 0.25rem !important; }
+.p-datepicker table td { padding: 1px !important; }
+.p-datepicker table td > span {
+  width: 1.8rem !important; height: 1.8rem !important;
+  line-height: 1.8rem !important; border-radius: 50% !important;
+}
+.p-datepicker .p-datepicker-header {
+  padding: 0.3rem 0.5rem !important; font-size: 0.85rem !important;
+}
+.p-datepicker .p-datepicker-prev, .p-datepicker .p-datepicker-next {
+  width: 1.7rem !important; height: 1.7rem !important;
+}
+
+.p-confirm-dialog .p-dialog-header {
+  background: #1e293b !important;
+  color: white !important;
+  padding: 1.3rem 1.8rem !important;
+  border-bottom: none !important;
+}
+
+.p-confirm-dialog .p-dialog-header .p-dialog-title {
+  font-size: 1.05rem !important;
+  font-weight: 700 !important;
+  color: white !important;
+  letter-spacing: 0.4px !important;
+}
+
+.p-confirm-dialog .p-dialog-header button {
+  color: rgba(255, 255, 255, 0.55) !important;
+  border-radius: 50% !important;
+}
+
+.p-confirm-dialog .p-dialog-header button:hover {
+  color: white !important;
+  background: rgba(255, 255, 255, 0.12) !important;
+}
+
+.p-confirm-dialog .p-dialog-content {
+  background: #ffffff !important;
+  padding: 2rem 1.8rem 1.6rem !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 1.2rem !important;
+}
+
+.p-confirm-dialog .p-dialog-content .p-confirm-dialog-icon {
+  font-size: 2.4rem !important;
+  color: #f59e0b !important;
+}
+
+.p-confirm-dialog .p-dialog-content .p-confirm-dialog-message {
+  font-size: 1rem !important;
+  color: #1e293b !important;
+  font-weight: 500 !important;
+  line-height: 1.6 !important;
+}
+
+.p-confirm-dialog .p-dialog-footer {
+  background: #f8fafc !important;
+  padding: 1rem 1.8rem 1.4rem !important;
+  display: flex !important;
+  justify-content: flex-end !important;
+  gap: 0.8rem !important;
+  border-top: 1px solid #e2e8f0 !important;
+}
+
+/* Bouton Non */
+.p-confirm-dialog .p-dialog-footer button:first-child {
+  background: transparent !important;
+  color: #64748b !important;
+  border: 2px solid #e2e8f0 !important;
+  border-radius: 10px !important;
+  padding: 0.55rem 1.4rem !important;
+  font-weight: 600 !important;
+  font-size: 0.9rem !important;
+  box-shadow: none !important;
+}
+
+.p-confirm-dialog .p-dialog-footer button:first-child:hover {
+  background: #f1f5f9 !important;
+  border-color: #94a3b8 !important;
+  color: #1e293b !important;
+}
+
+/* Bouton Oui */
+.p-confirm-dialog .p-dialog-footer button:last-child {
+  background: #ef4444 !important;
+  color: white !important;
+  border: 2px solid #ef4444 !important;
+  border-radius: 10px !important;
+  padding: 0.55rem 1.4rem !important;
+  font-weight: 700 !important;
+  font-size: 0.9rem !important;
+  box-shadow: 0 4px 14px rgba(239, 68, 68, 0.35) !important;
+}
+
+.p-confirm-dialog .p-dialog-footer button:last-child:hover {
+  background: #dc2626 !important;
+  border-color: #dc2626 !important;
+  box-shadow: 0 6px 18px rgba(239, 68, 68, 0.45) !important;
+}
+
+/* Global Green Button */
+.btn-green {
+  background: #28a745 !important;
+  border: 1px solid #28a745 !important;
+  color: white !important;
+  font-weight: 600 !important;
+  transition: all 0.2s !important;
+
+  &:hover {
+    background: #218838 !important;
+    border-color: #218838 !important;
+    box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3) !important;
+  }
+
+  &:disabled {
+    background: #94d3a2 !important;
+    border-color: #94d3a2 !important;
+    opacity: 0.7 !important;
+  }
+}

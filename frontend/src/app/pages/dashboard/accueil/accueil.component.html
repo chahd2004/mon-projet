@@ -1,176 +1,161 @@
-<div class="accueil-container">
-  <!-- En-tête -->
-  <div class="header-section">
-    <div>
-      <h1>Tableau de bord</h1>
-      <p class="subtitle">Bienvenue sur votre espace de gestion</p>
-    </div>
-    <div class="header-actions">
-      <button class="btn-outline" (click)="rafraichir()">
-        <i class="pi pi-refresh"></i> Actualiser
-      </button>
-    </div>
-  </div>
+<!-- src/app/pages/dashboard/accueil/accueil.component.html -->
+<p-toast></p-toast>
+<div class="dashboard-layout">
 
-  <!-- Spinner -->
-  <div *ngIf="loading" class="loading-center">
-    <p-progressSpinner strokeWidth="4"></p-progressSpinner>
-  </div>
-
-  <!-- CARTES STATISTIQUES -->
-  <div class="stats-grid" *ngIf="!loading">
-    <div class="stat-card blue" (click)="naviguerVersFactures()">
-      <div class="stat-icon">
-        <i class="pi pi-file"></i>
-      </div>
-      <div class="stat-info">
-        <span class="stat-value">{{ totalFactures }}</span>
-        <span class="stat-label">Total Factures</span>
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <div class="logo">
+        <i class="pi pi-chart-pie"></i>
+        <span>{{ 'SIDEBAR.LOGO' | translate }}</span>
       </div>
     </div>
 
-    <div class="stat-card green" (click)="naviguerVersClients()">
-      <div class="stat-icon">
-        <i class="pi pi-users"></i>
-      </div>
-      <div class="stat-info">
-        <span class="stat-value">{{ totalClients }}</span>
-        <span class="stat-label">Total Clients</span>
-      </div>
-    </div>
+    <nav class="sidebar-nav">
 
-    <div class="stat-card purple">
-      <div class="stat-icon">
-        <i class="pi pi-wallet"></i>
-      </div>
-      <div class="stat-info">
-        <span class="stat-value">{{ formatMontant(chiffreAffaires, true) }}</span>
-        <span class="stat-label">Chiffre d'affaires</span>
-      </div>
-    </div>
-
-    <div class="stat-card red">
-      <div class="stat-icon">
-        <i class="pi pi-exclamation-triangle"></i>
-      </div>
-      <div class="stat-info">
-        <span class="stat-value">{{ facturesImpayees }}</span>
-        <span class="stat-label">Factures impayées</span>
-      </div>
-    </div>
-  </div>
-
-  <!-- GRAPHIQUE + DERNIÈRES FACTURES -->
-  <div class="content-grid" *ngIf="!loading">
-    <!-- Graphique -->
-    <div class="chart-card">
-      <div class="card-header">
-        <h3>
-          <i class="pi pi-chart-line"></i>
-          Évolution mensuelle
-        </h3>
-      </div>
-      <div class="card-body">
-        <p-chart
-          type="line"
-          [data]="chartData"
-          [options]="chartOptions"
-          height="300px"
-        ></p-chart>
-        <div *ngIf="chartData.datasets[0].data.length === 0" class="chart-empty">
-          <p>Aucune donnée disponible</p>
+      <!-- GÉNÉRAL -->
+      <div class="nav-section">
+        <div class="section-title">
+          <i class="pi pi-home"></i>
+          {{ 'SIDEBAR.GENERAL' | translate }}
         </div>
-      </div>
-    </div>
 
-    <!-- Dernières factures -->
-    <div class="table-card">
-      <div class="card-header">
-        <h3>
-          <i class="pi pi-list"></i>
-          Dernières factures
-        </h3>
-        <button class="voir-tout-btn" (click)="naviguerVersFactures()">
-          Voir tout <i class="pi pi-arrow-right"></i>
-        </button>
+        <!-- Tableau de bord : vue d'ensemble -->
+        <a [routerLink]="hasRole('SUPER_ADMIN') ? '/super-admin/statistiques' : '/dashboard'" routerLinkActive="active"
+          [routerLinkActiveOptions]="{exact: true}" class="nav-item">
+          <i class="pi pi-gauge"></i>
+          <span class="nav-label">{{ 'SIDEBAR.DASHBOARD' | translate }}</span>
+        </a>
+
+        <!-- Clients : personnes -->
+        <a *ngIf="hasAnyRole(['ENTREPRISE_ADMIN', 'ENTREPRISE_MANAGER', 'ENTREPRISE_VIEWER', 'EMETTEUR'])"
+          routerLink="/clients" routerLinkActive="active" class="nav-item">
+          <i class="pi pi-users"></i>
+          <span class="nav-label">{{ 'SIDEBAR.CLIENTS' | translate }}</span>
+        </a>
+
+        <!-- Produits : article/tag -->
+        <a *ngIf="hasAnyRole(['ENTREPRISE_ADMIN', 'ENTREPRISE_MANAGER', 'ENTREPRISE_VIEWER', 'EMETTEUR'])"
+          routerLink="/produits" routerLinkActive="active" class="nav-item">
+          <i class="pi pi-tag"></i>
+          <span class="nav-label">{{ 'SIDEBAR.PRODUITS' | translate }}</span>
+        </a>
+
+        <!-- Demandes super-admin -->
+        <a *ngIf="hasRole('SUPER_ADMIN')" routerLink="/demandes" routerLinkActive="active" class="nav-item">
+          <i class="pi pi-inbox"></i>
+          <span class="nav-label">{{ 'SIDEBAR.DEMANDES' | translate }}</span>
+        </a>
+
+        <!-- Utilisateurs super-admin -->
+        <a *ngIf="hasRole('SUPER_ADMIN')" routerLink="/users" routerLinkActive="active" class="nav-item">
+          <i class="pi pi-users"></i>
+          <span class="nav-label">{{ 'SIDEBAR.UTILISATEURS' | translate }}</span>
+        </a>
+
+        <!-- Collaborateurs entreprise-admin -->
+        <a *ngIf="hasRole('ENTREPRISE_ADMIN')" routerLink="/collaborateurs" routerLinkActive="active" class="nav-item">
+          <i class="pi pi-id-card"></i>
+          <span class="nav-label">{{ 'SIDEBAR.COLLABORATEURS' | translate }}</span>
+        </a>
+
+        <!-- Client -->
+        <a *ngIf="hasRole('CLIENT')" routerLink="/mon-profil" routerLinkActive="active" class="nav-item">
+          <i class="pi pi-user-edit"></i>
+          <span class="nav-label">{{ 'SIDEBAR.PROFIL' | translate }}</span>
+        </a>
       </div>
-      <div class="card-body">
-        <div *ngIf="dernieresFactures.length === 0" class="empty-state">
+
+      <!-- FACTURATION -->
+      <div class="nav-section">
+        <div class="section-title">
+          <i class="pi pi-receipt"></i>
+          {{ 'SIDEBAR.FACTURATION' | translate }}
+        </div>
+
+        <!-- Factures : document texte -->
+        <a *ngIf="hasAnyRole(['ENTREPRISE_ADMIN', 'ENTREPRISE_MANAGER', 'ENTREPRISE_VIEWER', 'CLIENT', 'EMETTEUR'])"
+          routerLink="/factures" routerLinkActive="active" class="nav-item">
+          <i class="pi pi-file-edit"></i>
+          <span class="nav-label">{{ 'SIDEBAR.FACTURES' | translate }}</span>
+        </a>
+
+        <!-- Devis : document avec loupe -->
+        <a *ngIf="hasAnyRole(['ENTREPRISE_ADMIN', 'ENTREPRISE_MANAGER', 'ENTREPRISE_VIEWER'])" routerLink="/devis"
+          routerLinkActive="active" class="nav-item">
+          <i class="pi pi-file-export"></i>
+          <span class="nav-label">{{ 'SIDEBAR.DEVIS' | translate }}</span>
+        </a>
+
+        <a *ngIf="hasAnyRole(['ENTREPRISE_ADMIN', 'ENTREPRISE_MANAGER', 'ENTREPRISE_VIEWER'])"
+          routerLink="/bons-commandes" routerLinkActive="active" class="nav-item">
           <i class="pi pi-file"></i>
-          <p>Aucune facture disponible</p>
+          <span class="nav-label">{{ 'SIDEBAR.BON_COMMANDES' | translate }}</span>
+        </a>
+
+        <a *ngIf="hasAnyRole(['ENTREPRISE_ADMIN', 'ENTREPRISE_MANAGER', 'ENTREPRISE_VIEWER'])" routerLink="/commandes"
+          routerLinkActive="active" class="nav-item">
+          <i class="pi pi-briefcase"></i>
+          <span class="nav-label">{{ 'SIDEBAR.COMMANDES' | translate }}</span>
+        </a>
+
+        <a *ngIf="hasAnyRole(['ENTREPRISE_ADMIN', 'ENTREPRISE_MANAGER', 'ENTREPRISE_VIEWER'])"
+          routerLink="/bons-livraison" routerLinkActive="active" class="nav-item">
+          <i class="pi pi-truck"></i>
+          <span class="nav-label">{{ 'SIDEBAR.BON_LIVRAISON' | translate }}</span>
+        </a>
+
+        <!-- Avoirs : remboursement/retour -->
+        <a *ngIf="hasAnyRole(['ENTREPRISE_ADMIN', 'ENTREPRISE_MANAGER', 'ENTREPRISE_VIEWER'])" routerLink="/avoirs"
+          routerLinkActive="active" class="nav-item">
+          <i class="pi pi-arrow-right-arrow-left"></i>
+          <span class="nav-label">{{ 'SIDEBAR.AVOIRS' | translate }}</span>
+        </a>
+      </div>
+
+      <!-- PARAMÈTRES -->
+      <div class="nav-section">
+        <div class="section-title">
+          <i class="pi pi-cog"></i>
+          {{ 'SIDEBAR.PARAMETRES' | translate }}
         </div>
 
-        <p-table
-          *ngIf="dernieresFactures.length > 0"
-          [value]="dernieresFactures"
-          [paginator]="false"
-          responsiveLayout="scroll"
-        >
-          <ng-template pTemplate="header">
-            <tr>
-              <th>N° Facture</th>
-              <th>Client</th>
-              <th>Montant TTC</th>
-              <th>Statut</th>
-              <th>Action</th>
-            </tr>
-          </ng-template>
+        <!-- Paramètres : réglages -->
+        <a routerLink="/parametres" routerLinkActive="active" class="nav-item">
+          <i class="pi pi-sliders-h"></i>
+          <span class="nav-label">{{ 'SIDEBAR.PARAMETRES' | translate }}</span>
+        </a>
 
-          <ng-template pTemplate="body" let-facture>
-            <tr>
-              <td class="num-fact">{{ facture.num_fact }}</td>
-              <td>{{ facture.nom_client }}</td>
-              <td class="montant">{{ formatMontant(facture.totalttc) }}</td>
-              <td>
-                <p-tag
-                  [value]="formatStatut(facture.statut)"
-                  [severity]="getStatutSeverity(facture.statut)"
-                ></p-tag>
-              </td>
-              <td>
-                <button
-                  class="voir-btn"
-                  (click)="voirFacture(facture.id)"
-                  pTooltip="Voir la facture"
-                  tooltipPosition="top"
-                >
-                  <i class="pi pi-eye"></i>
-                </button>
-              </td>
-            </tr>
-          </ng-template>
-        </p-table>
+        <!-- Déconnexion : sortie -->
+        <a class="nav-item logout" (click)="logout()">
+          <i class="pi pi-sign-out"></i>
+          <span class="nav-label">{{ 'SIDEBAR.LOGOUT' | translate }}</span>
+        </a>
+      </div>
+
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="user-info">
+        <div class="user-avatar">
+          <i class="pi pi-user"></i>
+        </div>
+        <div class="user-details">
+          <span class="user-name">{{ userLabel }}</span>
+          <span class="user-role">{{ roleLabel }}</span>
+        </div>
       </div>
     </div>
-  </div>
+  </aside>
 
-  <!-- SECTION CHIFFRE D'AFFAIRES -->
-  <div class="section-title">
-    <i class="pi pi-chart-line"></i>
-    <h2>Chiffre d'affaires</h2>
-  </div>
+  <!-- CONTENU -->
+  <main class="main-content">
 
-  <div class="ca-section" *ngIf="!loading">
-    <div class="ca-card">
-      <div class="ca-header">
-        <span class="ca-label">Chiffre d'affaires de l'exercice</span>
-        <span class="ca-year">{{ stats.exercice }}</span>
-      </div>
-      <div class="ca-value">{{ formatMontant(chiffreAffaires) }}</div>
-      <div class="ca-evolution" [class.negative]="stats.evolution < 0">
-        <i class="pi" [ngClass]="stats.evolution >= 0 ? 'pi-arrow-up' : 'pi-arrow-down'"></i>
-        {{ stats.evolution | number:'1.2-2' }}% vs N-1
-      </div>
+    <div *ngIf="isViewer" class="viewer-banner">
+      {{ 'SIDEBAR.VIEW_MODE' | translate }}
     </div>
-
-    <div class="ca-annees">
-      <div *ngIf="stats.annees.length === 0" class="annee-card empty">
-        <p>Aucune donnée annuelle</p>
-      </div>
-      <div class="annee-card" *ngFor="let annee of stats.annees">
-        <div class="annee-periode">Du {{ annee.debut }} au {{ annee.fin }}</div>
-        <div class="annee-montant">{{ formatMontant(annee.montant) }}</div>
-      </div>
-    </div>
-  </div>
+    <router-outlet></router-outlet>
+  </main>
+  <app-chat-widget
+    *ngIf="hasAnyRole(['ENTREPRISE_ADMIN', 'ENTREPRISE_MANAGER', 'ENTREPRISE_VIEWER'])"></app-chat-widget>
 </div>

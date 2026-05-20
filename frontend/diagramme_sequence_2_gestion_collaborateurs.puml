@@ -1,0 +1,92 @@
+@startuml
+title Diagramme de séquence — Gestion des collaborateurs
+
+<style>
+sequenceDiagram {
+  ParticipantPadding 20
+}
+</style>
+
+skinparam backgroundColor #FFFFFF
+skinparam sequenceArrowThickness 1.5
+skinparam roundcorner 5
+skinparam LifeLineBorderColor #333333
+
+actor "Entreprise Admin" as A
+boundary "Interface" as I <<Boundary>>
+control "Controller" as C <<Control>>
+control "UserService" as US <<Control>>
+entity "User" as U <<Entity>>
+control "EmailService" as ES <<Control>>
+
+== Ajouter ==
+
+A -> I : 1 Remplir formulaire
+activate A
+activate I
+I -> I : 2 Validation
+activate I
+deactivate I
+
+alt Invalide
+    I --> A : 3 Afficher erreurs
+else Valide
+    I -> C : 4 POST /collaborateurs
+    activate C
+    C -> US : 5 createCollaborateur()
+    activate US
+    US -> U : 6 findByEmail()
+    activate U
+    
+    alt existe
+        U --> US : 7 User existe
+        deactivate U
+        US --> C : 8 400 Bad Request
+        C --> I : 9 Afficher erreur
+    else disponible
+        US -> U : 10 save()
+        activate U
+        U --> US : void
+        deactivate U
+        
+        US -> ES : 11 sendAccountInfo()
+        activate ES
+        ES --> US : void
+        deactivate ES
+        
+        US --> C : 12 201 Created
+        deactivate US
+        C --> I : 13 Succès + actualiser liste
+        deactivate C
+    end
+end
+deactivate I
+deactivate A
+
+== Supprimer ==
+
+A -> I : 14 Cliquer Supprimer
+activate A
+activate I
+I -> I : 15 Confirmation
+activate I
+deactivate I
+A -> I : 16 Confirmer
+
+I -> C : 17 DELETE /collaborateurs/{id}
+activate C
+C -> US : 18 deleteUser()
+activate US
+US -> U : 19 findById() + delete()
+activate U
+U --> US : void
+deactivate U
+
+US --> C : 20 204 No Content
+deactivate US
+C --> I : 21 Masquer + Toast succès
+deactivate C
+deactivate I
+deactivate A
+
+@enduml

@@ -1,0 +1,107 @@
+<div class="detail-container">
+  <p-toast></p-toast>
+  <p-confirmDialog></p-confirmDialog>
+
+  <div class="page-header">
+    <button pButton icon="pi pi-arrow-left" [label]="'SUPER_ADMIN.REQUESTS.DETAIL.BACK' | translate"
+      class="p-button-text" (click)="retourListe()"></button>
+    <h1>{{ 'SUPER_ADMIN.REQUESTS.DETAIL.TITLE' | translate }}</h1>
+  </div>
+
+  <!-- Chargement -->
+  <div *ngIf="isLoading" class="loading-container">
+    <p-progressSpinner strokeWidth="4"></p-progressSpinner>
+    <p>{{ 'SUPER_ADMIN.REQUESTS.DETAIL.LOADING' | translate }}</p>
+  </div>
+
+  <div *ngIf="!isLoading && demande">
+
+    <!-- Statut actuel -->
+    <div class="status-banner">
+      <span>{{ 'SUPER_ADMIN.REQUESTS.DETAIL.CURRENT_STATUS' | translate }}</span>
+      <p>{{ getStatusLabel() }}</p>
+      <span class="date-info" *ngIf="demande.dateSoumission">
+        {{ 'SUPER_ADMIN.REQUESTS.DETAIL.SUBMITTED_ON' | translate:{date: (demande.dateSoumission | date: 'dd/MM/yyyy HH:mm')} }}
+      </span>
+    </div>
+
+    <div class="cards-grid">
+
+      <!-- Informations entreprise -->
+      <p-card>
+        <ng-template pTemplate="header">
+          <div class="card-title"><i class="pi pi-building"></i> {{ 'SUPER_ADMIN.REQUESTS.DETAIL.COMPANY_INFO' | translate }}</div>
+        </ng-template>
+        <div class="info-grid">
+          <div class="info-row"><label>{{ 'SUPER_ADMIN.REQUESTS.DETAIL.CODE' | translate }}</label><span>{{ demande.code }}</span></div>
+          <div class="info-row"><label>{{ 'SUPER_ADMIN.REQUESTS.DETAIL.BUSINESS_NAME' | translate }}</label><span>{{ demande.raisonSociale }}</span></div>
+          <div class="info-row"><label>{{ 'SUPER_ADMIN.REQUESTS.DETAIL.TAX_ID' | translate }}</label><span>{{ demande.matriculeFiscal }}</span></div>
+          <div class="info-row"><label>{{ 'SUPER_ADMIN.REQUESTS.DETAIL.LEGAL_FORM' | translate }}</label><span>{{ demande.formeJuridique || '—' }}</span></div>
+          <div class="info-row"><label>{{ 'SUPER_ADMIN.REQUESTS.DETAIL.ADDRESS' | translate }}</label><span>{{ demande.adresseComplete }}</span></div>
+          <div class="info-row"><label>{{ 'SUPER_ADMIN.REQUESTS.DETAIL.REGION' | translate }}</label><span>{{ demande.region }}</span></div>
+          <div class="info-row"><label>{{ 'SUPER_ADMIN.REQUESTS.TABLE.EMAIL' | translate }}</label><span>{{ demande.email }}</span></div>
+          <div class="info-row"><label>{{ 'SUPER_ADMIN.REQUESTS.DETAIL.PHONE' | translate }}</label><span>{{ demande.telephone || '—' }}</span></div>
+          <div class="info-row" *ngIf="demande.siteWeb"><label>{{ 'SUPER_ADMIN.REQUESTS.DETAIL.WEBSITE' | translate }}</label><span>{{ demande.siteWeb }}</span></div>
+          <div class="info-row" *ngIf="demande.banque"><label>{{ 'SUPER_ADMIN.REQUESTS.DETAIL.BANK' | translate }}</label><span>{{ demande.banque }}</span></div>
+          <div class="info-row" *ngIf="demande.iban"><label>{{ 'SUPER_ADMIN.REQUESTS.DETAIL.IBAN' | translate }}</label><span>{{ demande.iban }}</span></div>
+        </div>
+      </p-card>
+
+      <!-- Informations responsable -->
+      <p-card>
+        <ng-template pTemplate="header">
+          <div class="card-title"><i class="pi pi-user"></i> {{ 'SUPER_ADMIN.REQUESTS.DETAIL.RESPONSIBLE' | translate }}</div>
+        </ng-template>
+        <div class="info-grid">
+          <div class="info-row"><label>{{ 'SUPER_ADMIN.REQUESTS.DETAIL.LAST_NAME' | translate }}</label><span>{{ demande.nomResponsable }}</span></div>
+          <div class="info-row"><label>{{ 'SUPER_ADMIN.REQUESTS.DETAIL.FIRST_NAME' | translate }}</label><span>{{ demande.prenomResponsable }}</span></div>
+          <div class="info-row"><label>{{ 'SUPER_ADMIN.REQUESTS.DETAIL.FUNCTION' | translate }}</label><span>{{ demande.fonctionResponsable }}</span></div>
+        </div>
+      </p-card>
+
+    </div>
+
+    <!-- Commentaire de traitement (si rejetée) -->
+    <div class="commentaire-section" *ngIf="demande.commentaireTraitement">
+      <h3>{{ 'SUPER_ADMIN.REQUESTS.DETAIL.REJECTION_COMMENT' | translate }}</h3>
+      <p>{{ demande.commentaireTraitement }}</p>
+    </div>
+
+    <!-- Actions (Approuver / Rejeter) — uniquement si en attente -->
+    <div class="actions-section" *ngIf="isPending()">
+
+      <!-- Formulaire de rejet -->
+      <div class="rejection-form" *ngIf="showRejectionForm">
+        <h3>{{ 'SUPER_ADMIN.REQUESTS.DETAIL.REJECT_REASON_TITLE' | translate }}</h3>
+        <textarea
+          pInputTextarea
+          [(ngModel)]="rejectionReason"
+          [placeholder]="'SUPER_ADMIN.REQUESTS.DETAIL.REJECT_REASON_PLACEHOLDER' | translate"
+          rows="4"
+          class="w-full"
+        ></textarea>
+        <div class="rejection-buttons">
+          <button pButton [label]="'COMMON.CANCEL' | translate" icon="pi pi-times"
+            class="p-button-text" (click)="annulerRejet()"></button>
+          <button pButton [label]="'SUPER_ADMIN.REQUESTS.DETAIL.CONFIRM_REJECT' | translate" icon="pi pi-times-circle"
+            class="p-button-danger" [loading]="actionLoading" (click)="rejeter()"></button>
+        </div>
+      </div>
+
+      <!-- Boutons principaux -->
+      <div class="main-actions" *ngIf="!showRejectionForm">
+        <button pButton [label]="'SUPER_ADMIN.REQUESTS.DETAIL.REJECT' | translate" icon="pi pi-times"
+          class="p-button-danger p-button-outlined"
+          [disabled]="actionLoading"
+          (click)="ouvrirRejet()">
+        </button>
+        <button pButton [label]="'SUPER_ADMIN.REQUESTS.DETAIL.APPROVE' | translate" icon="pi pi-check"
+          class="p-button-success"
+          [loading]="actionLoading"
+          (click)="confirmerApprobation()">
+        </button>
+      </div>
+    </div>
+
+  </div>
+</div>

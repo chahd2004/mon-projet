@@ -1,0 +1,96 @@
+.form-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2rem;
+
+  @media (max-width: 768px) {
+    padding: 1rem;
+  }
+
+  .error {
+    color: #ef4444;
+    font-size: 0.85rem;
+    margin-top: 0.4rem;
+    display: block;
+    animation: fadeIn 0.3s ease-out;
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.form-header {
+  margin-bottom: 2rem;
+
+  h1 {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #1a202c;
+    margin: 0;
+  }
+}
+
+.form-card {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  border-radius: 8px;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+
+  label {
+    font-weight: 600;
+    color: #1a202c;
+    margin-bottom: 0.5rem;
+    font-size: 0.95rem;
+  }
+
+  input,
+  ::ng-deep .p-dropdown {
+    padding: 0.75rem;
+    border: 1px solid #e5e7eb;
+    border-radius: 4px;
+    font-size: 0.95rem;
+
+    &:focus {
+      border-color: #667eea;
+      outline: none;
+    }
+  }
+
+  .error {
+    color: #ef4444;
+    font-size: 0.85rem;
+    margin-top: 0.25rem;
+  }
+}
+
+.checkbox-section {
+  margin-bottom: 2rem;
+  display: flex;
+  align-items: center;
+
+  ::ng-deep .p-checkbox {
+    margin-right: 0.75rem;
+  }
+}
+
+.form-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+
+  button {
+    min-width: 100px;
+  }
+}

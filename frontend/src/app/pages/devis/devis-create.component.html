@@ -1,0 +1,170 @@
+<div class="devis-create-page" *ngIf="!loading; else loadingTpl">
+  <button class="back-link" (click)="retourAuxDevis()">&larr; {{ 'COMMON.BACK_TO_LIST' | translate }}</button>
+  <h1 class="title">{{ isEditMode ? ('DEVIS.EDIT' | translate) : ('DEVIS.NEW' | translate) }}</h1>
+
+  <!-- En-tête Vendeur (Compte Connecté) -->
+  <div class="section vendeur-section">
+    <div class="vendeur-left">
+      <div class="vendeur-avatar">
+        <span>{{ vendeurSelected?.raisonSociale?.charAt(0) ?? 'V' }}</span>
+      </div>
+      <div class="vendeur-info">
+        <div class="vendeur-fixed">
+          <span class="vendeur-value">{{ vendeurSelected?.raisonSociale ?? ('FACTURE.NOT_DEFINED' | translate) }}</span>
+        </div>
+      </div>
+    </div>
+    <div class="vendeur-right">
+      <div class="info-grid">
+        <div class="info-item"><span class="info-label">{{ 'FACTURE.ADDRESS' | translate }}</span><span
+            class="info-value">{{ vendeurSelected?.adresseComplete ?? ('FACTURE.NOT_PROVIDED' | translate) }}</span></div>
+        <div class="info-item"><span class="info-label">{{ 'FACTURE.PHONE' | translate }}</span><span
+            class="info-value">{{ vendeurSelected?.telephone ?? ('FACTURE.NOT_PROVIDED' | translate) }}</span></div>
+        <div class="info-item"><span class="info-label">{{ 'FACTURE.CODE_RC' | translate }}</span><span
+            class="info-value">{{ vendeurSelected?.code ?? ('FACTURE.NOT_PROVIDED' | translate) }}</span></div>
+        <div class="info-item"><span class="info-label">{{ 'FACTURE.EMAIL' | translate }}</span><span
+            class="info-value">{{ vendeurSelected?.email ?? ('FACTURE.NOT_PROVIDED' | translate) }}</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>{{ 'DEVIS.GENERAL_INFO' | translate }}</h2>
+    <div class="grid two-cols">
+      <div class="field">
+        <label>{{ 'FACTURE.CLIENT' | translate }} *</label>
+        <div class="inline-row">
+          <select [(ngModel)]="clientId">
+            <option [ngValue]="null">{{ 'DEVIS.SELECT_CLIENT' | translate }}</option>
+            <option *ngFor="let c of clients" [ngValue]="c.id">{{ c.raisonSociale }}</option>
+          </select>
+          <button type="button" class="secondary" (click)="ouvrirNouveauClientModal()">+ {{ 'DEVIS.NEW_CLIENT' |
+            translate }}</button>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>{{ 'FACTURE.ISSUE_DATE' | translate }}</label>
+        <input type="date" [(ngModel)]="dateEmission" [ngModelOptions]="{ standalone: true }" />
+      </div>
+
+      <div class="field">
+        <label>{{ 'DEVIS.VALIDITY_DATE' | translate }}</label>
+        <input type="date" [(ngModel)]="dateValidite" [ngModelOptions]="{ standalone: true }" />
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>{{ 'DEVIS.PRODUCT_LINES' | translate }}</h2>
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>{{ 'FACTURE.PRODUCT' | translate }}</th>
+            <th>{{ 'FACTURE.QUANTITY' | translate }}</th>
+            <th>{{ 'FACTURE.UNIT_PRICE' | translate }}</th>
+            <th>{{ 'FACTURE.VAT' | translate }} %</th>
+            <th>{{ 'FACTURE.AMOUNT_HT' | translate }}</th>
+            <th>{{ 'FACTURES.TABLE.ACTIONS' | translate }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let line of lignes; let i = index">
+            <td>{{ i + 1 }}</td>
+            <td>
+              <select [(ngModel)]="line.produitId" [ngModelOptions]="{ standalone: true }">
+                <option [ngValue]="null">{{ 'DEVIS.SEARCH_PRODUCT' | translate }}</option>
+                <option *ngFor="let p of produits" [ngValue]="p.id">{{ p.designation }}</option>
+              </select>
+            </td>
+            <td>
+              <input type="number" min="1" [(ngModel)]="line.quantite" [ngModelOptions]="{ standalone: true }" />
+            </td>
+            <td>{{ (getProduit(line)?.prixUnitaire || 0) | number:'1.3-3' }}</td>
+            <td>{{ (getProduit(line)?.tauxTVA || 0) | number:'1.0-0' }}%</td>
+            <td>{{ getLigneMontantTTC(line) | number:'1.3-3' }}</td>
+            <td>
+              <button type="button" class="danger" (click)="supprimerLigne(i)">{{ 'COMMON.DELETE' | translate
+                }}</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <button type="button" class="secondary" (click)="ajouterLigne()">+ {{ 'FACTURE.ADD_LINE' | translate }}</button>
+  </div>
+
+  <div class="card">
+    <h2>{{ 'DEVIS.SUMMARY' | translate }}</h2>
+    <div class="summary-grid">
+      <p>{{ 'DEVIS.TOTAL_HT' | translate }} : <strong>{{ totalHT | number:'1.3-3' }} TND</strong></p>
+      <p>{{ 'FACTURE.VAT' | translate }} : <strong>{{ totalTVA | number:'1.3-3' }} TND</strong></p>
+      <p class="ttc">{{ 'DEVIS.TOTAL_TTC' | translate }} : <strong>{{ totalTTC | number:'1.3-3' }} TND</strong></p>
+    </div>
+  </div>
+
+
+
+  <div *ngIf="errorMessage" class="error">{{ errorMessage }}</div>
+
+  <div class="actions-row">
+    <button type="button" class="primary" (click)="enregistrerBrouillon()">{{ isEditMode ? ('DEVIS.UPDATE_DRAFT' |
+      translate) : ('DEVIS.SAVE_DRAFT' | translate) }}</button>
+  </div>
+</div>
+
+<ng-template #loadingTpl>
+  <div class="loading">{{ 'DASHBOARD.REFRESH' | translate }}...</div>
+</ng-template>
+
+<div class="modal-backdrop" *ngIf="displayClientModal" (click)="fermerNouveauClientModal()">
+  <div class="modal-card" (click)="$event.stopPropagation()">
+    <h3>{{ 'DEVIS.NEW_CLIENT' | translate }}</h3>
+
+    <div class="modal-grid">
+      <div class="field">
+        <label>{{ 'CLIENTS.TABLE.RAISON_SOCIALE' | translate }} *</label>
+        <input type="text" [(ngModel)]="clientForm.raisonSociale" [ngModelOptions]="{ standalone: true }" />
+      </div>
+
+      <div class="field">
+        <label>{{ 'CLIENTS.TABLE.EMAIL' | translate }} *</label>
+        <input type="email" [(ngModel)]="clientForm.email" [ngModelOptions]="{ standalone: true }" />
+      </div>
+
+      <div class="field">
+        <label>{{ 'CLIENTS.TABLE.TELEPHONE' | translate }} *</label>
+        <input type="text" [(ngModel)]="clientForm.telephone" [ngModelOptions]="{ standalone: true }" />
+      </div>
+
+      <div class="field">
+        <label>{{ 'CLIENTS.TABLE.ADRESSE' | translate }} *</label>
+        <input type="text" [(ngModel)]="clientForm.adresseComplete" [ngModelOptions]="{ standalone: true }" />
+      </div>
+
+      <div class="field">
+        <label>{{ 'CLIENTS.TABLE.PAYS' | translate }} *</label>
+        <input type="text" [(ngModel)]="clientForm.pays" [ngModelOptions]="{ standalone: true }" />
+      </div>
+
+      <div class="field">
+        <label>{{ 'CLIENTS.TABLE.REGION' | translate }} *</label>
+        <select [(ngModel)]="clientForm.region" [ngModelOptions]="{ standalone: true }">
+          <option *ngFor="let r of regions" [ngValue]="r.value">{{ r.label }}</option>
+        </select>
+      </div>
+    </div>
+
+    <div *ngIf="clientModalError" class="error">{{ clientModalError }}</div>
+
+    <div class="modal-actions">
+      <button type="button" class="secondary" (click)="fermerNouveauClientModal()">{{ 'COMMON.CANCEL' | translate
+        }}</button>
+      <button type="button" class="primary" [disabled]="clientSaving" (click)="sauvegarderNouveauClient()">{{
+        'FACTURE.ADD' | translate }}</button>
+    </div>
+  </div>
+</div>

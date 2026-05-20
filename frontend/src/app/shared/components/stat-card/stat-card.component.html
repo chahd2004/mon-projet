@@ -1,0 +1,20 @@
+<div class="stat-card" [class]="getColorClass()" (click)="onClick()" [class.loading]="isLoading">
+  <div class="card-header">
+    <div class="card-icon" *ngIf="data.icon">
+      <i [class]="data.icon"></i>
+    </div>
+    <div class="card-title">{{ data.title }}</div>
+  </div>
+
+  <div class="card-body">
+    <div class="value">{{ data.value }}</div>
+    <div *ngIf="data.trend" [class]="getTrendClass()">
+      <i [class]="getTrendIcon()"></i>
+      <span *ngIf="data.trendValue">{{ data.trendValue }}%</span>
+    </div>
+  </div>
+
+  <div *ngIf="isLoading" class="loading-overlay">
+    <div class="spinner"></div>
+  </div>
+</div>

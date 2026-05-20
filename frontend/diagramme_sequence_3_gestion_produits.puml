@@ -1,0 +1,133 @@
+@startuml
+title Diagramme de séquence — Gestion des produits (ECB)
+
+skinparam backgroundColor #FFFFFF
+skinparam sequenceArrowThickness 1.5
+skinparam roundcorner 5
+skinparam LifeLineBorderColor #333333
+skinparam SequenceGroupBorderColor #888888
+skinparam SequenceGroupFontColor #333333
+skinparam SequenceGroupBackgroundColor #F5F5F5
+
+' ECB Stereotypes
+actor "Manager" as M
+actor "Consultant" as C
+boundary "Interface" as I <<Boundary>>
+control "ProduitController" as PC <<Control>>
+control "ProduitService" as PS <<Control>>
+entity "Produit" as PR <<Entity>>
+
+== Consultation (Manager & Consultant) ==
+
+group Accéder au catalogue
+    M -> I : Accéder au catalogue
+    C -> I : Accéder au catalogue
+    activate I
+    I -> PC : GET /api/produits
+    activate PC
+    PC -> PS : getProduitsByEmetteur()
+    activate PS
+    PS -> PR : findByEmetteurId()
+    activate PR
+    PR --> PS : List<Produit>
+    deactivate PR
+    note right: Statut :\n- qte <= 0 : "Rupture de stock"\n- qte <= seuil : "Stock faible"\n- Sinon : "Disponible"
+    PS --> PC : List<ProduitResponseDTO>
+    deactivate PS
+    PC --> I : 200 OK
+    deactivate PC
+    I --> M : Afficher produits et stocks
+    I --> C : Afficher produits et stocks
+    deactivate I
+end
+
+== Ajouter un produit (Manager uniquement) ==
+
+M -> I : Saisir infos + Enregistrer
+activate M
+activate I
+I -> PC : POST /api/produits
+activate PC
+PC -> PS : create(request)
+activate PS
+PS -> PR : save(produit)
+activate PR
+PR --> PS : Produit
+deactivate PR
+PS --> PC : ProduitResponseDTO
+deactivate PS
+PC --> I : 201 Created
+deactivate PC
+I --> M : Succès : Produit ajouté
+deactivate I
+deactivate M
+
+== Modifier un produit (Manager uniquement) ==
+
+M -> I : Cliquer sur Modifier
+activate M
+activate I
+I --> M : Afficher formulaire
+M -> I : Modifier les infos + Enregistrer
+I -> PC : PUT /api/produits/{id}
+activate PC
+PC -> PS : update(id, request)
+activate PS
+PS -> PR : save(produit)
+activate PR
+PR --> PS : Produit
+deactivate PR
+PS --> PC : 200 OK
+deactivate PS
+PC --> I : 200 OK
+deactivate PC
+I --> M : Succès : Produit modifié
+deactivate I
+deactivate M
+
+== Gérer le stock (Manager uniquement) ==
+
+M -> I : Cliquer sur Modifier
+activate M
+activate I
+I --> M : Afficher formulaire (avec champ stock)
+M -> I : Ajuster la quantité + Enregistrer
+I -> PC : PUT /api/produits/{id}
+activate PC
+PC -> PS : update(id, request)
+activate PS
+PS -> PR : save(produit)
+activate PR
+PR --> PS : Produit
+deactivate PR
+PS --> PC : 200 OK
+deactivate PS
+PC --> I : 200 OK
+deactivate PC
+    note right: Statut :\n- qte <= 0 : "Rupture de stock"\n- qte <= seuil : "Stock faible"\n- Sinon : "Disponible"
+I --> M : Succès : Stock mis à jour
+deactivate I
+deactivate M
+
+== Supprimer (Manager uniquement) ==
+
+M -> I : Cliquer Supprimer
+activate M
+activate I
+I -> PC : DELETE /api/produits/{id}
+activate PC
+PC -> PS : delete(id)
+activate PS
+PS -> PR : deleteById(id)
+activate PR
+PR --> PS : void
+deactivate PR
+PS --> PC : void
+deactivate PS
+PC --> I : 204 No Content
+deactivate PC
+I --> M : Succès : Produit supprimé
+deactivate I
+deactivate M
+
+@enduml

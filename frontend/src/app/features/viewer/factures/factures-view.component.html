@@ -1,0 +1,53 @@
+<div class="factures-view">
+  <div class="view-header">
+    <h2>Factures (Lecture)</h2>
+    <p class="subtitle">Consultez les factures en mode lecture seule</p>
+  </div>
+
+  <div *ngIf="loading" class="loading-spinner">
+    <p>Chargement des factures...</p>
+  </div>
+
+  <div *ngIf="error" class="alert alert-danger">
+    {{ error }}
+  </div>
+
+  <div *ngIf="!loading && factures.length > 0" class="table-container">
+    <table class="factures-table">
+      <thead>
+        <tr>
+          <th>Numéro</th>
+          <th>Acheteur</th>
+          <th>Vendeur</th>
+          <th>Date d'émission</th>
+          <th>Montant TTC</th>
+          <th>Statut</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let facture of factures" class="facture-row">
+          <td class="facture-number">{{ facture.numFact }}</td>
+          <td>{{ facture.acheteurNom }}</td>
+          <td>{{ facture.vendeurNom }}</td>
+          <td>{{ facture.dateEmission | date: 'dd/MM/yyyy' }}</td>
+          <td class="amount">{{ facture.totalTTC | number: '1.2-2' }} €</td>
+          <td>
+            <span [ngClass]="['badge', getStatutClass(facture.statut)]">
+              {{ facture.statut }}
+            </span>
+          </td>
+          <td class="actions">
+            <a [routerLink]="['/viewer/factures', facture.id]" class="btn-view">
+              Consulter
+            </a>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div *ngIf="!loading && factures.length === 0 && !error" class="no-data">
+    <p>Aucune facture disponible</p>
+  </div>
+</div>

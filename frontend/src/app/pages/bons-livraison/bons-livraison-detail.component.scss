@@ -1,0 +1,300 @@
+.bl-detail-page {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 1rem 1.2rem;
+}
+
+.back-link {
+  border: 0;
+  background: transparent;
+  color: #1d4ed8;
+  font-weight: 700;
+  cursor: pointer;
+  margin-bottom: 0.65rem;
+}
+
+.header-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  border: 1px solid #d9e2ec;
+  border-radius: 12px;
+  background: #ffffff;
+  padding: 1.2rem;
+  margin-bottom: 1rem;
+
+  .header-main {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+
+    h1 {
+      margin: 0;
+      color: #102a43;
+      font-size: 1.4rem;
+    }
+  }
+
+  .header-actions {
+    display: flex;
+    gap: 0.6rem;
+  }
+}
+
+.action-btn-sm {
+  border: 0;
+  border-radius: 8px;
+  padding: 0.45rem 0.9rem;
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  background: #334155;
+  color: #ffffff;
+  transition: all 0.2s;
+
+  &:hover {
+    background: #1e293b;
+  }
+
+  &.danger {
+    background: #dc2626;
+    &:hover { background: #b91c1c; }
+  }
+
+  &.success {
+    background: #059669;
+    &:hover { background: #047857; }
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.signature-card {
+  background: #fff;
+  border-left: 5px solid #1e40af;
+  padding: 1.2rem;
+
+  .label {
+    font-weight: 700;
+    color: #1e3a8a;
+    margin-bottom: 0.6rem;
+    font-size: 1rem;
+  }
+}
+
+.status-pill {
+  padding: 0.35rem 0.75rem;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.status-pill.draft {
+  background: #e0f2fe;
+  color: #0c4a6e;
+}
+
+.status-pill.delivered {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.status-pill.signed-client {
+  background: #ede9fe;
+  color: #5b21b6;
+}
+
+.status-pill.dispute {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.status-pill.closed {
+  background: #f1f5f9;
+  color: #475569;
+}
+
+.card {
+  border: 1px solid #d9e2ec;
+  border-radius: 12px;
+  background: #ffffff;
+  padding: 0.9rem;
+  margin-bottom: 0.9rem;
+}
+
+.card h2 {
+  margin: 0 0 0.8rem;
+  color: #102a43;
+  text-transform: uppercase;
+  font-size: 1rem;
+}
+
+.mini-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.8rem;
+  margin-bottom: 0.8rem;
+}
+
+.mini-card,
+.full-card {
+  border: 1px solid #e4ecf3;
+  border-radius: 10px;
+  background: #f8fbff;
+  padding: 0.75rem;
+}
+
+.full-card {
+  margin-bottom: 0.7rem;
+}
+
+.mini-card h3,
+.full-card h3 {
+  margin: 0 0 0.4rem;
+  color: #102a43;
+  text-transform: uppercase;
+  font-size: 0.9rem;
+}
+
+.mini-card p,
+.full-card p {
+  margin: 0.2rem 0;
+  color: #334155;
+}
+
+.strong {
+  font-weight: 700;
+}
+
+.table-wrapper {
+  border: 1px solid #d9e2ec;
+  border-radius: 12px;
+  overflow-x: auto;
+  background: #ffffff;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 760px;
+}
+
+th,
+td {
+  border-bottom: 1px solid #e4ecf3;
+  padding: 0.62rem;
+  text-align: left;
+  font-size: 0.9rem;
+  color: #243b53;
+}
+
+th {
+  background: #f0f4f8;
+  font-weight: 700;
+}
+
+.state {
+  display: inline-block;
+  border-radius: 999px;
+  padding: 0.18rem 0.48rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.state.ok {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.state.warn {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.separator {
+  height: 1px;
+  background: #d9e2ec;
+  margin: 0.9rem 0;
+}
+
+.hint {
+  margin: 0.7rem 0 0;
+  color: #486581;
+  font-weight: 600;
+}
+
+.message {
+  margin-top: 0.7rem;
+  border-radius: 10px;
+  text-align: center;
+  padding: 0.8rem;
+}
+
+.message.error {
+  color: #7f1d1d;
+  background: #fee2e2;
+  border: 1px solid #fecaca;
+}
+
+.message.info {
+  color: #1e3a8a;
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+}
+
+.loading,
+.empty {
+  text-align: center;
+  padding: 0.9rem;
+}
+
+@media (max-width: 900px) {
+  .mini-grid,
+  .recap-card .recap-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.signature-link-section {
+  .label {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #102a43;
+    margin-bottom: 0.5rem;
+  }
+
+  .link-box {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+
+    input {
+      flex: 1;
+      padding: 0.65rem;
+      border: 1px solid #d9e2ec;
+      border-radius: 8px;
+      background: #f0f4f8;
+      font-size: 0.9rem;
+      color: #334155;
+    }
+
+    button {
+      padding: 0.65rem 1rem;
+      background: #1e40af;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-weight: 700;
+      cursor: pointer;
+
+      &:hover {
+        background: #1e3a8a;
+      }
+    }
+  }
+}

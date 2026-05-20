@@ -1,0 +1,74 @@
+<div class="statut-page">
+  <p-card class="statut-card">
+    <ng-template pTemplate="header">
+      <div class="card-header">
+        <h1>Suivi de votre demande</h1>
+
+      </div>
+    </ng-template>
+
+    <div class="statut-container">
+      <div class="status-section">
+        <h2>Statut</h2>
+        <p>{{ getStatusLabel() }}</p>
+      </div>
+
+      <div class="info-section">
+
+
+        <div class="info-item">
+          <label>Email :</label>
+          <span>{{ demande.email }}</span>
+        </div>
+
+        <div class="info-item">
+          <label>Date de soumission :</label>
+          <span>{{ demande.dateSubmission | date: 'dd/MM/yyyy à HH:mm' }}</span>
+        </div>
+      </div>
+
+      <div class="notes-section">
+        <h3>Commentaires</h3>
+        <p class="notes">{{ demande.notes }}</p>
+      </div>
+
+      <div class="timeline">
+        <h3>Étapes du processus</h3>
+        <div class="timeline-item">
+          <div class="timeline-marker completed">1</div>
+          <div class="timeline-content">
+            <h4>Demande soumise</h4>
+            <p>{{ demande.dateSubmission | date: 'dd/MM/yyyy' }}</p>
+          </div>
+        </div>
+
+        <div class="timeline-item" [class.completed]="isApproved()">
+          <div class="timeline-marker" [class.completed]="isApproved()">2</div>
+          <div class="timeline-content">
+            <h4>En cours de validation</h4>
+            <p *ngIf="demande.statut === 'PENDING'">Nous examinons votre demande...</p>
+            <p *ngIf="demande.statut === 'APPROVED'">Votre demande a été approuvée!</p>
+            <p *ngIf="demande.statut === 'REJECTED'">Votre demande a été rejetée.</p>
+          </div>
+        </div>
+
+        <div class="timeline-item" [class.completed]="isApproved()">
+          <div class="timeline-marker" [class.completed]="isApproved()">3</div>
+          <div class="timeline-content">
+            <h4>Accès accordé</h4>
+            <p *ngIf="isApproved()">Vous pouvez maintenant vous connecter avec vos identifiants.</p>
+            <p *ngIf="!isApproved()">Sera activé une fois votre demande approuvée.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="action-buttons">
+        <p-button *ngIf="isApproved()" label="Se connecter" icon="pi pi-sign-in" (click)="navigateToLogin()"
+          styleClass="p-button-primary"></p-button>
+
+        <p-button label="Retour à l'accueil" icon="pi pi-home" (click)="navigateToHome()"
+          styleClass="p-button-primary"></p-button>
+      </div>
+    </div>
+  </p-card>
+</div>

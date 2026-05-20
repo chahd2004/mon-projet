@@ -1,0 +1,172 @@
+@startuml
+title Diagramme de séquence — Gestion des commandes (ECB)
+
+skinparam backgroundColor #FFFFFF
+skinparam sequenceArrowThickness 1.5
+skinparam roundcorner 5
+skinparam LifeLineBorderColor #333333
+skinparam SequenceGroupBorderColor #888888
+skinparam SequenceGroupFontColor #333333
+skinparam SequenceGroupBackgroundColor #F5F5F5
+
+' ECB Stereotypes
+actor "Manager" as M
+actor "Consultant" as C
+boundary "Interface" as I <<Boundary>>
+control "CommandeController" as CC <<Control>>
+control "CommandeService" as CS <<Control>>
+control "BonCommandeService" as BCS <<Control>>
+control "BonLivraisonService" as BLS <<Control>>
+entity "Commande" as CMD <<Entity>>
+entity "BonCommande" as BC <<Entity>>
+entity "BonLivraison" as BL <<Entity>>
+
+== Consultation (Manager & Consultant) ==
+
+M -> I : Accéder au menu "Commandes"
+C -> I : Accéder au menu "Commandes"
+activate I
+I -> CC : GET /api/commandes
+activate CC
+CC -> CS : findAll()
+activate CS
+CS -> CMD : findAll()
+activate CMD
+CMD --> CS : List<Commande>
+deactivate CMD
+CS --> CC : List<CommandeDTO>
+deactivate CS
+CC --> I : Affichage de la liste
+deactivate CC
+I --> M : Liste affichée
+I --> C : Liste affichée
+deactivate I
+
+== Génération (Manager uniquement) ==
+
+M -> I : cliquer sur "Depuis BC"
+activate M
+activate I
+I -> BCS : getAll(filtre CONFIRMED)
+activate BCS
+BCS --> I : List<BonCommande>
+deactivate BCS
+
+M -> I : Sélectionner BC + cliquer sur "Convertir"
+I -> CC : POST /api/conversions/bon-commande/{id}/vers-commande
+activate CC
+CC -> CS : createFromBC(bcId)
+activate CS
+CS -> CMD : save(newCommande, statut=DRAFT)
+activate CMD
+CMD --> CS : Commande
+deactivate CMD
+CS -> BC : updateStatus(bcId, statut=CONVERTED)
+activate BC
+BC --> CS : void
+deactivate BC
+CS --> CC : CommandeDTO
+deactivate CS
+CC --> I : 201 Created
+deactivate CC
+I --> M : Succès : Commande générée (DRAFT)
+deactivate I
+deactivate M
+
+== Modification (Manager uniquement) ==
+
+M -> I : Sélectionner + cliquer sur "Modifier"
+activate M
+activate I
+I -> CC : PUT /api/commandes/{id}
+activate CC
+CC -> CS : update(id, dto)
+activate CS
+CS -> CMD : findById() + save()
+activate CMD
+CMD --> CS : Commande
+deactivate CMD
+CS --> CC : CommandeDTO
+deactivate CS
+CC --> I : 200 OK
+deactivate CC
+I --> M : Succès : Commande mise à jour
+deactivate I
+deactivate M
+
+== Confirmation (Manager uniquement) ==
+
+M -> I : cliquer sur "Confirmer"
+activate M
+activate I
+I -> CC : confirmerCommande(id)
+activate CC
+CC -> CS : confirmer(id)
+activate CS
+CS -> CMD : updateStatus(id, statut=CONFIRMED)
+activate CMD
+CMD --> CS : Commande
+deactivate CMD
+CS --> CC : 200 OK
+deactivate CS
+CC --> I : Confirmation (Succès)
+deactivate CC
+I --> M : Succès : Commande confirmée
+deactivate I
+deactivate M
+
+== Mise en Livraison (Manager uniquement) ==
+
+M -> I : cliquer sur "Démarrer production"
+activate M
+activate I
+I -> CC : demarrerProduction(id)
+activate CC
+CC -> CS : demarrer(id)
+activate CS
+CS -> CMD : updateStatus(id, statut=IN_PROGRESS)
+activate CMD
+CMD --> CS : Commande
+deactivate CMD
+
+note right of CS : Génération automatique\ndu Bon de Livraison
+CS -> BLS : generateBL()
+activate BLS
+BLS -> BL : save(newBL, statut=DRAFT)
+activate BL
+BL --> BLS : BonLivraison
+deactivate BL
+BLS --> CS : BonLivraison
+deactivate BLS
+CS --> CC : 200 OK
+deactivate CS
+CC --> I : Statut mis à jour
+deactivate CC
+I --> M : Succès : Production démarrée
+deactivate I
+deactivate M
+
+== Annulation (Manager uniquement) ==
+
+M -> I : cliquer sur "Annuler"
+activate M
+activate I
+I --> M : Demander motif
+M -> I : Saisir motif
+I -> CC : annulerCommande(id, motif)
+activate CC
+CC -> CS : annuler(id, motif)
+activate CS
+CS -> CMD : updateStatus(id, statut=CANCELLED)
+activate CMD
+CMD --> CS : Commande
+deactivate CMD
+CS --> CC : 200 OK
+deactivate CS
+CC --> I : Confirmation annulation
+deactivate CC
+I --> M : Succès : Commande annulée
+deactivate I
+deactivate M
+
+@enduml

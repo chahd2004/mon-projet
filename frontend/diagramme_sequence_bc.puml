@@ -1,0 +1,155 @@
+@startuml
+title Diagramme de séquence — Gestion des bons de commande (ECB)
+
+skinparam backgroundColor #FFFFFF
+skinparam sequenceArrowThickness 1.5
+skinparam roundcorner 5
+skinparam LifeLineBorderColor #333333
+skinparam SequenceGroupBorderColor #888888
+skinparam SequenceGroupFontColor #333333
+skinparam SequenceGroupBackgroundColor #F5F5F5
+
+' ECB Stereotypes
+actor "Manager" as M
+actor "Consultant" as C
+boundary "Interface" as I <<Boundary>>
+control "BCController" as BCC <<Control>>
+control "BCService" as BCS <<Control>>
+control "EmailService" as ES
+entity "BonCommande" as BC <<Entity>>
+
+== Consultation (Manager & Consultant) ==
+
+M -> I : Accéder au menu "Bons de Commande"
+C -> I : Accéder au menu "Bons de Commande"
+activate I
+I -> BCC : GET /api/bon-commandes
+activate BCC
+BCC -> BCS : getAll()
+activate BCS
+BCS -> BC : findAll()
+activate BC
+BC --> BCS : List<BC>
+deactivate BC
+BCS --> BCC : List<BCResponseDTO>
+deactivate BCS
+BCC --> I : 200 OK (Affichage de la liste)
+deactivate BCC
+I --> M : Liste affichée
+I --> C : Liste affichée
+deactivate I
+
+
+== Modification d'un bon de commande (Manager uniquement) ==
+
+M -> I : Sélectionner + cliquer sur "Modifier"
+activate M
+activate I
+I -> BCC : PUT /api/bon-commandes/{id}
+activate BCC
+BCC -> BCS : update(id, dto)
+activate BCS
+BCS -> BC : findById() + save()
+activate BC
+BC --> BCS : BonCommande
+deactivate BC
+BCS --> BCC : BCResponseDTO
+deactivate BCS
+BCC --> I : 200 OK
+deactivate BCC
+I --> M : Succès : BC mis à jour
+deactivate I
+deactivate M
+
+== Générer depuis Devis (Manager uniquement) ==
+
+M -> I : Saisir infos + cliquer sur "Générer"
+activate M
+activate I
+I -> BCC : POST /api/bon-commandes
+activate BCC
+BCC -> BCS : create(request)
+activate BCS
+BCS -> BC : save(BC, statut=DRAFT)
+activate BC
+BC --> BCS : BonCommande
+deactivate BC
+BCS --> BCC : BCResponseDTO
+deactivate BCS
+BCC --> I : 201 Created
+deactivate BCC
+I --> M : Succès : Bon de commande généré (DRAFT)
+deactivate I
+deactivate M
+
+== Envoyer demande de signature (Manager uniquement) ==
+
+M -> I : cliquer sur "Envoyer demande"
+activate M
+activate I
+I -> BCC : PUT /api/bon-commandes/{id}/envoyer
+activate BCC
+BCC -> BCS : envoyer(id)
+activate BCS
+BCS -> ES : sendSignatureRequest(BC)
+activate ES
+note right : L'email (lien de signature) est envoyé au Client
+ES --> BCS : void
+deactivate ES
+BCS -> BC : updateStatus(id, statut=SENT)
+activate BC
+BC --> BCS : BonCommande
+deactivate BC
+BCS --> BCC : 200 OK
+deactivate BCS
+BCC --> I : Succès : Bon de commande envoyé
+deactivate BCC
+I --> M : Succès : Mail envoyé
+deactivate I
+deactivate M
+
+== Confirmation (Manager uniquement) ==
+
+M -> I : cliquer sur "Confirmer"
+activate M
+activate I
+I -> BCC : confirmer(id)
+activate BCC
+BCC -> BCS : confirmer(id)
+activate BCS
+BCS -> BC : updateStatus(id, statut=CONFIRMED)
+activate BC
+BC --> BCS : BonCommande
+deactivate BC
+BCS --> BCC : 200 OK
+deactivate BCS
+BCC --> I : Statut mis à jour
+deactivate BCC
+I --> M : Succès : Bon de commande confirmé
+deactivate I
+deactivate M
+
+== Annulation (Manager uniquement) ==
+
+M -> I : cliquer sur "Annuler"
+activate M
+activate I
+I --> M : Demander motif
+M -> I : Saisir motif
+I -> BCC : annuler(id, motif)
+activate BCC
+BCC -> BCS : annuler(id, motif)
+activate BCS
+BCS -> BC : updateStatus(id, statut=CANCELLED)
+activate BC
+BC --> BCS : BonCommande
+deactivate BC
+BCS --> BCC : 200 OK
+deactivate BCS
+BCC --> I : Confirmation annulation
+deactivate BCC
+I --> M : Succès : Bon de commande annulé
+deactivate I
+deactivate M
+
+@enduml

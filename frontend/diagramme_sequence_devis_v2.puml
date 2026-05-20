@@ -1,0 +1,153 @@
+@startuml
+title Diagramme de Séquence - Gestion des devis (ECB)
+
+skinparam style strictuml
+skinparam maxMessageSize 150
+skinparam sequence {
+    ParticipantPadding 30
+    MessageAlign center
+}
+
+actor "Manager" as Manager
+actor "Consultant" as Consultant
+actor "Client" as Client
+
+boundary "Interface\n<<Boundary>>" as Interface
+control "DevisController\n<<Control>>" as Controller
+control "PublicDocumentController\n<<Control>>" as PublicController
+control "DevisService\n<<Control>>" as Service
+control "EmailService\n<<Utility>>" as EmailService
+entity "Devis\n<<Entity>>" as Devis
+
+== Consultation (Manager & Consultant) ==
+
+Manager -> Interface : Accéder au menu "Devis"
+Consultant -> Interface : Accéder au menu "Devis"
+activate Interface
+Interface -> Controller : GET /api/devis
+activate Controller
+Controller -> Service : getByVendeur()
+activate Service
+Service -> Devis : findByVendeurId()
+activate Devis
+Devis --> Service : List<Devis>
+deactivate Devis
+Service --> Controller : List<DevisDTO>
+deactivate Service
+Controller --> Interface : 200 OK
+deactivate Controller
+Interface --> Manager : Liste affichée
+Interface --> Consultant : Liste affichée
+deactivate Interface
+
+== Création du devis (Manager uniquement) ==
+
+Manager -> Interface : Nouveau devis + Enregistrer
+activate Interface
+Interface -> Controller : POST /api/devis
+activate Controller
+Controller -> Service : create(data)
+activate Service
+Service -> Devis : save(newDevis, statut=DRAFT)
+activate Devis
+Devis --> Service : Devis
+deactivate Devis
+Service --> Controller : DevisDTO
+deactivate Service
+Controller --> Interface : 201 Created
+deactivate Controller
+Interface --> Manager : Succès : Devis ajouté (DRAFT)
+deactivate Interface
+
+== Modification (Manager uniquement) ==
+
+Manager -> Interface : Sélectionner + Modifier
+activate Interface
+Interface -> Controller : PUT /api/devis/{id}
+activate Controller
+Controller -> Service : update(id, data)
+activate Service
+Service -> Devis : findById() + save()
+activate Devis
+Devis --> Service : Devis
+deactivate Devis
+Service --> Controller : DevisDTO
+deactivate Service
+Controller --> Interface : 200 OK
+deactivate Controller
+Interface --> Manager : Message de succès
+deactivate Interface
+
+
+== Envoi du devis (Manager uniquement) ==
+
+Manager -> Interface : "Envoyer demande d'acceptation"
+activate Interface
+Interface -> Controller : PUT /api/devis/{id}/envoyer
+activate Controller
+Controller -> Service : envoyer(id)
+activate Service
+    Service -> EmailService : send(mailClient + link)
+    activate EmailService
+    EmailService -> Client : Email (Lien du devis)
+    EmailService --> Service : void
+    deactivate EmailService
+Service -> Devis : updateStatus(SENT)
+activate Devis
+Devis --> Service : void
+deactivate Devis
+Service --> Controller : DevisDTO
+deactivate Service
+Controller --> Interface : 200 OK
+deactivate Controller
+Interface --> Manager : Succès : Devis envoyé
+deactivate Interface
+
+== Actions du Client (Lien Public) ==
+
+Client -> Interface : Accéder au lien (Mail)
+activate Interface
+Interface -> PublicController : GET /api/public/devis/{ref}
+activate PublicController
+PublicController -> Service : getByNumDevis(ref)
+activate Service
+Service --> PublicController : DevisDTO
+deactivate Service
+PublicController --> Interface : Affichage du Devis
+deactivate PublicController
+
+alt Acceptation
+    Client -> Interface : cliquer sur "Accepter le devis"
+    Interface -> PublicController : PUT /api/public/devis/{id}/accepter
+    activate PublicController
+    PublicController -> Service : accepter(id)
+    activate Service
+    Service -> Devis : updateStatus(ACCEPTED)
+    activate Devis
+    Devis --> Service : void
+    deactivate Devis
+    Service --> PublicController : success
+    deactivate Service
+    PublicController --> Interface : 200 OK
+    deactivate PublicController
+    Interface --> Client : Succès : Devis accepté
+else Refus
+    Client -> Interface : cliquer sur "Rejeter le devis"
+    Interface -> PublicController : PUT /api/public/devis/{id}/rejeter
+    activate PublicController
+    PublicController -> Service : rejeter(id, raison)
+    activate Service
+    Service -> Devis : updateStatus(REJECTED)
+    activate Devis
+    Devis --> Service : void
+    deactivate Devis
+    Service --> PublicController : success
+    deactivate Service
+    PublicController --> Interface : 200 OK
+    deactivate PublicController
+    Interface --> Client : Devis rejeté
+end
+deactivate Interface
+
+
+@enduml

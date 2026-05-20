@@ -1,5 +1,6 @@
 // src/app/pages/produits/produits.component.scss
-@use "sass:color";
+@use 'sass:color';
+
 $primary-blue: #3b82f6;
 $success: #10b981;
 $warning: #f59e0b;
@@ -8,161 +9,82 @@ $dark-blue: #1e293b;
 $gray-light: #f8fafc;
 $gray-text: #64748b;
 $border-color: #e2e8f0;
-
-// Ajout des variables manquantes
-$gray-100: #f3f4f6;
-$gray-200: #e5e7eb;
-$gray-300: #d1d5db;
-$gray-400: #9ca3af;
-$gray-500: #6b7280;
-$gray-600: #4b5563;
-$gray-700: #374151;
-$gray-800: #1f2937;
-$gray-900: #111827;
-
-// Dialog footer buttons
-.dialog-footer-btn {
-  background: $primary-blue;
-  color: white;
-  border: none;
-  padding: 0.7rem 1.5rem;
-  border-radius: 8px;
-  font-weight: 600;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  cursor: pointer;
-  transition: all 0.2s;
-  margin-right: 0.5rem;
-  box-shadow: 0 2px 8px rgba($primary-blue, 0.15);
-
-  &:hover {
-    background: #2563eb;
-    transform: scale(1.05);
-  }
-}
-
-.dialog-footer-btn.cancel {
-  background: $danger;
-  color: white;
-  &:hover { background: #dc2626; }
-}
-// src/app/pages/produits/produits.component.scss
-$primary-blue: #3b82f6;
-$success: #10b981;
-$warning: #f59e0b;
-$danger: #ef4444;
-$dark-blue: #1e293b;
-$gray-light: #f8fafc;
-$gray-text: #64748b;
-$border-color: #e2e8f0;
-
-// Ajout des variables manquantes
-$gray-100: #f3f4f6;
-$gray-200: #e5e7eb;
-$gray-300: #d1d5db;
-$gray-400: #9ca3af;
-$gray-500: #6b7280;
-$gray-600: #4b5563;
-$gray-700: #374151;
-$gray-800: #1f2937;
-$gray-900: #111827;
 
 .produits-container {
-  padding: 2rem;
+  max-width: 1450px;
+  margin: 0 auto;
+  padding: 0.5rem 1rem;
   min-height: 100vh;
   background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  box-sizing: border-box;
+  overflow-x: hidden;
+  width: 100%;
 }
 
-// En-tête
+// ===== EN-TÊTE =====
 .header-section {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 2rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+  gap: 0.75rem;
 
   .header-left {
     display: flex;
     align-items: center;
     gap: 1rem;
 
-    .back-btn {
-      width: 40px;
-      height: 40px;
-      border-radius: 10px;
-      border: none;
-      background: white;
-      color: $dark-blue;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      transition: all 0.2s;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-
-      i {
-        font-size: 1.2rem;
-      }
-
-      &:hover {
-        background: $dark-blue;
-        color: white;
-        transform: translateX(-3px);
-      }
-    }
 
     h2 {
       color: $dark-blue;
       font-weight: 700;
-      font-size: 1.8rem;
+      font-size: 1.4rem;
       margin: 0;
       display: flex;
       align-items: center;
       gap: 0.5rem;
-
-      i {
-        color: $primary-blue;
-      }
-    }
-  }
-
-  .add-btn {
-    background: $success;
-    color: white;
-    border: none;
-    padding: 0.8rem 1.8rem;
-    border-radius: 12px;
-    font-weight: 600;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    cursor: pointer;
-    transition: all 0.3s;
-    box-shadow: 0 4px 12px rgba($success, 0.3);
-
-    i {
-      font-size: 1.2rem;
-    }
-
-    &:hover {
-      background: #0d9668;
-      transform: translateY(-2px);
-      box-shadow: 0 6px 15px rgba($success, 0.4);
+      i { color: $primary-blue; }
     }
   }
 }
 
-// Filtres
+// ===== BOUTON NOUVEAU PRODUIT =====
+.add-btn {
+  background: $success;
+  color: white;
+  border: none;
+  padding: 0.65rem 1.4rem;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 0.95rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
+  white-space: nowrap;
+  flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba($success, 0.35);
+
+  &:hover {
+    background: #0d9668;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba($success, 0.4);
+  }
+}
+
+// ===== FILTRES =====
 .filters-section {
   background: white;
-  border-radius: 15px;
-  padding: 1.5rem;
-  margin-bottom: 2rem;
+  border-radius: 12px;
+  padding: 1rem 1.5rem;
+  margin-bottom: 1rem;
   box-shadow: 0 2px 10px rgba(0,0,0,0.05);
 
   .search-box {
     position: relative;
-    max-width: 400px;
+    max-width: 420px;
 
     i {
       position: absolute;
@@ -176,21 +98,16 @@ $gray-900: #111827;
 
     input {
       width: 100%;
-      padding: 0.8rem 1rem 0.8rem 2.5rem;
+      padding: 0.75rem 1rem 0.75rem 2.5rem;
       border: 2px solid $border-color;
       border-radius: 10px;
       font-size: 0.95rem;
-      background: white;
-      transition: all 0.3s;
+      transition: all 0.2s;
 
       &:focus {
         border-color: $primary-blue;
         outline: none;
         box-shadow: 0 0 0 3px rgba($primary-blue, 0.1);
-      }
-
-      &::placeholder {
-        color: color.adjust($gray-text, $lightness: 20%);
       }
     }
 
@@ -203,168 +120,232 @@ $gray-900: #111827;
       border: none;
       color: $gray-text;
       cursor: pointer;
-      width: 30px;
-      height: 30px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      width: 30px; height: 30px;
+      display: flex; align-items: center; justify-content: center;
       border-radius: 50%;
       transition: all 0.2s;
 
-      &:hover {
-        background: rgba($danger, 0.1);
-        color: $danger;
-      }
+      i { position: static; font-size: 0.9rem; }
 
-      i {
-        position: static;
-        font-size: 0.9rem;
-      }
+      &:hover { background: rgba($danger, 0.1); color: $danger; }
     }
   }
 }
 
-// Tableau
-::ng-deep .p-card {
-  border-radius: 20px;
+// ===== TABLEAU (Design moderne unifié) =====
+.produits-table {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  border: 1px solid #e2e8f0;
   overflow: hidden;
-  box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1);
-  
-  .p-card-body { 
-    padding: 0; 
-  }
+  margin-bottom: 2rem;
 }
 
 ::ng-deep .p-datatable {
   .p-datatable-thead > tr > th {
     background: $dark-blue;
     color: white;
-    padding: 1rem;
+    padding: 0.75rem 1rem;
     font-weight: 600;
-    font-size: 0.9rem;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
+    font-size: 0.85rem;
+    white-space: nowrap;
+    border: none;
   }
 
   .p-datatable-tbody > tr {
     background: white;
-    
     td {
-      padding: 1rem;
-      border-bottom: 1px solid $border-color;
-      color: $dark-blue;
-
-      &.text-right {
-        text-align: right;
-      }
-
-      &.font-bold {
-        font-weight: 600;
-        color: $dark-blue;
-      }
+      padding: 0.65rem 1rem;
+      border-bottom: 1px solid #f1f5f9;
+      color: #334155;
+      &.text-right { text-align: right; }
+      &.font-bold   { font-weight: 600; color: $dark-blue; }
     }
+    &:hover { background: #f8fafc; }
+  }
 
-    &:hover {
-      background: $gray-light;
-    }
+  .p-paginator {
+    background: #f9fafb;
+    border-top: 1px solid #e5e7eb;
+    padding: 1rem;
   }
 }
 
-// Actions
 .actions-cell {
   display: flex;
   gap: 0.5rem;
   justify-content: center;
 }
 
-.action-btn {
-  width: 36px;
-  height: 36px;
-  border: none;
+.icon-btn {
+  border: 1px solid #e5e7eb;
+  background: transparent;
+  color: #666666;
   border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: all 0.2s;
-  color: white;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  transition: all 0.2s ease;
 
-  i {
-    font-size: 1rem;
-  }
+  i { font-size: 1rem; }
 
   &:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    border-color: #d1d5db;
+    background: #f9fafb;
   }
 
-  &.edit-btn {
-    background: $warning;
-    &:hover { background: #d97706; }
-  }
-
-  &.delete-btn {
-    background: $danger;
-    &:hover { background: #dc2626; }
+  &:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
   }
 }
 
-// Message vide
-.add-first-btn {
+// ===== DIALOGUE =====
+.dialog-content {
+  background: white;
+  padding: 0.5rem 0;
+
+  .form-group {
+    margin-bottom: 1.3rem;
+
+    label {
+      display: block;
+      margin-bottom: 0.45rem;
+      font-weight: 600;
+      color: $dark-blue;
+      font-size: 0.9rem;
+
+      .required { color: $danger; margin-left: 2px; }
+    }
+
+    input, ::ng-deep .p-inputnumber {
+      width: 100%;
+    }
+
+    input {
+      padding: 0.65rem 0.9rem;
+      border: 2px solid $border-color;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      color: $dark-blue;
+      background: white;
+      transition: all 0.2s;
+      box-sizing: border-box;
+
+      &:focus {
+        border-color: $primary-blue;
+        outline: none;
+        box-shadow: 0 0 0 3px rgba($primary-blue, 0.1);
+      }
+    }
+
+    ::ng-deep .p-inputnumber {
+      width: 100%;
+      .p-inputnumber-input {
+        width: 100%;
+        border: 2px solid $border-color !important;
+        border-radius: 8px !important;
+        padding: 0.65rem 0.9rem !important;
+        font-size: 0.95rem !important;
+        &:focus {
+          border-color: $primary-blue !important;
+          box-shadow: 0 0 0 3px rgba($primary-blue, 0.1) !important;
+        }
+      }
+    }
+  }
+
+  .form-row {
+    display: flex;
+    gap: 1rem;
+    .half { flex: 1; min-width: 0; }
+  }
+
+  .preview-section {
+    margin-top: 1.5rem;
+    padding: 1.2rem;
+    background: $gray-light;
+    border-radius: 10px;
+    border: 1px solid $border-color;
+
+    h4 { margin: 0 0 1rem 0; color: $dark-blue; font-size: 0.95rem; font-weight: 700; }
+
+    .preview-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 0.4rem 0;
+      border-bottom: 1px solid $border-color;
+      font-size: 0.9rem;
+
+      &:last-child { border-bottom: none; }
+      &.total {
+        margin-top: 0.5rem;
+        padding-top: 0.8rem;
+        border-top: 2px solid $primary-blue;
+        font-size: 1rem;
+        font-weight: 700;
+      }
+
+      span    { color: $gray-text; }
+      strong  { color: $dark-blue; }
+    }
+  }
+}
+
+.dialog-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  padding-top: 0.5rem;
+}
+
+.dialog-footer-btn {
   background: $primary-blue;
   color: white;
   border: none;
-  padding: 0.8rem 1.8rem;
-  border-radius: 10px;
+  padding: 0.7rem 1.5rem;
+  border-radius: 8px;
   font-weight: 600;
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
   cursor: pointer;
   transition: all 0.2s;
-  margin-top: 1rem;
+  box-shadow: 0 2px 8px rgba($primary-blue, 0.15);
 
-  &:hover {
-    background: #2563eb;
-    transform: scale(1.05);
+  &:hover { background: #2563eb; transform: scale(1.03); }
+  &:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+  &.cancel {
+    background: white;
+    color: $dark-blue;
+    border: 1.5px solid $border-color;
+    box-shadow: none;
+    &:hover { background: $gray-light; border-color: $dark-blue; }
   }
 }
 
-// ===== DIALOGUE - STYLES COMPLETS ET OPAQUES =====
+// ===== PRIMENG OVERRIDES =====
 ::ng-deep .p-dialog {
   background: white !important;
   border-radius: 16px !important;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2) !important;
-  border: 1px solid rgba(255, 255, 255, 0.3) !important;
-  
+  box-shadow: 0 20px 40px rgba(0,0,0,0.2) !important;
+
   .p-dialog-header {
     background: white !important;
     border-bottom: 1px solid $border-color !important;
     border-radius: 16px 16px 0 0 !important;
-    padding: 1.5rem !important;
-    
-    .p-dialog-title {
-      color: $dark-blue !important;
-      font-weight: 700 !important;
-      font-size: 1.3rem !important;
-    }
-    
-    .p-dialog-header-icon {
-      color: $gray-text !important;
-      transition: all 0.2s !important;
-      
-      &:hover {
-        background: rgba($danger, 0.1) !important;
-        color: $danger !important;
-      }
-    }
+    padding: 1.2rem 1.5rem !important;
+
+    .p-dialog-title { color: $dark-blue !important; font-weight: 700 !important; font-size: 1.2rem !important; }
+    .p-dialog-header-icon { color: $gray-text !important; &:hover { color: $danger !important; } }
   }
 
   .p-dialog-content {
     background: white !important;
     padding: 1.5rem !important;
-    border-radius: 0 !important;
     max-height: 70vh !important;
   }
 
@@ -376,253 +357,122 @@ $gray-900: #111827;
   }
 }
 
-// Contenu du dialogue
-.dialog-content {
-  background: white;
-  padding: 0.5rem 0;
+::ng-deep .p-dialog-mask { background: rgba(0,0,0,0.5) !important; }
 
-  .form-group {
-    margin-bottom: 1.5rem;
-
-    label {
-      display: block;
-      margin-bottom: 0.5rem;
-      font-weight: 600;
-      color: $dark-blue;
-      font-size: 0.95rem;
-      
-      .required {
-        color: $danger;
-        margin-left: 3px;
-      }
-    }
-
-    input, p-inputNumber, .p-inputnumber {
-      width: 100%;
-    }
-    
-    input, ::ng-deep .p-inputnumber input {
-      background: white !important;
-      border: 2px solid $border-color !important;
-      border-radius: 8px !important;
-      padding: 0.7rem 1rem !important;
-      color: $dark-blue !important;
-      font-size: 0.95rem !important;
-      transition: all 0.3s !important;
-      width: 100% !important;
-      
-      &:focus {
-        border-color: $primary-blue !important;
-        box-shadow: 0 0 0 3px rgba($primary-blue, 0.2) !important;
-        outline: none !important;
-      }
-      
-      &::placeholder {
-        color: color.adjust($gray-text, $lightness: 20%) !important;
-        font-style: italic;
-      }
-    }
-    
-    // Style pour le composant p-inputNumber
-    ::ng-deep .p-inputnumber {
-      width: 100%;
-      
-      .p-inputnumber-input {
-        width: 100%;
-      }
-    }
-  }
-
-  .form-row {
-    display: flex;
-    gap: 1rem;
-    
-    .half {
-      flex: 1;
-    }
-    
-    @media (max-width: 768px) {
-      flex-direction: column;
-    }
-  }
-
-  .preview-section {
-    margin-top: 2rem;
-    padding: 1.5rem;
-    background: $gray-light !important;
-    border-radius: 10px;
-    border: 1px solid $border-color;
-
-    h4 {
-      margin: 0 0 1rem 0;
-      color: $dark-blue;
-      font-size: 1rem;
-      font-weight: 600;
-    }
-
-    .preview-item {
-      display: flex;
-      justify-content: space-between;
-      padding: 0.5rem 0;
-      border-bottom: 1px solid $border-color;
-
-      &:last-child {
-        border-bottom: none;
-      }
-
-      &.total {
-        margin-top: 0.5rem;
-        padding-top: 1rem;
-        border-top: 2px solid $primary-blue;
-        font-size: 1.1rem;
-      }
-
-      span {
-        color: $gray-text;
-      }
-
-      strong {
-        color: $dark-blue;
-      }
-    }
-  }
-}
-
-// Boutons du pied de dialogue
-.dialog-footer {
-  display: flex;
-  justify-content: flex-end;
-  gap: 0.5rem;
-  
-  .dialog-footer-btn {
-    background: $primary-blue !important;
-    color: white !important;
-    border: none !important;
-    padding: 0.7rem 1.5rem !important;
-    border-radius: 8px !important;
-    font-weight: 600 !important;
-    display: inline-flex !important;
-    align-items: center !important;
-    gap: 0.5rem !important;
-    cursor: pointer !important;
-    transition: all 0.2s !important;
-    box-shadow: 0 2px 8px rgba($primary-blue, 0.15) !important;
-  
-    &:hover {
-      background: #2563eb !important;
-      transform: translateY(-2px) !important;
-      box-shadow: 0 4px 12px rgba($primary-blue, 0.3) !important;
-    }
-    
-    &:active {
-      transform: translateY(0) !important;
-    }
-  }
-  
-  .dialog-footer-btn.cancel {
-    background: $danger !important;
-    
-    &:hover { 
-      background: #dc2626 !important; 
-    }
-  }
-  
-  .dialog-footer-btn.secondary {
-    background: $gray-400 !important;  // Remplacé $gray-500 par $gray-400
-    
-    &:hover { 
-      background: $gray-500 !important; 
-    }
-  }
-}
-
-// Pagination
+// ===== PAGINATION (Harmonisé avec Factures) =====
 ::ng-deep .p-paginator {
-  padding: 1rem;
   background: white;
-  
+  padding: 0.75rem 1rem;
+  border-top: 1px solid #f1f5f9;
   .p-paginator-page.p-highlight {
     background: $primary-blue;
     color: white;
     border-radius: 8px;
   }
-  
-  .p-paginator-element:hover {
-    background: $gray-light;
-    border-radius: 8px;
+}
+
+// ===== BADGES STOCK =====
+.stock-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.28rem 0.7rem;
+  border-radius: 20px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  white-space: nowrap;
+  letter-spacing: 0.2px;
+
+  &.statut-disponible {
+    background: rgba($success, 0.12);
+    color: color.adjust($success, $lightness: -8%);
+    border: 1px solid rgba($success, 0.3);
+  }
+
+  &.statut-faible {
+    background: rgba($warning, 0.12);
+    color: color.adjust($warning, $lightness: -15%);
+    border: 1px solid rgba($warning, 0.35);
+  }
+
+  &.statut-rupture {
+    background: rgba($danger, 0.1);
+    color: color.adjust($danger, $lightness: -10%);
+    border: 1px solid rgba($danger, 0.3);
+  }
+
+  &.statut-illimite {
+    background: rgba($primary-blue, 0.1);
+    color: color.adjust($primary-blue, $lightness: -10%);
+    border: 1px solid rgba($primary-blue, 0.3);
   }
 }
 
-// Responsive
-@media (max-width: 768px) {
-  .produits-container {
-    padding: 1rem;
+.stock-qty {
+  text-align: center;
+  font-weight: 700;
+  font-size: 0.92rem;
+  color: $dark-blue;
+}
+
+// ===== SECTION STOCK DANS LE DIALOG =====
+.stock-section {
+  background: $gray-light;
+  border: 1px solid $border-color;
+  border-radius: 10px;
+  padding: 1rem 1.2rem;
+  margin-bottom: 1.3rem;
+
+  .stock-section-title {
+    margin: 0 0 1rem 0;
+    color: $dark-blue;
+    font-size: 0.92rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    i { color: $primary-blue; }
   }
+
+  .checkbox-group {
+    margin-bottom: 0.9rem;
+    ::ng-deep .p-checkbox-label {
+      font-size: 0.88rem;
+      color: $dark-blue;
+      font-weight: 500;
+    }
+  }
+
+  .stock-preview {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-top: 0.8rem;
+    font-size: 0.85rem;
+
+    .stock-preview-label {
+      color: $gray-text;
+      font-weight: 500;
+    }
+  }
+}
+
+// ===== RESPONSIVE =====
+@media (max-width: 768px) {
+  .produits-container { padding: 0.75rem 1rem; }
 
   .header-section {
     flex-direction: column;
-    gap: 1rem;
-    
-    .header-left {
-      width: 100%;
-      justify-content: space-between;
-    }
-    
-    .add-btn {
-      width: 100%;
-      justify-content: center;
-    }
+    align-items: flex-start;
+
+    .header-left { width: 100%; }
+    .add-btn { width: 100%; justify-content: center; }
   }
 
-  .filters-section {
-    .search-box {
-      max-width: 100%;
-    }
-  }
+  .filters-section .search-box { max-width: 100%; }
 
-  .form-row {
-    flex-direction: column;
-  }
-  
-  .dialog-footer {
-    flex-direction: column;
-    
-    .dialog-footer-btn {
-      width: 100%;
-      justify-content: center;
-    }
-  }
-}
+  .dialog-content .form-row { flex-direction: column; gap: 0; }
 
-// Message d'erreur pour les champs invalides
-.error-message {
-  color: $danger;
-  font-size: 0.8rem;
-  margin-top: 0.3rem;
-  display: flex;
-  align-items: center;
-  gap: 0.3rem;
-  
-  i {
-    font-size: 0.9rem;
-  }
-}
-
-// Badge pour le statut
-.status-badge {
-  display: inline-block;
-  padding: 0.3rem 0.8rem;
-  border-radius: 20px;
-  font-size: 0.8rem;
-  font-weight: 600;
-  
-  &.active {
-    background: rgba($success, 0.1);
-    color: $success;
-  }
-  
-  &.inactive {
-    background: rgba($danger, 0.1);
-    color: $danger;
-  }
+  .actions-cell { flex-direction: column; align-items: stretch; }
+  .action-btn   { justify-content: center; }
 }

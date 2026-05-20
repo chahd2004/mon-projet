@@ -1,18 +1,16 @@
 <!-- src/app/pages/produits/produits.component.html -->
 <div class="produits-container">
+
   <!-- En-tête -->
   <div class="header-section">
     <div class="header-left">
-      <button class="back-btn" (click)="retourListe()" pTooltip="Retour au dashboard">
-        <i class="pi pi-arrow-left"></i>
-      </button>
       <h2>
         <i class="pi pi-box"></i>
-        Gestion des produits
+        {{ 'PRODUITS.TITLE' | translate }}
       </h2>
     </div>
-    <button class="add-btn" (click)="ajouterProduit()">
-      <i class="pi pi-plus-circle"></i> Nouveau produit
+    <button *ngIf="!isViewer" class="add-btn" (click)="ajouterProduit()">
+      <i class="pi pi-plus"></i> {{ 'PRODUITS.NEW' | translate }}
     </button>
   </div>
 
@@ -20,10 +18,10 @@
   <div class="filters-section">
     <div class="search-box">
       <i class="pi pi-search"></i>
-      <input 
-        type="text" 
-        pInputText 
-        placeholder="Rechercher par référence ou désignation..." 
+      <input
+        type="text"
+        pInputText
+        [placeholder]="'PRODUITS.SEARCH_PLACEHOLDER' | translate"
         [(ngModel)]="searchText"
         (keyup.enter)="onSearch()"
       >
@@ -34,26 +32,29 @@
   </div>
 
   <!-- Tableau -->
-  <p-card>
-    <p-table 
-      [value]="produitsFiltered" 
-      [paginator]="true" 
-      [rows]="rowsPerPage"
-      [totalRecords]="produitsFiltered.length"
-      [loading]="loading"
-      [lazy]="false"
-      (onPageChange)="onPageChange($event)"
-      responsiveLayout="scroll"
-    >
+  <p-table
+    [value]="produitsFiltered"
+    [rows]="rowsPerPage"
+    [totalRecords]="produitsFiltered.length"
+    [loading]="loading"
+    [lazy]="true"
+    [paginator]="true"
+    [rowsPerPageOptions]="rowsOptions"
+    (onLazyLoad)="loadProduitsLazy($event)"
+    styleClass="p-datatable-sm p-datatable-striped produits-table"
+    responsiveLayout="scroll"
+  >
       <ng-template pTemplate="header">
         <tr>
           <th>ID</th>
-          <th>Référence</th>
-          <th>Désignation</th>
-          <th>Prix unitaire HT</th>
-          <th>TVA %</th>
-          <th>Prix TTC</th>
-          <th style="text-align: center;">Actions</th>
+          <th>{{ 'PRODUITS.TABLE.REF' | translate }}</th>
+          <th>{{ 'PRODUITS.TABLE.DESIGNATION' | translate }}</th>
+          <th>{{ 'PRODUITS.TABLE.PRIX_HT' | translate }}</th>
+          <th>{{ 'PRODUITS.TABLE.TVA' | translate }}</th>
+          <th>{{ 'PRODUITS.TABLE.PRIX_TTC' | translate }}</th>
+          <th>{{ 'PRODUITS.TABLE.STOCK' | translate }}</th>
+          <th>{{ 'PRODUITS.TABLE.STATUS' | translate }}</th>
+          <th *ngIf="!isViewer" style="text-align: center; min-width: 160px;">{{ 'PRODUITS.TABLE.ACTIONS' | translate }}</th>
         </tr>
       </ng-template>
 
@@ -65,12 +66,28 @@
           <td class="text-right">{{ formatPrix(produit.prixUnitaire) }}</td>
           <td class="text-right">{{ formatTVA(produit.tauxTVA) }}</td>
           <td class="text-right font-bold">{{ formatPrix(produit.prixUnitaire * (1 + produit.tauxTVA/100)) }}</td>
+          <td class="text-center stock-qty">{{ getStockDisplay(produit) }}</td>
           <td>
+            <ng-container *ngIf="getStockStatut(produit) as statut">
+              <span class="stock-badge" [ngClass]="statut.classe">
+                {{ statut.icon }} {{ statut.label | translate }}
+              </span>
+            </ng-container>
+          </td>
+          <td *ngIf="!isViewer">
             <div class="actions-cell">
-              <button class="action-btn edit-btn" (click)="modifierProduit(produit)" pTooltip="Modifier">
+              <button
+                class="icon-btn icon-btn-edit"
+                (click)="modifierProduit(produit)"
+                [pTooltip]="'PRODUITS.ACTIONS.EDIT_TOOLTIP' | translate"
+                tooltipPosition="top">
                 <i class="pi pi-pencil"></i>
               </button>
-              <button class="action-btn delete-btn" (click)="supprimerProduit(produit.id)" pTooltip="Supprimer">
+              <button
+                class="icon-btn icon-btn-delete"
+                (click)="supprimerProduit(produit.id)"
+                [pTooltip]="'PRODUITS.ACTIONS.DELETE_TOOLTIP' | translate"
+                tooltipPosition="top">
                 <i class="pi pi-trash"></i>
               </button>
             </div>
@@ -80,91 +97,137 @@
 
       <ng-template pTemplate="emptymessage">
         <tr>
-          <td colspan="7" style="text-align: center; padding: 3rem;">
-            <i class="pi pi-box" style="font-size: 3rem; color: #94a3b8;"></i>
-            <h3>Aucun produit trouvé</h3>
-            <p>Commencez par ajouter votre premier produit via le bouton <strong>"Nouveau produit"</strong>.</p>
+          <td [attr.colspan]="isViewer ? 8 : 9" style="text-align: center; padding: 3rem;">
+            <i class="pi pi-box" style="font-size: 3rem; color: #94a3b8; display:block; margin-bottom:1rem;"></i>
+            <h3 style="color:#1e293b; margin:0.5rem 0;">{{ 'PRODUITS.EMPTY.TITLE' | translate }}</h3>
+            <p *ngIf="!isViewer" style="color:#64748b; margin-bottom:1.5rem;">{{ 'PRODUITS.EMPTY.SUBTITLE_ADD' | translate }}</p>
+            <p *ngIf="isViewer" style="color:#64748b; margin-bottom:1.5rem;">{{ 'PRODUITS.EMPTY.SUBTITLE_VIEW' | translate }}</p>
           </td>
         </tr>
       </ng-template>
     </p-table>
-  </p-card>
 
   <!-- Dialogue d'ajout/modification -->
-  <p-dialog 
-    [(visible)]="displayDialog" 
-    [header]="dialogMode === 'add' ? 'Nouveau produit' : 'Modifier le produit'"
-    [style]="{width: '500px'}"
+  <p-dialog
+    [(visible)]="displayDialog"
+    [header]="dialogMode === 'add' ? ('PRODUITS.DIALOG.ADD_TITLE' | translate) : ('PRODUITS.DIALOG.EDIT_TITLE' | translate)"
+    [style]="{width: '540px'}"
     [modal]="true"
     [draggable]="false"
     [resizable]="false"
   >
     <div class="dialog-content">
+
       <div class="form-group">
-        <label>Référence <span class="required">*</span></label>
-        <input type="text" pInputText [(ngModel)]="produitForm.reference" 
+        <label>{{ 'PRODUITS.FORM.REF' | translate }} <span class="required">*</span></label>
+        <input type="text" pInputText [(ngModel)]="produitForm.reference"
                placeholder="Ex: PROD-001" autofocus>
       </div>
 
       <div class="form-group">
-        <label>Désignation <span class="required">*</span></label>
-        <input type="text" pInputText [(ngModel)]="produitForm.designation" 
+        <label>{{ 'PRODUITS.FORM.DESIGNATION' | translate }} <span class="required">*</span></label>
+        <input type="text" pInputText [(ngModel)]="produitForm.designation"
                placeholder="Nom du produit">
       </div>
 
       <div class="form-row">
         <div class="form-group half">
-          <label>Prix unitaire HT <span class="required">*</span></label>
-          <p-inputNumber [(ngModel)]="produitForm.prixUnitaire" 
-                        mode="decimal" 
-                        [min]="0" 
-                        [max]="9999999" 
-                        [minFractionDigits]="3" 
+          <label>{{ 'PRODUITS.FORM.PRIX_HT' | translate }} <span class="required">*</span></label>
+          <p-inputNumber [(ngModel)]="produitForm.prixUnitaire"
+                        mode="decimal"
+                        [min]="0"
+                        [max]="9999999"
+                        [minFractionDigits]="3"
                         [maxFractionDigits]="3"
                         suffix=" TND">
           </p-inputNumber>
         </div>
-
         <div class="form-group half">
-          <label>TVA % <span class="required">*</span></label>
-          <p-inputNumber [(ngModel)]="produitForm.tauxTVA" 
-                        [min]="0" 
-                        [max]="100" 
-                        [minFractionDigits]="2" 
+          <label>{{ 'PRODUITS.FORM.TVA' | translate }} <span class="required">*</span></label>
+          <p-inputNumber [(ngModel)]="produitForm.tauxTVA"
+                        [min]="0"
+                        [max]="100"
+                        [minFractionDigits]="2"
                         [maxFractionDigits]="2"
                         suffix=" %">
           </p-inputNumber>
         </div>
       </div>
 
+      <!-- ===== SECTION STOCK ===== -->
+      <div class="stock-section">
+        <h4 class="stock-section-title">
+          <i class="pi pi-warehouse"></i> {{ 'PRODUITS.FORM.STOCK_TITLE' | translate }}
+        </h4>
+
+        <div class="form-row">
+          <div class="form-group half">
+            <label>{{ 'PRODUITS.FORM.STOCK_QTY' | translate }}</label>
+            <p-inputNumber
+              [(ngModel)]="produitForm.quantiteStock"
+              [min]="0"
+              [max]="999999"
+              placeholder="0">
+            </p-inputNumber>
+          </div>
+          <div class="form-group half">
+            <label>{{ 'PRODUITS.FORM.STOCK_ALERT' | translate }}</label>
+            <p-inputNumber
+              [(ngModel)]="produitForm.seuilAlerteStock"
+              [min]="0"
+              [max]="999999"
+              placeholder="5">
+            </p-inputNumber>
+          </div>
+        </div>
+
+        <!-- Aperçu statut stock -->
+        <div class="stock-preview">
+          <span class="stock-preview-label">{{ 'PRODUITS.FORM.STOCK_PREVIEW' | translate }}</span>
+          <span class="stock-badge"
+            [ngClass]="{
+              'statut-disponible': produitForm.quantiteStock > produitForm.seuilAlerteStock,
+              'statut-faible': produitForm.quantiteStock > 0 && produitForm.quantiteStock <= produitForm.seuilAlerteStock,
+              'statut-rupture': produitForm.quantiteStock <= 0
+            }">
+            <ng-container *ngIf="produitForm.quantiteStock <= 0">🔴 {{ 'PRODUITS.STOCK_STATUS.OUT' | translate }}</ng-container>
+            <ng-container *ngIf="produitForm.quantiteStock > 0 && produitForm.quantiteStock <= produitForm.seuilAlerteStock">⚠️ {{ 'PRODUITS.STOCK_STATUS.LOW' | translate }}</ng-container>
+            <ng-container *ngIf="produitForm.quantiteStock > produitForm.seuilAlerteStock">✅ {{ 'PRODUITS.STOCK_STATUS.AVAILABLE' | translate }}</ng-container>
+          </span>
+        </div>
+      </div>
+
       <div class="preview-section" *ngIf="produitForm.prixUnitaire > 0">
-        <h4>Aperçu</h4>
+        <h4>{{ 'PRODUITS.FORM.PREVIEW_TITLE' | translate }}</h4>
         <div class="preview-item">
-          <span>Prix HT:</span>
+          <span>{{ 'PRODUITS.FORM.PREVIEW_HT' | translate }} :</span>
           <strong>{{ formatPrix(produitForm.prixUnitaire) }}</strong>
         </div>
         <div class="preview-item">
-          <span>Montant TVA ({{ produitForm.tauxTVA }}%):</span>
+          <span>{{ 'PRODUITS.FORM.PREVIEW_VAT' | translate }} ({{ produitForm.tauxTVA }}%) :</span>
           <strong>{{ formatPrix(produitForm.prixUnitaire * produitForm.tauxTVA / 100) }}</strong>
         </div>
         <div class="preview-item total">
-          <span>Prix TTC:</span>
+          <span>{{ 'PRODUITS.FORM.PREVIEW_TTC' | translate }} :</span>
           <strong>{{ formatPrix(produitForm.prixUnitaire * (1 + produitForm.tauxTVA/100)) }}</strong>
         </div>
       </div>
+
     </div>
 
     <ng-template pTemplate="footer">
-      <button type="button" class="dialog-footer-btn cancel" (click)="displayDialog = false">
-        <i class="pi pi-times"></i> Annuler
-      </button>
-      <button type="button" class="dialog-footer-btn" (click)="sauvegarderProduit()" [disabled]="loading">
-        <i class="pi pi-check"></i> {{ dialogMode === 'add' ? 'Ajouter' : 'Modifier' }}
-      </button>
+      <div class="dialog-footer">
+        <button type="button" class="dialog-footer-btn cancel" (click)="displayDialog = false">
+          <i class="pi pi-times"></i> {{ 'COMMON.CANCEL' | translate }}
+        </button>
+        <button type="button" class="dialog-footer-btn" (click)="sauvegarderProduit()" [disabled]="loading">
+          <i class="pi pi-check"></i> {{ (dialogMode === 'add' ? 'COMMON.SAVE' : 'COMMON.SAVE') | translate }}
+        </button>
+      </div>
     </ng-template>
   </p-dialog>
 
-  <!-- Toast et confirmation -->
   <p-toast></p-toast>
   <p-confirmDialog></p-confirmDialog>
+
 </div>

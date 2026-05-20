@@ -1,0 +1,202 @@
+.produits-view {
+  .view-header {
+    margin-bottom: 24px;
+
+    h2 {
+      margin: 0 0 6px 0;
+      font-size: 24px;
+      color: #333;
+    }
+
+    .subtitle {
+      margin: 0;
+      color: #666;
+      font-size: 14px;
+    }
+  }
+
+  // ===== BARRE DE RECHERCHE =====
+  .search-bar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 10px 16px;
+    margin-bottom: 20px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+    max-width: 480px;
+
+    .search-icon {
+      font-size: 16px;
+      color: #999;
+      flex-shrink: 0;
+    }
+
+    .search-input {
+      border: none;
+      outline: none;
+      font-size: 14px;
+      color: #333;
+      width: 100%;
+      background: transparent;
+
+      &::placeholder {
+        color: #aaa;
+      }
+    }
+  }
+
+  // ===== SPINNER / ERREUR =====
+  .loading-spinner {
+    text-align: center;
+    padding: 40px;
+    color: #007bff;
+  }
+
+  .alert {
+    padding: 15px;
+    border-radius: 4px;
+    margin-bottom: 20px;
+
+    &.alert-danger {
+      background-color: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+  }
+
+  // ===== TABLEAU =====
+  .table-container {
+    overflow-x: auto;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  }
+
+  .produits-table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #fff;
+
+    thead tr {
+      background-color: #1e293b;
+      border-bottom: 2px solid #334155;
+    }
+
+    th {
+      padding: 14px 16px;
+      text-align: left;
+      font-weight: 600;
+      color: #f1f5f9;
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    tbody tr {
+      border-bottom: 1px solid #e8ecf0;
+      transition: background-color 0.15s;
+
+      &:hover {
+        background-color: #f8fafc;
+      }
+
+      &:last-child {
+        border-bottom: none;
+      }
+    }
+
+    td {
+      padding: 14px 16px;
+      color: #555;
+      font-size: 14px;
+
+      &.col-id {
+        color: #999;
+        font-size: 13px;
+      }
+
+      &.produit-reference {
+        font-weight: 600;
+        color: #1e293b;
+      }
+
+      &.price {
+        font-weight: 500;
+        color: #16a34a;
+      }
+
+      &.price-ttc {
+        font-weight: 700;
+        color: #0f172a;
+      }
+
+      &.tva {
+        font-weight: 500;
+        color: #64748b;
+      }
+
+      &.col-stock {
+        text-align: center;
+
+        .stock-qty {
+          font-weight: 700;
+          font-size: 15px;
+
+          &.stock-disponible { color: #16a34a; }
+          &.stock-faible     { color: #d97706; }
+          &.stock-rupture    { color: #dc2626; }
+          &.stock-illimite   { color: #2563eb; }
+        }
+      }
+    }
+  }
+
+  // ===== BADGES STATUT =====
+  .status-badge {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    white-space: nowrap;
+
+    &.badge-disponible {
+      background: #dcfce7;
+      color: #166534;
+      border: 1px solid #86efac;
+    }
+
+    &.badge-faible {
+      background: #fef3c7;
+      color: #92400e;
+      border: 1px solid #fcd34d;
+    }
+
+    &.badge-rupture {
+      background: #fee2e2;
+      color: #991b1b;
+      border: 1px solid #fca5a5;
+    }
+
+    &.badge-illimite {
+      background: #dbeafe;
+      color: #1e40af;
+      border: 1px solid #93c5fd;
+    }
+  }
+
+  // ===== AUCUN RÉSULTAT =====
+  .no-data {
+    text-align: center;
+    padding: 60px 20px;
+    color: #999;
+
+    p {
+      margin: 0;
+      font-size: 16px;
+    }
+  }
+}

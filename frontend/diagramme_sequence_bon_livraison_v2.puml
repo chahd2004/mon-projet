@@ -1,0 +1,143 @@
+@startuml
+title Diagramme de Séquence - Bons de Livraison (ECB)
+
+skinparam style strictuml
+skinparam maxMessageSize 150
+skinparam sequence {
+    ParticipantPadding 30
+    MessageAlign center
+}
+
+actor "Manager" as Manager
+actor "Consultant" as Consultant
+
+boundary "Interface\n<<Boundary>>" as Interface
+control "BonLivraisonController\n<<Control>>" as Controller
+control "BonLivraisonService\n<<Control>>" as Service
+control "EmailService\n<<Utility>>" as EmailService
+entity "BonLivraison\n<<Entity>>" as Entity
+
+== Consultation (Manager & Consultant) ==
+
+Manager -> Interface : Accéder au menu "Bons de Livraison"
+Consultant -> Interface : Accéder au menu "Bons de Livraison"
+activate Interface
+Interface -> Controller : GET /api/bon-livraisons
+activate Controller
+Controller -> Service : getAll() / getByVendeur()
+activate Service
+Service -> Entity : findAll() [via Repository]
+activate Entity
+Entity --> Service : List<BonLivraison>
+deactivate Entity
+Service --> Controller : List<BonLivraisonResponseDTO>
+deactivate Service
+Controller --> Interface : 200 OK
+deactivate Controller
+Interface --> Manager : Liste affichée
+Interface --> Consultant : Liste affichée
+deactivate Interface
+
+
+
+== Modification (Manager uniquement) ==
+
+Manager -> Interface : Sélectionner + Modifier
+activate Interface
+Interface -> Controller : PUT /api/bon-livraisons/{id}
+activate Controller
+Controller -> Service : update(id, dto)
+activate Service
+Service -> Entity : findById() + save()
+activate Entity
+Entity --> Service : BonLivraison
+deactivate Entity
+Service --> Controller : BonLivraisonResponseDTO
+deactivate Service
+Controller --> Interface : 200 OK
+deactivate Controller
+Interface --> Manager : Succès : BL mis à jour
+deactivate Interface
+
+== Action de Livraison (Manager uniquement) ==
+
+Manager -> Interface : cliquer sur "Livrer & Envoyer signature"
+activate Interface
+Interface -> Controller : PUT /api/bon-livraisons/{id}/livrer
+activate Controller
+Controller -> Service : marquerLivre(id)
+activate Service
+Service -> EmailService : sendBonLivraisonEmail(link)
+activate EmailService
+note right : L'email (lien de signature) est envoyé au Client
+EmailService --> Service : void
+deactivate EmailService
+Service -> Entity : updateStatus(DELIVERED)
+activate Entity
+Entity --> Service : void
+deactivate Entity
+Service --> Controller : BonLivraisonResponseDTO
+deactivate Service
+Controller --> Interface : 200 OK
+deactivate Controller
+Interface --> Manager : Succès : Email envoyé au client
+deactivate Interface
+
+== Gestion des Litiges : Signalement (Manager uniquement) ==
+
+Manager -> Interface : cliquer sur "Signaler litige"
+activate Interface
+Interface -> Controller : PUT /api/bon-livraisons/{id}/litige
+activate Controller
+Controller -> Service : signalerLitige(id, motif)
+activate Service
+Service -> Entity : updateStatus(DISPUTE)
+activate Entity
+Entity --> Service : void
+deactivate Entity
+Service --> Controller : BonLivraisonResponseDTO
+deactivate Service
+Controller --> Interface : 200 OK
+deactivate Controller
+Interface --> Manager : Litige signalé
+deactivate Interface
+
+== Gestion des Litiges : Résolution (Manager uniquement) ==
+
+Manager -> Interface : cliquer sur "Résoudre litige"
+activate Interface
+Interface -> Controller : PUT /api/bon-livraisons/{id}/resoudre-litige
+activate Controller
+Controller -> Service : resoudreLitige(id)
+activate Service
+Service -> Entity : updateStatus(DELIVERED)
+activate Entity
+Entity --> Service : void
+deactivate Entity
+Service --> Controller : BonLivraisonResponseDTO
+deactivate Service
+Controller --> Interface : 200 OK
+deactivate Controller
+Interface --> Manager : Litige résolu
+deactivate Interface
+
+== Annulation (Manager uniquement) ==
+
+Manager -> Interface : cliquer sur "Annuler"
+activate Interface
+Interface -> Controller : PUT /api/bon-livraisons/{id}/annuler
+activate Controller
+Controller -> Service : annuler(id, raison)
+activate Service
+Service -> Entity : updateStatus(CANCELLED)
+activate Entity
+Entity --> Service : void
+deactivate Entity
+Service --> Controller : BonLivraisonResponseDTO
+deactivate Service
+Controller --> Interface : 200 OK
+deactivate Controller
+Interface --> Manager : Bon de livraison annulé
+deactivate Interface
+
+@enduml

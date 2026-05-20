@@ -1,0 +1,134 @@
+<div class="commandes-page">
+  <h1 class="title">{{ 'COMMANDES.TITLE' | translate }}</h1>
+
+  <div class="action-bar">
+    <button class="btn btn-neutral" *ngIf="!isViewer" (click)="depuisBC()">{{ 'COMMANDES.ACTIONS.FROM_BC' | translate }}</button>
+  </div>
+
+  <div *ngIf="errorMessage" class="message error">{{ errorMessage }}</div>
+  <div *ngIf="successMessage" class="message success">{{ successMessage }}</div>
+
+  <div class="filters-row">
+    <select [(ngModel)]="selectedStatus" [ngModelOptions]="{ standalone: true }">
+      <option value="ALL">{{ 'COMMANDES.FILTER_STATUS' | translate }}</option>
+      <option *ngFor="let status of availableStatuses" [ngValue]="status">{{ getStatusLabel(status) }}</option>
+    </select>
+  </div>
+
+  <div class="table-wrapper" *ngIf="!loading; else loadingTpl">
+    <table>
+      <thead>
+        <tr>
+          <th>{{ 'COMMANDES.TABLE.NUM' | translate }}</th>
+          <th>{{ 'COMMANDES.TABLE.CLIENT' | translate }}</th>
+          <th>{{ 'COMMANDES.TABLE.DATE' | translate }}</th>
+          <th>{{ 'COMMANDES.TABLE.TOTAL' | translate }}</th>
+          <th>{{ 'COMMANDES.TABLE.STATUS' | translate }}</th>
+          <th>{{ 'COMMANDES.TABLE.ACTIONS' | translate }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of filteredCommandes" [ngClass]="'status-' + getStatusClass(item.statut)">
+          <td class="strong">{{ item.numero }}</td>
+          <td>{{ item.client }}</td>
+          <td>{{ item.dateCommande | date:'dd/MM/yyyy' }}</td>
+          <td class="strong">{{ item.totalTTC | number:'1.3-3' }} TND</td>
+          <td>
+            <span class="status" [ngClass]="getStatusClass(item.statut)">{{ getStatusLabel(item.statut) }}</span>
+          </td>
+          <td>
+            <div class="row-actions">
+              <button class="icon-btn" (click)="voirCommande(item)" title="Voir"><i class="pi pi-eye"></i></button>
+
+              <button class="icon-btn" *ngIf="!isViewer && canConfirm(item)" (click)="confirmerCommande(item)"
+                title="Confirmer"><i class="pi pi-check"></i></button>
+
+              <button class="icon-btn" *ngIf="!isViewer && canStartProduction(item)" (click)="demarrerProduction(item)"
+                title="Démarrer production"><i class="pi pi-play"></i></button>
+
+
+              <button class="icon-btn danger" *ngIf="!isViewer && canCancel(item)" (click)="annulerCommande(item)"
+                title="Annuler"><i class="pi pi-times"></i></button>
+            </div>
+          </td>
+        </tr>
+        <tr *ngIf="!filteredCommandes.length">
+          <td colspan="6" class="empty">{{ 'COMMANDES.EMPTY' | translate }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="stats-card">
+    <h2>{{ 'COMMANDES.STATS_TITLE' | translate }}</h2>
+    <div class="stats-container">
+      <div *ngFor="let stat of statusStats" class="stat-badge" [ngClass]="getStatusClass(stat.status)">
+        <span class="stat-label">{{ getStatusLabel(stat.status) }}</span>
+        <span class="stat-count">{{ stat.count }}</span>
+      </div>
+    </div>
+  </div>
+
+  <ng-template #loadingTpl>
+    <div class="loading">{{ 'COMMANDES.LOADING' | translate }}</div>
+  </ng-template>
+</div>
+
+<div class="modal-backdrop" *ngIf="displayConvertModal" (click)="closeConvertModal()">
+  <div class="modal-card" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>{{ 'COMMANDES.CONVERT_MODAL.TITLE' | translate }}</h3>
+      <button type="button" class="modal-close" (click)="closeConvertModal()">x</button>
+    </div>
+
+    <p class="modal-subtitle">{{ 'COMMANDES.CONVERT_MODAL.SUBTITLE' | translate }}</p>
+
+    <input type="text" class="search-input" [placeholder]="'COMMANDES.CONVERT_MODAL.SEARCH_PLACEHOLDER' | translate"
+      [(ngModel)]="conversionSearch" [ngModelOptions]="{ standalone: true }" />
+
+    <div class="table-wrapper modal-table" *ngIf="!chargementBCs; else loadingBCsTpl">
+      <table>
+        <thead>
+          <tr>
+            <th>Selection</th>
+            <th>{{ 'BC.TABLE.NUM' | translate }}</th>
+            <th>{{ 'COMMANDES.TABLE.CLIENT' | translate }}</th>
+            <th>{{ 'COMMANDES.TABLE.DATE' | translate }}</th>
+            <th>{{ 'COMMANDES.TABLE.TOTAL' | translate }}</th>
+            <th>{{ 'COMMANDES.TABLE.STATUS' | translate }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let bc of filteredConfirmedBonCommandes" (click)="selectedBCId = bc.id" class="selectable-row">
+            <td>
+              <input type="radio" name="selectedBC" [value]="bc.id" [(ngModel)]="selectedBCId"
+                [ngModelOptions]="{ standalone: true }" />
+            </td>
+            <td>{{ formatBonCommandeReference(bc) }}</td>
+            <td>{{ bc.acheteurNom || '-' }}</td>
+            <td>{{ bc.dateCreation | date:'dd/MM/yyyy' }}</td>
+            <td>{{ (bc.totalTTC || 0) | number:'1.3-3' }} TND</td>
+            <td><span class="status confirmed">CONFIRMED</span></td>
+          </tr>
+          <tr *ngIf="!filteredConfirmedBonCommandes.length">
+            <td colspan="6" class="empty">{{ 'COMMANDES.CONVERT_MODAL.EMPTY' | translate }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <ng-template #loadingBCsTpl>
+      <div class="loading">{{ 'COMMANDES.CONVERT_MODAL.LOADING' | translate }}</div>
+    </ng-template>
+
+    <div class="modal-actions">
+      <button type="button" class="btn btn-neutral" (click)="closeConvertModal()">{{
+        'COMMANDES.CONVERT_MODAL.BTN_CANCEL' | translate }}</button>
+      <button type="button" class="btn btn-primary" [disabled]="converting || !selectedBCId"
+        (click)="convertirBCSelectionne()">
+        {{ converting ? ('COMMANDES.CONVERT_MODAL.CONVERTING' | translate) : ('COMMANDES.CONVERT_MODAL.BTN_CONVERT' |
+        translate) }}
+      </button>
+    </div>
+  </div>
+</div>

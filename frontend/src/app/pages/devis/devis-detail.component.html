@@ -1,0 +1,110 @@
+<div class="devis-detail-page" *ngIf="!loading && devis; else loadingOrError">
+  <button class="back-link" (click)="retourAuxDevis()">&larr; {{ 'COMMON.BACK_TO_LIST' | translate }}</button>
+
+  <div class="header-card">
+    <h1>{{ formatDevisReference() }}</h1>
+  </div>
+
+  <div class="infos-grid">
+    <section class="party-card">
+      <h3>{{ client?.raisonSociale || devis.acheteurNom }}</h3>
+      <p>{{ client?.adresseComplete || '-' }}</p>
+      <p>{{ client?.email || '-' }}</p>
+      <p>{{ client?.telephone || '-' }}</p>
+    </section>
+
+    <section class="meta-card">
+      <p><strong>{{ 'FACTURE.ISSUE_DATE' | translate }}:</strong> {{ devis.dateCreation | date:'dd/MM/yyyy' }}</p>
+      <p *ngIf="devis.dateValidite"><strong>{{ 'DEVIS.VALIDITY_DATE' | translate }}:</strong> {{ devis.dateValidite | date:'dd/MM/yyyy' }}</p>
+      <p><strong>{{ 'FACTURE.VENDOR' | translate }}:</strong> {{ vendeur?.raisonSociale || devis.vendeurNom }}</p>
+      <p><strong>{{ 'FACTURE.MF' | translate }}:</strong> {{ vendeur?.matriculeFiscal || '-' }}</p>
+    </section>
+  </div>
+
+  <h2 class="section-title">Detail des prestations</h2>
+  <div class="table-wrapper">
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>{{ 'FACTURE.DESIGNATION' | translate }}</th>
+          <th>{{ 'FACTURE.QUANTITY' | translate }}</th>
+          <th>{{ 'FACTURE.UNIT_PRICE' | translate }}</th>
+          <th>{{ 'FACTURE.VAT' | translate }} %</th>
+          <th>{{ 'FACTURE.AMOUNT_HT' | translate }}</th>
+          <th>Total</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let ligne of lignes; let i = index">
+          <td>{{ i + 1 }}</td>
+          <td>{{ ligne.produitDesignation || '-' }}</td>
+          <td>{{ ligne.quantite || 0 }}</td>
+          <td>{{ (ligne.prixUnitaire || 0) | number:'1.3-3' }}</td>
+          <td>{{ getLigneTauxTVA(ligne) | number:'1.0-2' }}%</td>
+          <td>{{ (ligne.montantHT || 0) | number:'1.3-3' }}</td>
+          <td>{{ getLigneMontantTTC(ligne) | number:'1.3-3' }}</td>
+        </tr>
+        <tr *ngIf="!lignes.length">
+          <td colspan="7" class="empty">Aucune ligne dans ce devis.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="totals-card">
+    <span>{{ 'FACTURE.TOTAL_HT' | translate }}: {{ devis.totalHT | number:'1.3-3' }} TND</span>
+    <span>{{ 'FACTURE.VAT' | translate }}: {{ devis.montantTVA | number:'1.3-3' }} TND</span>
+    <span class="ttc">{{ 'FACTURE.TOTAL_TTC' | translate }}: {{ devis.totalTTC | number:'1.3-3' }} TND</span>
+  </div>
+
+
+
+
+  <div class="actions-footer">
+    <button class="btn btn-primary" *ngIf="canConvertirDirectement()" (click)="ouvrirConversionFacture()">
+      <i class="pi pi-file-plus"></i> {{ 'DEVIS.ACTIONS.GENERATE_INVOICE' | translate }}
+    </button>
+  </div>
+
+  <div class="error" *ngIf="errorMessage">{{ errorMessage }}</div>
+
+  <p-dialog [header]="'DEVIS.CONVERT_MODAL.TITLE' | translate" [(visible)]="displayConvertDialog" [modal]="true"
+    [style]="{width: '450px'}" [draggable]="false" [resizable]="false">
+    <div class="convert-dialog-content" *ngIf="conversionForm" [formGroup]="conversionForm">
+      <p class="subtitle">{{ 'DEVIS.CONVERT_MODAL.SUBTITLE' | translate }}</p>
+
+      <div class="field mt-4">
+        <label for="dateDoc">{{ 'DEVIS.CONVERT_MODAL.DATE_DOC' | translate }}</label>
+        <p-calendar id="dateDoc" formControlName="dateDocument" [showIcon]="true" appendTo="body"
+          styleClass="w-full"></p-calendar>
+      </div>
+
+      <div class="field mt-3">
+        <label for="modeP">{{ 'DEVIS.CONVERT_MODAL.MODE_PAIEMENT' | translate }}</label>
+        <p-dropdown id="modeP" formControlName="modePaiement" [options]="paymentModes" optionLabel="label"
+          optionValue="value" styleClass="w-full" appendTo="body"></p-dropdown>
+      </div>
+
+      <div class="field mt-3">
+        <label for="dateP">{{ 'DEVIS.CONVERT_MODAL.DATE_PAIEMENT' | translate }}</label>
+        <p-calendar id="dateP" formControlName="datePaiement" [showIcon]="true" appendTo="body"
+          styleClass="w-full"></p-calendar>
+      </div>
+    </div>
+
+    <ng-template pTemplate="footer">
+      <button pButton [label]="'DEVIS.CONVERT_MODAL.CANCEL' | translate" class="p-button-text"
+        (click)="displayConvertDialog = false"></button>
+      <button pButton [label]="'DEVIS.CONVERT_MODAL.SUBMIT' | translate" (click)="confirmerConversionFacture()"
+        [loading]="isConverting" [disabled]="conversionForm.invalid"></button>
+    </ng-template>
+  </p-dialog>
+
+  <p-toast></p-toast>
+</div>
+
+<ng-template #loadingOrError>
+  <div class="loading" *ngIf="loading">Chargement du devis...</div>
+  <div class="error" *ngIf="!loading && errorMessage">{{ errorMessage }}</div>
+</ng-template>

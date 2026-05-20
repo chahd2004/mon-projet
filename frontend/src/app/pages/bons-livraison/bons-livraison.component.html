@@ -1,0 +1,137 @@
+<div class="bl-page">
+  <h1 class="title">{{ 'BL.TITLE' | translate }}</h1>
+
+
+
+  <div *ngIf="errorMessage" class="message error">{{ errorMessage }}</div>
+  <div *ngIf="successMessage" class="message success">{{ successMessage }}</div>
+
+  <div class="filters-row">
+    <select [(ngModel)]="selectedStatus" [ngModelOptions]="{ standalone: true }">
+      <option value="ALL">{{ 'BL.FILTER_STATUS' | translate }}</option>
+      <option *ngFor="let status of statusOptions" [ngValue]="status">{{ 'STATUS.' + status | translate }}</option>
+    </select>
+  </div>
+
+  <div class="table-wrapper" *ngIf="!loading; else loadingTpl">
+    <table>
+      <thead>
+        <tr>
+          <th>{{ 'BL.TABLE.NUM' | translate }}</th>
+          <th>{{ 'BL.TABLE.ORDER_LINK' | translate }}</th>
+          <th>{{ 'BL.TABLE.CLIENT' | translate }}</th>
+          <th>{{ 'BL.TABLE.DATE' | translate }}</th>
+          <th>{{ 'BL.TABLE.STATUS' | translate }}</th>
+          <th>{{ 'BL.TABLE.ACTIONS' | translate }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of filteredBonsLivraison" [ngClass]="'status-' + getStatusClass(item.statut)">
+          <td class="strong">{{ item.numeroBL }}</td>
+          <td>{{ item.commandeLiee }}</td>
+          <td>{{ item.client }}</td>
+          <td>{{ item.dateLivraison | date:'dd/MM/yyyy' }}</td>
+          <td>
+            <span class="status" [ngClass]="getStatusClass(item.statut)">{{ 'STATUS.' + item.statut | translate }}</span>
+          </td>
+          <td>
+            <div class="row-actions">
+              <button class="icon-btn" (click)="voirBL(item)" title="Voir"><i class="pi pi-eye"></i></button>
+              
+              <button class="icon-btn" *ngIf="!isViewer && item.statut === 'DRAFT'" (click)="marquerLivre(item)" 
+                title="Livrer (Envoyer mail client)"><i class="pi pi-truck"></i></button>
+              
+              <button class="icon-btn" *ngIf="!isViewer && item.statut === 'SIGNED_CLIENT'" (click)="ouvrirFactureModal(item)" 
+                title="Générer une facture"><i class="pi pi-file"></i></button>
+                
+              <button class="icon-btn" *ngIf="!isViewer && item.statut === 'DELIVERED'" (click)="signalerLitige(item)" 
+                title="Signaler un litige"><i class="pi pi-exclamation-triangle"></i></button>
+
+              <button class="icon-btn" *ngIf="!isViewer && item.statut === 'DISPUTE'" (click)="resoudreLitige(item)" 
+                title="Résoudre le litige"><i class="pi pi-check-circle"></i></button>
+
+              <button class="icon-btn danger" *ngIf="!isViewer && canCancel(item)" (click)="annulerBL(item)" 
+                title="Annuler le Bon de Livraison"><i class="pi pi-times"></i></button>
+
+            </div>
+          </td>
+        </tr>
+        <tr *ngIf="!filteredBonsLivraison.length">
+          <td colspan="6" class="empty">{{ 'BL.EMPTY' | translate }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="stats-card">
+    <h2>{{ 'BL.STATS_TITLE' | translate }}</h2>
+    <div class="stats-line"></div>
+    <div class="stats-container">
+      <div class="stat-badge draft">
+        <span class="stat-label">{{ 'STATUS.DRAFT' | translate }}</span>
+        <span class="stat-count">{{ draftCount }}</span>
+      </div>
+      <div class="stat-badge delivered">
+        <span class="stat-label">{{ 'STATUS.DELIVERED' | translate }}</span>
+        <span class="stat-count">{{ deliveredCount }}</span>
+      </div>
+      <div class="stat-badge signed-client">
+        <span class="stat-label">{{ 'STATUS.SIGNED' | translate }}</span>
+        <span class="stat-count">{{ signedCount }}</span>
+      </div>
+      <div class="stat-badge dispute">
+        <span class="stat-label">{{ 'STATUS.DISPUTE' | translate }}</span>
+        <span class="stat-count">{{ disputeCount }}</span>
+      </div>
+      <div class="stat-badge closed" *ngIf="closedCount > 0">
+        <span class="stat-label">{{ 'STATUS.CLOSED' | translate }}</span>
+        <span class="stat-count">{{ closedCount }}</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="dispute-card" *ngIf="disputes.length">
+    <h2>{{ 'BL.DISPUTES_TITLE' | translate }}</h2>
+    <div class="dispute-item" *ngFor="let item of disputes">
+      <strong>{{ item.numeroBL }}</strong> - {{ item.client }} <br/>
+      <span class="reason">{{ 'BL.DISPUTE_REASON_LABEL' | translate }} {{ item.disputeReason || ('BL.DISPUTE_REASON_UNKNOWN' | translate) }}</span>
+    </div>
+  </div>
+
+  <ng-template #loadingTpl>
+    <div class="loading">{{ 'BL.LOADING' | translate }}</div>
+  </ng-template>
+</div>
+
+
+
+  <p-dialog [header]="'DEVIS.CONVERT_MODAL.TITLE' | translate" [(visible)]="displayFactureModal" 
+    [modal]="true" [style]="{width: '450px'}" [draggable]="false" [resizable]="false">
+    <div class="convert-dialog-content" *ngIf="conversionForm" [formGroup]="conversionForm">
+      <p class="subtitle">Générer une facture à partir du bon de livraison {{ selectedBLForFacture?.numeroBL }}</p>
+
+      <div class="field mt-4">
+        <label for="dateDoc">{{ 'DEVIS.CONVERT_MODAL.DATE_DOC' | translate }}</label>
+        <p-calendar id="dateDoc" formControlName="dateDocument" [showIcon]="true" appendTo="body" styleClass="w-full"></p-calendar>
+      </div>
+
+      <div class="field mt-3">
+        <label for="modeP">{{ 'DEVIS.CONVERT_MODAL.MODE_PAIEMENT' | translate }}</label>
+        <p-dropdown id="modeP" formControlName="modePaiement" [options]="paymentModes" 
+          optionLabel="label" optionValue="value" styleClass="w-full" appendTo="body"></p-dropdown>
+      </div>
+
+      <div class="field mt-3">
+        <label for="dateP">{{ 'DEVIS.CONVERT_MODAL.DATE_PAIEMENT' | translate }}</label>
+        <p-calendar id="dateP" formControlName="datePaiement" [showIcon]="true" appendTo="body" styleClass="w-full"></p-calendar>
+      </div>
+    </div>
+
+    <ng-template pTemplate="footer">
+      <button pButton [label]="'DEVIS.CONVERT_MODAL.CANCEL' | translate" class="p-button-text" (click)="fermerFactureModal()"></button>
+      <button pButton [label]="'DEVIS.CONVERT_MODAL.SUBMIT' | translate" (click)="genererFactureDepuiBL()" 
+        [loading]="generatingFacture" [disabled]="conversionForm.invalid"></button>
+    </ng-template>
+  </p-dialog>
+
+  <p-toast></p-toast>

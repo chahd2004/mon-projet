@@ -1,0 +1,164 @@
+@startuml
+title Diagramme de séquence — Gestion des demandes et des utilisateurs (ECB)
+
+skinparam backgroundColor #FFFFFF
+skinparam sequenceArrowThickness 1.5
+skinparam roundcorner 5
+skinparam LifeLineBorderColor #333333
+skinparam SequenceGroupBorderColor #888888
+skinparam SequenceGroupFontColor #333333
+skinparam SequenceGroupBackgroundColor #F5F5F5
+
+' ECB Stereotypes
+actor "Entreprise" as E
+actor "SuperAdmin" as SA
+boundary "Interface" as I <<Boundary>>
+control "AdminController" as AC <<Control>>
+control "AdminService" as AS <<Control>>
+control "EmailService" as ES <<Control>>
+entity "Demande" as DEM <<Entity>>
+entity "User" as USR <<Entity>>
+
+== Soumettre une demande (Entreprise) ==
+
+E -> I : Remplir le formulaire
+activate E
+activate I
+I -> AC : POST /demandes/emetteur
+activate AC
+AC -> AS : soumettreDemande()
+activate AS
+AS -> DEM : save() — REQUESTED
+activate DEM
+DEM --> AS : Demande
+deactivate DEM
+AS -> ES : sendAcknowledgment()
+activate ES
+ES --> AS : void
+deactivate ES
+AS --> AC : 200 OK
+deactivate AS
+AC --> I : 200 OK
+deactivate AC
+I --> E : Succès : Demande soumise
+deactivate I
+deactivate E
+
+== Consulter les demandes (SuperAdmin) ==
+
+SA -> I : Accéder aux demandes
+activate SA
+activate I
+I -> AC : GET /demandes
+activate AC
+AC -> AS : getAllDemandes()
+activate AS
+AS -> DEM : findAll()
+activate DEM
+DEM --> AS : List<Demande>
+deactivate DEM
+AS --> AC : Liste des demandes
+deactivate AS
+AC --> I : Afficher la liste
+deactivate AC
+I --> SA : Liste affichée
+deactivate I
+deactivate SA
+
+== Approuver une demande (SuperAdmin) ==
+
+SA -> I : Cliquer "Approuver"
+activate SA
+activate I
+I -> AC : POST /{id}/approuver
+activate AC
+AC -> AS : approuverDemande(id)
+activate AS
+AS -> DEM : save() — APPROVED
+activate DEM
+DEM --> AS : Demande
+deactivate DEM
+AS -> ES : sendAccountCreated()
+activate ES
+ES --> AS : void
+deactivate ES
+AS --> AC : 200 APPROVED
+deactivate AS
+AC --> I : 200 APPROVED
+deactivate AC
+I --> SA : Succès : Demande approuvée
+deactivate I
+deactivate SA
+
+== Rejeter une demande (SuperAdmin) ==
+
+SA -> I : Cliquer "Rejeter" + motif
+activate SA
+activate I
+I -> AC : POST /{id}/rejeter
+activate AC
+AC -> AS : rejeterDemande(id)
+activate AS
+AS -> DEM : save() — REJECTED
+activate DEM
+DEM --> AS : Demande
+deactivate DEM
+AS -> ES : sendRejection()
+activate ES
+ES --> AS : void
+deactivate ES
+AS --> AC : 200 REJECTED
+deactivate AS
+AC --> I : 200 REJECTED
+deactivate AC
+I --> SA : Succès : Demande rejetée
+deactivate I
+deactivate SA
+
+== Créer un SuperAdmin (SuperAdmin) ==
+
+SA -> I : Remplir formulaire nouveau SuperAdmin
+activate SA
+activate I
+I -> AC : POST /users/create
+activate AC
+AC -> AS : createSuperAdmin()
+activate AS
+AS -> USR : save() — SUPER_ADMIN
+activate USR
+USR --> AS : User
+deactivate USR
+AS -> ES : sendTempPassword()
+activate ES
+ES --> AS : void
+deactivate ES
+AS --> AC : 201 Created
+deactivate AS
+AC --> I : 201 Created
+deactivate AC
+I --> SA : Succès : SuperAdmin créé
+deactivate I
+deactivate SA
+
+== Consulter les utilisateurs (SuperAdmin) ==
+
+SA -> I : Accéder à la gestion des utilisateurs
+activate SA
+activate I
+I -> AC : GET /users
+activate AC
+AC -> AS : getAllUsers()
+activate AS
+AS -> USR : findAll()
+activate USR
+USR --> AS : List<User>
+deactivate USR
+AS --> AC : DTO List
+deactivate AS
+AC --> I : 200 OK — liste
+deactivate AC
+I --> SA : Afficher la liste
+deactivate I
+deactivate SA
+
+@enduml

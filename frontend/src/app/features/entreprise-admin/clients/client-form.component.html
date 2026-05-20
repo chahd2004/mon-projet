@@ -1,0 +1,104 @@
+<p-toast></p-toast>
+<div class="form-container">
+  <div class="form-header">
+    <h1>Ajouter Client</h1>
+  </div>
+
+  <p-card class="form-card">
+    <form [formGroup]="form">
+      <h3 class="section-title">Informations Générales</h3>
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="code">Code Client *</label>
+          <input id="code" type="text" pInputText formControlName="code"
+            placeholder="Ex: CL-001" />
+          <small class="error" *ngIf="form.get('code')?.invalid && form.get('code')?.touched">
+            Le code est requis
+          </small>
+          <small class="error" *ngIf="fieldErrors['code']">{{ fieldErrors['code'] }}</small>
+        </div>
+
+        <div class="form-group">
+          <label for="raisonSociale">Raison Sociale *</label>
+          <input id="raisonSociale" type="text" pInputText formControlName="raisonSociale"
+            placeholder="Nom de l'entreprise" />
+          <small class="error" *ngIf="form.get('raisonSociale')?.invalid && form.get('raisonSociale')?.touched">
+            {{ getErrorMessage('raisonSociale') }}
+          </small>
+          <small class="error" *ngIf="fieldErrors['raisonSociale']">{{ fieldErrors['raisonSociale'] }}</small>
+        </div>
+
+        <div class="form-group">
+          <label for="email">Email *</label>
+          <input id="email" type="email" pInputText formControlName="email" placeholder="Email" />
+          <small class="error" *ngIf="form.get('email')?.invalid && form.get('email')?.touched">
+            {{ getErrorMessage('email') }}
+          </small>
+          <small class="error" *ngIf="fieldErrors['email']">{{ fieldErrors['email'] }}</small>
+        </div>
+
+        <div class="form-group">
+          <label for="telephone">Téléphone *</label>
+          <input id="telephone" type="tel" pInputText formControlName="telephone" placeholder="Téléphone" />
+          <small class="error" *ngIf="form.get('telephone')?.invalid && form.get('telephone')?.touched">
+            Téléphone est requis
+          </small>
+          <small class="error" *ngIf="fieldErrors['telephone']">{{ fieldErrors['telephone'] }}</small>
+        </div>
+
+        <div class="form-group">
+          <label for="contactPrincipal">Contact Principal *</label>
+          <input id="contactPrincipal" type="text" pInputText formControlName="contactPrincipal"
+            placeholder="Nom du contact" />
+          <small class="error" *ngIf="form.get('contactPrincipal')?.invalid && form.get('contactPrincipal')?.touched">
+            Contact Principal est requis
+          </small>
+          <small class="error" *ngIf="fieldErrors['contactPrincipal']">{{ fieldErrors['contactPrincipal'] }}</small>
+        </div>
+      </div>
+
+      <h3 class="section-title">Adresse</h3>
+      <div class="form-grid">
+        <div class="form-group full-width">
+          <label for="adresse">Adresse *</label>
+          <input id="adresse" type="text" pInputText formControlName="adresse" placeholder="Adresse complète" />
+          <small class="error" *ngIf="form.get('adresse')?.invalid && form.get('adresse')?.touched">
+            Adresse est requise
+          </small>
+          <small class="error" *ngIf="fieldErrors['adresseComplete']">{{ fieldErrors['adresseComplete'] }}</small>
+        </div>
+
+        <div class="form-group">
+          <label for="region">Région *</label>
+          <p-dropdown id="region" [options]="regionOptions" formControlName="region" optionLabel="label"
+            optionValue="value" placeholder="Sélectionner une région"></p-dropdown>
+          <small class="error" *ngIf="form.get('region')?.invalid && form.get('region')?.touched">
+            Région est requise
+          </small>
+          <small class="error" *ngIf="fieldErrors['region']">{{ fieldErrors['region'] }}</small>
+        </div>
+
+        <div class="form-group">
+          <label for="codePostal">Code Postal *</label>
+          <input id="codePostal" type="text" pInputText formControlName="codePostal" placeholder="Code postal" />
+          <small class="error" *ngIf="form.get('codePostal')?.invalid && form.get('codePostal')?.touched">
+            Code Postal est requis
+          </small>
+          <small class="error" *ngIf="fieldErrors['codePostal']">{{ fieldErrors['codePostal'] }}</small>
+        </div>
+      </div>
+
+      <div class="form-group full-width">
+        <label for="notes">Notes</label>
+        <textarea id="notes" pInputText formControlName="notes" placeholder="Notes supplémentaires..."
+          rows="3"></textarea>
+      </div>
+
+      <div class="form-actions">
+        <button pButton type="button" label="Annuler" class="p-button-text" (click)="cancel()"></button>
+        <button pButton type="button" label="Ajouter" icon="pi pi-check" [loading]="isSubmitting"
+          [disabled]="!form.valid || isSubmitting" (click)="save()"></button>
+      </div>
+    </form>
+  </p-card>
+</div>

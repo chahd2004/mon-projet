@@ -1,0 +1,187 @@
+@startuml
+title Diagramme de séquence — Gestion des devis (ECB)
+
+skinparam backgroundColor #FFFFFF
+skinparam sequenceArrowThickness 1.5
+skinparam roundcorner 5
+skinparam LifeLineBorderColor #333333
+skinparam SequenceGroupBorderColor #888888
+skinparam SequenceGroupFontColor #333333
+skinparam SequenceGroupBackgroundColor #F5F5F5
+
+' ECB Stereotypes
+actor "Manager" as M
+actor "Consultant" as C
+actor "Client" as CL
+boundary "Interface" as I <<Boundary>>
+control "DevisController" as DC <<Control>>
+control "DevisService" as DS <<Control>>
+control "EmailService" as ES
+entity "Devis" as D <<Entity>>
+entity "BonCommande" as BC <<Entity>>
+
+== Consultation (Manager & Consultant) ==
+
+M -> I : Accéder au menu "Devis"
+C -> I : Accéder au menu "Devis"
+activate I
+I -> DC : GET /api/devis
+activate DC
+DC -> DS : findAll()
+activate DS
+DS -> D : findAll()
+activate D
+D --> DS : List<Devis>
+deactivate D
+DS --> DC : List<DevisDTO>
+deactivate DS
+DC --> I : Affichage de la liste
+deactivate DC
+I --> M : Liste affichée
+I --> C : Liste affichée
+deactivate I
+
+
+== Création d'un devis (Manager uniquement) ==
+
+M -> I : cliquer sur "Nouveau devis"
+activate M
+activate I
+I -> DC : POST /api/devis
+activate DC
+DC -> DS : create(data)
+activate DS
+DS -> D : save(newDevis, statut=DRAFT)
+activate D
+D --> DS : Devis
+deactivate D
+DS --> DC : DevisDTO
+deactivate DS
+DC --> I : Affichage du Devis
+deactivate DC
+I --> M : Succès : Devis ajouté (DRAFT)
+deactivate I
+
+== Modification d'un devis (Manager uniquement) ==
+
+M -> I : Sélectionner + cliquer sur "Modifier"
+activate M
+activate I
+I -> DC : PUT /api/devis/{id}
+activate DC
+DC -> DS : update(id, data)
+activate DS
+DS -> D : findById() + save()
+activate D
+D --> DS : Devis
+deactivate D
+DS --> DC : DevisDTO
+deactivate DS
+DC --> I : 200 OK
+deactivate DC
+I --> M : Succès : Devis mis à jour
+deactivate I
+deactivate M
+
+== Envoi du devis (Manager uniquement) ==
+
+M -> I : cliquer sur "Envoyer demande d'acceptation"
+activate I
+I -> DC : PUT /api/devis/{id}/envoyer
+activate DC
+DC -> DS : envoyer(id)
+activate DS
+DS -> ES : send(mailClient + link)
+activate ES
+note right : Le mail contient un lien vers\nla page de signature publique
+ES -> CL : Email (Lien du devis)
+ES --> DS : void
+deactivate ES
+DS -> D : updateStatus(id, statut=SENT)
+activate D
+D --> DS : void
+deactivate D
+DS --> DC : DevisDTO
+deactivate DS
+DC --> I : Confirmation d'envoi (SENT)
+deactivate DC
+I --> M : Succès : Devis envoyé
+deactivate I
+deactivate M
+
+== Actions du Client (Lien Public) ==
+
+CL -> I : Accéder au lien reçu par mail
+activate CL
+activate I
+I -> DC : GET /api/public/devis/{ref}
+activate DC
+DC --> I : Affichage du Devis
+deactivate DC
+I --> CL : Page de consultation publique affichée
+deactivate I
+
+alt Acceptation
+    CL -> I : cliquer sur "Accepter le devis"
+    activate I
+    I -> DC : PUT /api/public/devis/{id}/accepter
+    activate DC
+    DC -> DS : accepterPublic(id)
+    activate DS
+    DS -> D : updateStatus(id, statut=CONFIRMED)
+    activate D
+    D --> DS : void
+    deactivate D
+    DS --> DC : success
+    deactivate DS
+    DC --> I : Succès (Signature enregistrée)
+    deactivate DC
+    I --> CL : Succès : Devis accepté
+    deactivate I
+else Refus
+    CL -> I : cliquer sur "Rejeter le devis"
+    activate I
+    I -> DC : PUT /api/public/devis/{id}/rejeter
+    activate DC
+    DC -> DS : rejeterPublic(id, raison)
+    activate DS
+    DS -> D : updateStatus(id, statut=CANCELLED)
+    activate D
+    D --> DS : void
+    deactivate D
+    DS --> DC : success
+    deactivate DS
+    DC --> I : Statut mis à jour
+    deactivate DC
+    I --> CL : Succès : Devis rejeté
+    deactivate I
+    deactivate CL
+end
+
+== Conversion (Manager) ==
+
+
+M -> I : cliquer sur "Convertir en BC"
+activate M
+activate I
+I -> DC : POST /api/conversions/...
+activate DC
+DC -> DS : convertirEnBonCommande(id)
+activate DS
+DS -> D : updateStatus(id, statut=CONVERTED)
+activate D
+D --> DS : void
+deactivate D
+DS -> BC : createNewBC(fromDevis)
+activate BC
+BC --> DS : BonCommande
+deactivate BC
+DS --> DC : success
+deactivate DS
+DC --> I : Bon de Commande généré
+deactivate DC
+I --> M : Succès : Bon de commande généré
+deactivate I
+deactivate M
+
+@enduml

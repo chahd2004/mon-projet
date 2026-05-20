@@ -1,0 +1,61 @@
+@startuml "Diagramme de Séquence - Premier login & Changement de mdp"
+
+skinparam style strictuml
+skinparam maxMessageSize 150
+skinparam sequence {
+    ParticipantPadding 30
+    MessageAlign center
+}
+
+actor "Utilisateur" as Utilisateur
+
+boundary "Interface Login" as InterfaceLogin
+boundary "Page Changer Mot de Passe" as InterfaceChange
+control "AuthController" as AuthController
+control "AuthService" as AuthService
+entity "User" as User
+control "JwtService" as JwtService
+
+== Login ==
+
+Utilisateur -> InterfaceLogin : Saisir Credentials
+activate InterfaceLogin
+InterfaceLogin -> AuthController : POST /api/auth/login
+activate AuthController
+AuthController -> AuthService : authenticate()
+activate AuthService
+AuthService -> User : findByEmail()
+activate User
+User --> AuthService : User (firstLogin=true)
+deactivate User
+AuthService -> JwtService : generateToken()
+activate JwtService
+JwtService --> AuthService : token
+deactivate JwtService
+AuthService --> AuthController : AuthResponse (requireChange=true)
+deactivate AuthService
+AuthController --> InterfaceLogin : 200 OK
+deactivate AuthController
+InterfaceLogin --> Utilisateur : Rediriger vers "Changer MDP"
+deactivate InterfaceLogin
+
+== Changer mot de passe ==
+
+Utilisateur -> InterfaceChange : Saisir Ancien + Nouveau MDP
+activate InterfaceChange
+InterfaceChange -> AuthController : POST /api/auth/change-password
+activate AuthController
+AuthController -> AuthService : changePassword()
+activate AuthService
+AuthService -> User : save(newPassword)
+activate User
+User --> AuthService : void (firstLogin=false)
+deactivate User
+AuthService --> AuthController : 200 OK
+deactivate AuthService
+AuthController --> InterfaceChange : Succès
+deactivate AuthController
+InterfaceChange --> Utilisateur : Accès Tableau de bord
+deactivate InterfaceChange
+
+@enduml

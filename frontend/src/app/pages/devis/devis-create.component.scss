@@ -1,0 +1,243 @@
+.devis-create-page {
+  min-height: auto;
+  padding: 1.1rem 1.2rem;
+  background: transparent;
+  max-width: 1180px;
+  margin: 0 auto;
+}
+
+.back-link {
+  border: 0;
+  background: transparent;
+  color: #1d4ed8;
+  font-weight: 700;
+  cursor: pointer;
+  margin-bottom: 0.6rem;
+}
+
+.title {
+  margin: 0 0 0.9rem;
+  color: #0f172a;
+  text-transform: uppercase;
+  font-size: 1.4rem;
+}
+
+.card {
+  background: #ffffff;
+  border: 1px solid #d8e4f5;
+  border-radius: 12px;
+  padding: 0.9rem;
+  margin-bottom: 0.9rem;
+}
+
+.card h2 {
+  margin: 0 0 0.7rem;
+  color: #0f172a;
+  font-size: 1.02rem;
+}
+
+.grid.two-cols {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.inline-row {
+  display: flex;
+  gap: 0.5rem;
+}
+
+select,
+input,
+textarea {
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  padding: 0.48rem 0.56rem;
+  font-size: 0.92rem;
+}
+
+.table-wrapper {
+  overflow-x: auto;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  margin-bottom: 0.65rem;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 840px;
+}
+
+th,
+td {
+  padding: 0.58rem 0.55rem;
+  border-bottom: 1px solid #eaf0f8;
+  text-align: left;
+  font-size: 0.88rem;
+}
+
+th {
+  background: #f1f5ff;
+  color: #1e3a8a;
+}
+
+.summary-grid {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.summary-grid p {
+  margin: 0;
+  color: #1f2937;
+}
+
+.summary-grid .ttc {
+  margin-top: 0.4rem;
+  padding-top: 0.4rem;
+  border-top: 1px solid #d8e4f5;
+}
+
+.actions-row {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.6rem;
+}
+
+button {
+  border: 0;
+  border-radius: 10px;
+  padding: 0.55rem 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+  background: #e2e8f0;
+  color: #0f172a;
+}
+
+button.primary {
+  background: #1d4ed8;
+  color: #ffffff;
+}
+
+button.secondary {
+  background: #e2e8f0;
+}
+
+button.danger {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.error {
+  margin: 0.5rem 0;
+  color: #991b1b;
+  font-weight: 600;
+}
+
+.loading {
+  text-align: center;
+  padding: 1rem;
+}
+
+@media (max-width: 900px) {
+  .grid.two-cols {
+    grid-template-columns: 1fr;
+  }
+
+  .inline-row {
+    flex-direction: column;
+  }
+
+  .actions-row {
+    justify-content: stretch;
+    flex-direction: column;
+  }
+}
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 1rem;
+}
+
+.modal-card {
+  width: min(720px, 100%);
+  background: #ffffff;
+  border-radius: 14px;
+  border: 1px solid #d8e4f5;
+  padding: 1rem;
+}
+
+.modal-card h3 {
+  margin: 0 0 0.75rem;
+  color: #0f172a;
+}
+
+.modal-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.7rem;
+}
+
+.modal-actions {
+  margin-top: 0.85rem;
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.6rem;
+}
+
+@media (max-width: 768px) {
+  .modal-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+// Variables (simplified or assuming imported)
+$blue: #1e40af;
+$blue-light: #3b82f6;
+$dark: #1e293b;
+$gray: #64728b;
+$border: #e2e8f0;
+
+.vendeur-section {
+  display: flex; justify-content: space-between; align-items: flex-start; gap: 2rem;
+  background: white; padding: 1.5rem; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+  margin-bottom: 2rem; border: 1px solid $border;
+
+  .vendeur-left {
+    display: flex; align-items: flex-start; gap: 1rem; flex: 1;
+    .vendeur-avatar {
+      width: 56px; height: 56px; border-radius: 50%; background: $blue-light;
+      display: flex; align-items: center; justify-content: center;
+      color: white; font-weight: 700; font-size: 1.4rem; flex-shrink: 0;
+    }
+    .vendeur-info { display: flex; flex-direction: column; gap: 0.3rem;
+      .vendeur-fixed {
+        display: flex; flex-direction: column; gap: 0.3rem;
+        .vendeur-value { color: $dark; font-size: 1rem; font-weight: 700; }
+      }
+    }
+  }
+  .vendeur-right { flex: 1.5;
+    .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; }
+  }
+}
+
+.info-item {
+  display: flex; gap: 0.5rem; align-items: baseline;
+  .info-label { font-weight: 600; color: $dark; font-size: 0.85rem; white-space: nowrap; }
+  .info-value  { color: $gray; font-size: 0.9rem; }
+}

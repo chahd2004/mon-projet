@@ -1,0 +1,168 @@
+@startuml
+title Diagramme de Séquence - Gestion des Demandes Emetteurs et Entreprises (ECB)
+
+skinparam backgroundColor #FFFFFF
+skinparam sequenceArrowThickness 1.5
+skinparam roundcorner 5
+skinparam LifeLineBorderColor #333333
+skinparam SequenceGroupBorderColor #888888
+skinparam SequenceGroupFontColor #333333
+skinparam SequenceGroupBackgroundColor #F5F5F5
+
+actor "Entreprise" as E
+actor "SuperAdmin" as SA
+
+boundary "Interface\n«Boundary»" as I
+control "PublicDemandeController\n«Control»" as PDC
+control "SuperAdminDemandeController\n«Control»" as SADC
+control "AuthController\n«Control»" as AC
+control "DemandeEmetteurService\n«Control»" as DES
+control "AuthService\n«Control»" as AS
+control "EmailService\n«Utility»" as ES
+entity "DemandeEmetteur\n«Entity»" as DE
+entity "User\n«Entity»" as U
+
+== Soumettre une demande (Entreprise) ==
+
+E -> I : Remplir le formulaire
+activate E
+activate I
+I -> PDC : POST /api/public/demandes/emetteur
+activate PDC
+PDC -> DES : soumettreDemande(request)
+activate DES
+DES -> DE : save() / Statut=REQUESTED
+activate DE
+DE --> DES : void
+deactivate DE
+DES -> ES : sendDemandeSoumiseEmail()
+activate ES
+ES --> DES : void
+deactivate ES
+DES --> PDC : 200 OK (Response)
+deactivate DES
+PDC --> I : Confirmation soumission
+deactivate PDC
+I --> E : Demande soumise avec succès
+deactivate I
+deactivate E
+
+== Consulter les demandes (SuperAdmin) ==
+
+SA -> I : Accéder aux demandes
+activate SA
+activate I
+I -> SADC : GET /api/super-admin/demandes
+activate SADC
+SADC -> DES : getAllDemandes()
+activate DES
+DES -> DE : findAll()
+activate DE
+DE --> DES : List<DemandeEmetteur>
+deactivate DE
+DES --> SADC : Liste des demandes
+deactivate DES
+SADC --> I : Afficher la liste
+deactivate SADC
+I --> SA : Liste affichée
+deactivate I
+deactivate SA
+
+== Approuver une demande (SuperAdmin) ==
+
+SA -> I : Cliquer "Approuver"
+activate SA
+activate I
+I -> SADC : POST /api/super-admin/demandes/{id}/approuver
+activate SADC
+SADC -> DES : approuverDemande(id, request)
+activate DES
+DES -> DE : save() / Statut=PENDING
+activate DE
+DE --> DES : void
+deactivate DE
+note right of DES: Création automatique du compte User\nMot de passe temporaire généré
+DES -> U : save() / Rôle=ENTREPRISE_ADMIN
+activate U
+U --> DES : User
+deactivate U
+DES -> ES : sendCompteCreeEmail()
+activate ES
+ES --> DES : void
+deactivate ES
+DES --> SADC : 200 APPROVED
+deactivate DES
+SADC --> I : Confirmation d'approbation
+deactivate SADC
+I --> SA : Demande approuvée
+deactivate I
+deactivate SA
+
+== Rejeter une demande (SuperAdmin) ==
+
+SA -> I : Cliquer "Rejeter" + motif
+activate SA
+activate I
+I -> SADC : POST /api/super-admin/demandes/{id}/rejeter
+activate SADC
+SADC -> DES : rejeterDemande(id, request)
+activate DES
+DES -> DE : save() / Statut=REJECTED
+activate DE
+DE --> DES : void
+deactivate DE
+DES -> ES : sendDemandeRejeteeEmail()
+activate ES
+ES --> DES : void
+deactivate ES
+DES --> SADC : 200 REJECTED
+deactivate DES
+SADC --> I : Confirmation du rejet
+deactivate SADC
+I --> SA : Demande rejetée
+deactivate I
+deactivate SA
+
+== Créer un SuperAdmin (SuperAdmin) ==
+
+SA -> I : Remplir formulaire nouveau SuperAdmin
+activate SA
+activate I
+I -> AC : POST /api/auth/register
+activate AC
+AC -> AS : register(request)
+activate AS
+AS -> U : save() / Rôle=SUPER_ADMIN
+activate U
+U --> AS : User
+deactivate U
+AS --> AC : AuthResponse
+deactivate AS
+AC --> I : 201 Created
+deactivate AC
+I --> SA : Nouveau SuperAdmin créé
+deactivate I
+deactivate SA
+
+== Consulter les entreprises (SuperAdmin) ==
+
+SA -> I : Accéder à la gestion des entreprises
+activate SA
+activate I
+I -> SADC : GET /api/super-admin/entreprises
+activate SADC
+SADC -> DES : findAll()
+activate DES
+DES -> DE : findAll()
+activate DE
+DE --> DES : List<DemandeEmetteur>
+deactivate DE
+DES --> SADC : 200 OK - liste
+deactivate DES
+SADC --> I : 200 OK - liste
+deactivate SADC
+I --> SA : Afficher la liste
+deactivate I
+deactivate SA
+
+@enduml

@@ -1,0 +1,158 @@
+@startuml
+title Diagramme de séquence — Gestion des bons de livraison (ECB)
+
+skinparam backgroundColor #FFFFFF
+skinparam sequenceArrowThickness 1.5
+skinparam roundcorner 5
+skinparam LifeLineBorderColor #333333
+skinparam SequenceGroupBorderColor #888888
+skinparam SequenceGroupFontColor #333333
+skinparam SequenceGroupBackgroundColor #F5F5F5
+
+' ECB Stereotypes
+actor "Manager" as M
+actor "Consultant" as C
+boundary "Interface" as I <<Boundary>>
+control "BLController" as BLC <<Control>>
+control "BLService" as BLS <<Control>>
+control "CommandeService" as CS <<Control>>
+control "EmailService" as ES
+entity "BonLivraison" as BL <<Entity>>
+entity "Commande" as CMD <<Entity>>
+
+== Consultation (Manager & Consultant) ==
+
+M -> I : Accéder au menu "Bons de Livraison"
+C -> I : Accéder au menu "Bons de Livraison"
+activate I
+I -> BLC : GET /api/bon-livraisons
+activate BLC
+BLC -> BLS : getAll() / getByVendeur()
+activate BLS
+BLS -> BL : findAll() [via Repository]
+activate BL
+BL --> BLS : List<BL>
+deactivate BL
+BLS --> BLC : List<BLResponseDTO>
+deactivate BLS
+BLC --> I : Affichage de la liste
+deactivate BLC
+I --> M : Liste affichée
+I --> C : Liste affichée
+deactivate I
+
+== Modification (Manager uniquement) ==
+
+M -> I : Sélectionner + cliquer sur "Modifier"
+activate M
+activate I
+I -> BLC : PUT /api/bon-livraisons/{id}
+activate BLC
+BLC -> BLS : update(id, dto)
+activate BLS
+BLS -> BL : findById() + save()
+activate BL
+BL --> BLS : BonLivraison
+deactivate BL
+BLS --> BLC : BLResponseDTO
+deactivate BLS
+BLC --> I : 200 OK
+deactivate BLC
+I --> M : Succès : BL mis à jour
+deactivate I
+deactivate M
+
+
+
+== Action de Livraison (Manager uniquement) ==
+
+M -> I : cliquer sur "Livrer & Envoyer signature"
+activate M
+activate I
+I -> BLC : PUT /api/bon-livraisons/{id}/livrer
+activate BLC
+BLC -> BLS : marquerLivre(id)
+activate BLS
+BLS -> ES : sendBonLivraisonEmail(link)
+activate ES
+note right : L'email (lien de signature) est envoyé au Client
+ES --> BLS : void
+deactivate ES
+BLS -> BL : updateStatus(id, statut=DELIVERED)
+activate BL
+BL --> BLS : void
+deactivate BL
+BLS --> BLC : BonLivraisonResponseDTO
+deactivate BLS
+BLC --> I : 200 OK
+deactivate BLC
+I --> M : Succès : Email envoyé au client
+deactivate I
+deactivate M
+
+== Gestion des Litiges : Signalement (Manager uniquement) ==
+
+M -> I : cliquer sur "Signaler litige"
+activate M
+activate I
+I -> BLC : PUT /api/bon-livraisons/{id}/litige
+activate BLC
+BLC -> BLS : signalerLitige(id, motif)
+activate BLS
+BLS -> BL : updateStatus(DISPUTE)
+activate BL
+BL --> BLS : void
+deactivate BL
+BLS --> BLC : BonLivraisonResponseDTO
+deactivate BLS
+BLC --> I : 200 OK
+deactivate BLC
+I --> M : Litige signalé
+deactivate I
+deactivate M
+
+== Gestion des Litiges : Résolution (Manager uniquement) ==
+
+M -> I : cliquer sur "Résoudre litige"
+activate M
+activate I
+I -> BLC : PUT /api/bon-livraisons/{id}/resoudre-litige
+activate BLC
+BLC -> BLS : resoudreLitige(id)
+activate BLS
+BLS -> BL : updateStatus(DELIVERED)
+activate BL
+BL --> BLS : void
+deactivate BL
+BLS --> BLC : BonLivraisonResponseDTO
+deactivate BLS
+BLC --> I : 200 OK
+deactivate BLC
+I --> M : Litige résolu
+deactivate I
+deactivate M
+
+== Annulation (Manager uniquement) ==
+
+M -> I : cliquer sur "Annuler"
+activate M
+activate I
+I --> M : Demander raison
+M -> I : Saisir raison
+I -> BLC : PUT /api/bon-livraisons/{id}/annuler
+activate BLC
+BLC -> BLS : annuler(id, raison)
+activate BLS
+BLS -> BL : updateStatus(id, statut=CANCELLED)
+activate BL
+BL --> BLS : BonLivraison
+deactivate BL
+BLS --> BLC : 200 OK
+deactivate BLS
+BLC --> I : BL Annulé (CANCELLED)
+deactivate BLC
+I --> M : Succès : Bon de livraison annulé
+deactivate I
+deactivate M
+
+@enduml

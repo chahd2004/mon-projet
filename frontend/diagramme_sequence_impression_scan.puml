@@ -1,0 +1,61 @@
+@startuml
+title Diagramme de séquence — Impression & Scan QR Code (ECB)
+
+skinparam backgroundColor #FFFFFF
+skinparam sequenceArrowThickness 1.5
+skinparam roundcorner 5
+skinparam LifeLineBorderColor #333333
+skinparam SequenceGroupBorderColor #888888
+skinparam SequenceGroupFontColor #333333
+skinparam SequenceGroupBackgroundColor #F5F5F5
+
+' ECB Stereotypes
+actor "Collaborateur" as U
+actor "Client (Public)" as CL
+boundary "Interface (App)" as I <<Boundary>>
+boundary "Page Publique (Web)" as P <<Boundary>>
+control "FactureComponent" as FC <<Control>>
+control "PublicController" as PC <<Control>>
+entity "Facture" as F <<Entity>>
+
+== Impression & Téléchargement (Interacteurs Authentifiés) ==
+
+U -> I : cliquer sur "Imprimer"
+activate U
+activate I
+I -> FC : imprimer()
+activate FC
+FC --> I : window.print()
+deactivate FC
+I --> U : Document PDF / Impression
+deactivate I
+deactivate U
+
+== Scan du QR Code (Impression et Scan) ==
+
+note over U, CL : Le scan s'effectue sur le document\n(Aucune authentification requise)
+
+group Accès via QR Code
+    U -> P : Scanner le QR Code
+    activate U
+    activate P
+    CL -> P : Scanner le QR Code
+    activate CL
+    
+    P -> PC : GET /api/public/factures/{id}
+    activate PC
+    PC -> F : Récupérer statut en temps réel
+    activate F
+    F --> PC : Données de la facture
+    deactivate F
+    PC --> P : Affichage des informations
+    deactivate PC
+    
+    P --> CL : Statut vérifié
+    deactivate CL
+    P --> U : Statut vérifié
+    deactivate P
+    deactivate U
+end
+
+@enduml

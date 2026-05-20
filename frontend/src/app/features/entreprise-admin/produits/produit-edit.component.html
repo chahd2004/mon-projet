@@ -1,0 +1,80 @@
+<div class="form-container">
+  <div class="form-header">
+    <h1>Modifier Produit</h1>
+  </div>
+
+  <p-card class="form-card">
+    <form [formGroup]="form">
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="code">Code Produit</label>
+          <input id="code" type="text" pInputText formControlName="code" [disabled]="true" />
+        </div>
+
+        <div class="form-group">
+          <label for="libelle">Libellé *</label>
+          <input id="libelle" type="text" pInputText formControlName="libelle" placeholder="Nom du produit" />
+        </div>
+
+        <div class="form-group">
+          <label for="categorie">Catégorie *</label>
+          <p-dropdown
+            id="categorie"
+            [options]="categorieOptions"
+            formControlName="categorie"
+            optionLabel="label"
+            optionValue="value"
+          ></p-dropdown>
+        </div>
+
+        <div class="form-group">
+          <label for="prix">Prix HT (TND) *</label>
+          <p-inputNumber id="prix" formControlName="prix" [minFractionDigits]="2" [maxFractionDigits]="2"></p-inputNumber>
+        </div>
+
+        <div class="form-group">
+          <label for="tva">TVA *</label>
+          <p-dropdown id="tva" [options]="tvaOptions" formControlName="tva" optionLabel="label" optionValue="value"></p-dropdown>
+        </div>
+
+        <div class="form-group">
+          <label for="stock">Quantité en Stock *</label>
+          <p-inputNumber id="stock" formControlName="quantiteStock" [min]="0"></p-inputNumber>
+        </div>
+      </div>
+
+      <div class="form-group full-width">
+        <label for="description">Description</label>
+        <textarea id="description" pInputText formControlName="description" rows="4"></textarea>
+      </div>
+
+      <div class="price-summary">
+        <div class="summary-item">
+          <span>Prix HT:</span>
+          <strong>{{ form.get('prix')?.value | number: '1.2-2' }} TND</strong>
+        </div>
+        <div class="summary-item">
+          <span>TVA ({{ form.get('tva')?.value }}%):</span>
+          <strong>{{ (getPrixTTC() - (form.get('prix')?.value || 0)) | number: '1.2-2' }} TND</strong>
+        </div>
+        <div class="summary-item total">
+          <span>Prix TTC:</span>
+          <strong>{{ getPrixTTC() | number: '1.2-2' }} TND</strong>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button pButton type="button" label="Annuler" class="p-button-text" (click)="cancel()"></button>
+        <button
+          pButton
+          type="button"
+          label="Mettre à jour"
+          icon="pi pi-check"
+          [loading]="isSubmitting"
+          [disabled]="!form.valid || isSubmitting"
+          (click)="save()"
+        ></button>
+      </div>
+    </form>
+  </p-card>
+</div>

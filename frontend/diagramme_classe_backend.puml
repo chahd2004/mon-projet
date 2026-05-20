@@ -1,0 +1,268 @@
+@startuml diagramme_classe_backend
+skinparam classAttributeIconSize 0
+skinparam monochrome true
+skinparam shadowing false
+skinparam linetype ortho
+skinparam backgroundColor white
+skinparam ClassFontStyle bold
+skinparam ArrowColor black
+skinparam ClassBorderColor black
+skinparam ClassBackgroundColor white
+
+hide circle
+top to bottom direction
+
+' ==========================================
+' NIVEAU 1 : USER + SOUS-CLASSES
+' ==========================================
+
+class User {
+  - Long id
+  - String email
+  - String password
+  - AccountStatus accountStatus
+  --
+  + authentifier()
+}
+
+class SuperAdmin {}
+class EntrepriseAdmin {}
+class EntrepriseManager {}
+class EntrepriseViewer {}
+
+User <|-- SuperAdmin
+User <|-- EntrepriseAdmin
+User <|-- EntrepriseManager
+User <|-- EntrepriseViewer
+
+' ==========================================
+' NIVEAU 2 : DEMANDE EMETTEUR
+' ==========================================
+
+class DemandeEmetteur {
+  - Long id
+  - String raisonSociale
+  - String matriculeFiscal
+  - AccountStatus status
+  --
+  + approuver()
+  + rejeter()
+  + notifierClient()
+}
+
+EntrepriseAdmin ..> DemandeEmetteur : <<soumet>>
+SuperAdmin ..> DemandeEmetteur : <<valide>>
+
+' ==========================================
+' NIVEAU 3 : EMETTEUR
+' ==========================================
+
+class Emetteur {
+  - Long id
+  - String code
+  - String raisonSociale
+  - String matriculeFiscal
+  - FormeJuridique formeJuridique
+  - String adresseComplete
+  - String pays
+  - String region
+  - String email
+  - String telephone
+  - String siteWeb
+  - String iban
+  - String banque
+  --
+  + getRaisonSociale()
+}
+
+User "1" -- "0..1" Emetteur : possède
+DemandeEmetteur ..> Emetteur : <<crée>>
+
+' ==========================================
+' NIVEAU 4 : CLIENT + PRODUIT
+' ==========================================
+
+together {
+  class Client {
+    - Long id
+    - String code
+    - String raisonSociale
+    - String email
+    - String telephone
+    - String adresseComplete
+    - String pays
+    - String region
+    --
+    + calculerSolde()
+  }
+
+  class Produit {
+    - Long id
+    - String reference
+    - String designation
+    - BigDecimal prixUnitaire
+    - Double tauxTVA
+    - Integer quantiteStock
+    - Boolean stockIllimite
+    - Integer seuilAlerteStock
+    --
+    + isDisponible(qty)
+    + diminuerStock(qty)
+    + augmenterStock(qty)
+  }
+}
+
+Client -[hidden]right- Produit
+Emetteur "1" --> "0..*" Client : gère
+Emetteur "1" --> "0..*" Produit : possède
+
+' ==========================================
+' DOCUMENTS COMMERCIAUX
+' ==========================================
+
+abstract class DocumentCommercial <<abstract>> {
+  - Long id
+  - LocalDate dateCreation
+  - StatutDoc statut
+  - BigDecimal totalHT
+  - BigDecimal totalTTC
+  - BigDecimal montantTVA
+  - String montantEnLettres
+  --
+  + calculerTotaux()
+  + valider()
+}
+
+together {
+  class Avoir {
+    - String numAvoir
+    - String motif
+    --
+    + creerDepuisFactureAnnulee()
+  }
+
+  class BonLivraison {
+    - String numBonLivraison
+    - LocalDate dateLivraison
+    --
+    + genererFacture()
+    + signerParClient()
+  }
+
+  class Devis {
+    - String numDevis
+    - LocalDate dateValidite
+    --
+    + convertirEnFacture()
+  }
+
+  class Commande {
+    - String numCommande
+    --
+    + convertirEnBonLivraison()
+    + convertirEnFacture()
+  }
+
+  class BonCommande {
+    - String numBonCommande
+    --
+    + convertirEnCommande()
+    + convertirEnBonLivraison()
+    + signerParClient()
+  }
+
+  class Facture {
+    - String numFact
+    - LocalDate dateEmission
+    - LocalDate datePaiement
+    - ModePaiement modePaiement
+    - LocalDate dateEcheance
+    --
+    + envoyer()
+    + genererXml()
+    + signer()
+  }
+}
+
+Avoir        -[hidden]right- BonLivraison
+BonLivraison -[hidden]right- Devis
+Devis        -[hidden]right- Commande
+Commande     -[hidden]right- BonCommande
+BonCommande  -[hidden]right- Facture
+
+' ==========================================
+' LIGNES
+' ==========================================
+
+abstract class LigneDocument <<abstract>> {
+  - Long id
+  - Integer quantite
+  - BigDecimal prixUnitaire
+  - BigDecimal montantHT
+  --
+  + calculerSousTotal()
+}
+
+together {
+  class LigneAvoir {}
+  class LigneBonLivraison {}
+  class LigneDevis {}
+  class LigneCommande {}
+  class LigneBonCommande {}
+  class LigneFacture {}
+}
+
+LigneAvoir        -[hidden]right- LigneBonLivraison
+LigneBonLivraison -[hidden]right- LigneDevis
+LigneDevis        -[hidden]right- LigneCommande
+LigneCommande     -[hidden]right- LigneBonCommande
+LigneBonCommande  -[hidden]right- LigneFacture
+
+' ==========================================
+' RELATIONS DOCUMENTS
+' ==========================================
+
+Client "1" --> "0..*" DocumentCommercial : reçoit
+Emetteur "1" --> "0..*" DocumentCommercial : émet
+
+' ==========================================
+' HÉRITAGE DOCUMENTS
+' ==========================================
+
+DocumentCommercial <|-- Avoir
+DocumentCommercial <|-- BonLivraison
+DocumentCommercial <|-- Devis
+DocumentCommercial <|-- Commande
+DocumentCommercial <|-- BonCommande
+DocumentCommercial <|-- Facture
+
+' ==========================================
+' COMPOSITION DOCUMENTS -> LIGNES
+' ==========================================
+
+Avoir        "1" *-- "1..*" LigneAvoir
+BonLivraison "1" *-- "1..*" LigneBonLivraison
+Devis        "1" *-- "1..*" LigneDevis
+Commande     "1" *-- "1..*" LigneCommande
+BonCommande  "1" *-- "1..*" LigneBonCommande
+Facture      "1" *-- "1..*" LigneFacture
+
+' ==========================================
+' HÉRITAGE LIGNES
+' ==========================================
+
+LigneDocument <|-- LigneAvoir
+LigneDocument <|-- LigneBonLivraison
+LigneDocument <|-- LigneDevis
+LigneDocument <|-- LigneCommande
+LigneDocument <|-- LigneBonCommande
+LigneDocument <|-- LigneFacture
+
+' ==========================================
+' RELATIONS CATALOGUE
+' ==========================================
+
+LigneDocument "0..*" --> "1" Produit : utilise
+Avoir "0..*" ..> "1" Facture : <<crée depuis>>
+
+@enduml

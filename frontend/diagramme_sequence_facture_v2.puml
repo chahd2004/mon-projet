@@ -1,0 +1,205 @@
+@startuml "Diagramme de Séquence - Gestion des Factures"
+
+skinparam style strictuml
+skinparam maxMessageSize 150
+skinparam sequence {
+    ParticipantPadding 30
+    MessageAlign center
+}
+
+actor "Manager" as Manager
+actor "Consultant" as Consultant
+
+boundary "Interface\n<<Boundary>>" as Interface
+control "ConversionController\n<<Control>>" as ConversionCtrl
+control "FactureController\n<<Control>>" as Controller
+control "ConversionService\n<<Control>>" as ConversionSvc
+control "FactureService\n<<Control>>" as Service
+control "AvoirService\n<<Control>>" as AvoirService
+control "EmailService\n<<Control>>" as EmailService
+entity "Facture\n<<Entity>>" as Facture
+entity "Avoir\n<<Entity>>" as Avoir
+
+== Consultation (Manager & Consultant) ==
+
+Manager -> Interface : Accéder au menu "Factures"
+Consultant -> Interface : Accéder au menu "Factures"
+activate Interface
+Interface -> Controller : GET /api/factures
+activate Controller
+Controller -> Service : getAll() / getFacturesByVendeur()
+activate Service
+Service -> Facture : findAll() [via Repository]
+activate Facture
+Facture --> Service : List<Facture>
+deactivate Facture
+Service --> Controller : List<FactureResponseDTO>
+deactivate Service
+Controller --> Interface : 200 OK (Affichage liste)
+deactivate Controller
+Interface --> Manager : Liste affichée
+Interface --> Consultant : Liste affichée
+deactivate Interface
+
+== Création Directe (Manager uniquement) ==
+
+Manager -> Interface : cliquer sur "Créer Facture"
+activate Interface
+Interface -> Controller : POST /api/factures (payload)
+activate Controller
+Controller -> Service : create(dto)
+activate Service
+Service -> Facture : save(newFacture, statut=DRAFT)
+activate Facture
+Facture --> Service : Facture
+deactivate Facture
+Service --> Controller : FactureResponseDTO
+deactivate Service
+Controller --> Interface : 201 Created
+deactivate Controller
+Interface --> Manager : Facture créée (Brouillon)
+deactivate Interface
+
+== Génération depuis Devis (Manager uniquement) ==
+
+Manager -> Interface : cliquer sur "Facturer le devis"
+activate Interface
+Interface -> ConversionCtrl : POST /api/conversions/devis/{id}/vers-facture
+activate ConversionCtrl
+ConversionCtrl -> ConversionSvc : devisVersFacture(id, dto)
+activate ConversionSvc
+ConversionSvc -> Facture : save(newFacture, statut=DRAFT)
+activate Facture
+Facture --> ConversionSvc : Facture
+deactivate Facture
+ConversionSvc --> ConversionCtrl : FactureResponseDTO
+deactivate ConversionSvc
+ConversionCtrl --> Interface : 201 Created
+deactivate ConversionCtrl
+Interface --> Manager : Facture générée (Brouillon)
+deactivate Interface
+
+== Génération depuis Commande (Manager uniquement) ==
+
+Manager -> Interface : cliquer sur "Facturer la commande"
+activate Interface
+Interface -> ConversionCtrl : POST /api/conversions/commande/{id}/vers-facture
+activate ConversionCtrl
+ConversionCtrl -> ConversionSvc : commandeVersFacture(id, dto)
+activate ConversionSvc
+ConversionSvc -> Facture : save(newFacture, statut=DRAFT)
+activate Facture
+Facture --> ConversionSvc : Facture
+deactivate Facture
+ConversionSvc --> ConversionCtrl : FactureResponseDTO
+deactivate ConversionSvc
+ConversionCtrl --> Interface : 201 Created
+deactivate ConversionCtrl
+Interface --> Manager : Facture générée (Brouillon)
+deactivate Interface
+
+== Génération depuis Bon de Livraison (Manager uniquement) ==
+
+Manager -> Interface : cliquer sur "Facturer le BL"
+activate Interface
+Interface -> ConversionCtrl : POST /api/conversions/bon-livraison/{id}/vers-facture
+activate ConversionCtrl
+ConversionCtrl -> ConversionSvc : bonLivraisonVersFacture(id, dto)
+activate ConversionSvc
+ConversionSvc -> Facture : save(newFacture, statut=DRAFT)
+activate Facture
+Facture --> ConversionSvc : Facture
+deactivate Facture
+ConversionSvc --> ConversionCtrl : FactureResponseDTO
+deactivate ConversionSvc
+ConversionCtrl --> Interface : 201 Created
+deactivate ConversionCtrl
+Interface --> Manager : Facture générée (Brouillon)
+deactivate Interface
+
+== Émission et Envoi (Manager) ==
+
+Manager -> Interface : cliquer sur "Envoyer Facture"
+activate Interface
+Interface -> Controller : PUT /api/factures/{id}/envoyer
+activate Controller
+Controller -> Service : envoyer(id)
+activate Service
+Service -> Facture : setStatut(SENT)
+activate Facture
+Facture --> Service : void
+deactivate Facture
+Service --> Controller : FactureResponseDTO
+deactivate Service
+Controller --> Interface : 200 OK
+deactivate Controller
+Interface --> Manager : Succès : Facture envoyée
+deactivate Interface
+
+== Paiement (Manager) ==
+
+Manager -> Interface : cliquer sur "Payer"
+activate Interface
+Interface -> Controller : PUT /api/factures/{id}/payer
+activate Controller
+Controller -> Service : marquerPayee(id)
+activate Service
+Service -> Facture : setStatut(PAID)
+activate Facture
+Facture --> Service : void
+deactivate Facture
+Service --> Controller : FactureResponseDTO
+deactivate Service
+Controller --> Interface : 200 OK
+deactivate Controller
+Interface --> Manager : Succès : Facture payée
+deactivate Interface
+
+== Rejet de Facture (Manager) ==
+
+Manager -> Interface : cliquer sur "Rejeter"
+activate Interface
+Interface -> Controller : PUT /api/factures/{id}/rejeter
+activate Controller
+Controller -> Service : rejeter(id, raison)
+activate Service
+Service -> Facture : setStatut(REJECTED)
+activate Facture
+Facture --> Service : void
+deactivate Facture
+Service --> Controller : FactureResponseDTO
+deactivate Service
+Controller --> Interface : 200 OK
+deactivate Controller
+Interface --> Manager : Facture rejetée
+deactivate Interface
+
+== Annulation Facture & Génération Avoir (Manager) ==
+
+Manager -> Interface : cliquer sur "Annuler"
+activate Interface
+Interface -> Controller : PUT /api/factures/{id}/annuler
+activate Controller
+Controller -> Service : annuler(id)
+activate Service
+Service -> Facture : setStatut(CANCELLED)
+activate Facture
+Facture --> Service : void
+deactivate Facture
+Service -> AvoirService : creerDepuisFacture(facture)
+activate AvoirService
+AvoirService -> Avoir : save(newAvoir, statut=DRAFT)
+activate Avoir
+Avoir --> AvoirService : Avoir
+deactivate Avoir
+AvoirService --> Service : AvoirResponseDTO
+deactivate AvoirService
+Service --> Controller : FactureResponseDTO
+deactivate Service
+Controller --> Interface : 200 OK
+deactivate Controller
+Interface --> Manager : Facture annulée et Avoir généré
+deactivate Interface
+deactivate Interface
+
+@enduml

@@ -1,0 +1,115 @@
+@startuml "Diagramme de Séquence - Gestion des produits (ECB)"
+
+skinparam style strictuml
+skinparam maxMessageSize 150
+skinparam sequence {
+    ParticipantPadding 30
+    MessageAlign center
+}
+
+actor "Manager" as Manager
+actor "Consultant" as Consultant
+
+boundary "Interface\n<<Boundary>>" as Interface
+control "ProduitController\n<<Control>>" as Controller
+control "ProduitService\n<<Control>>" as Service
+entity "Produit\n<<Entity>>" as Entity
+
+== Consultation (Manager & Consultant) ==
+
+alt [Manager / Consultant]
+    Manager -> Interface : Accéder au catalogue
+    activate Interface
+    Interface -> Controller : GET /api/produits
+    activate Controller
+    Controller -> Service : getProduitsByEmetteur()
+    activate Service
+    Service -> Entity : findByEmetteurId()
+    activate Entity
+    Entity --> Service : List<Produit>
+    deactivate Entity
+    Service --> Controller : List<ProduitResponseDTO>
+    deactivate Service
+    Controller --> Interface : 200 OK
+    deactivate Controller
+    Interface --> Manager : Liste affichée
+    deactivate Interface
+end
+
+== Ajouter un produit (Manager uniquement) ==
+
+Manager -> Interface : Saisir infos + Enregistrer
+activate Interface
+Interface -> Controller : POST /api/produits
+activate Controller
+Controller -> Service : create(request)
+activate Service
+Service -> Entity : save()
+activate Entity
+Entity --> Service : Produit
+deactivate Entity
+Service --> Controller : ProduitResponseDTO
+deactivate Service
+Controller --> Interface : 201 Created
+deactivate Controller
+Interface --> Manager : Message de succès
+deactivate Interface
+
+== Modifier un produit (Manager uniquement) ==
+
+Manager -> Interface : Sélectionner + Modifier
+activate Interface
+Interface -> Controller : PUT /api/produits/{id}
+activate Controller
+Controller -> Service : update(id, request)
+activate Service
+Service -> Entity : findById() + save()
+activate Entity
+Entity --> Service : Produit
+deactivate Entity
+Service --> Controller : ProduitResponseDTO
+deactivate Service
+Controller --> Interface : 200 OK
+deactivate Controller
+Interface --> Manager : Message de succès
+deactivate Interface
+
+== Gérer le stock (Manager uniquement) ==
+
+Manager -> Interface : Ajuster la quantité
+activate Interface
+Interface -> Controller : PUT /api/produits/{id}/stock
+activate Controller
+Controller -> Service : updateStock(id, qte)
+activate Service
+Service -> Entity : setQuantiteStock(qte) + save()
+activate Entity
+Entity --> Service : Produit
+deactivate Entity
+Service --> Controller : ProduitResponseDTO
+deactivate Service
+Controller --> Interface : 200 OK
+deactivate Controller
+Interface --> Manager : Stock mis à jour
+deactivate Interface
+
+== Supprimer (Manager uniquement) ==
+
+Manager -> Interface : Cliquer sur Supprimer
+activate Interface
+Interface -> Controller : DELETE /api/produits/{id}
+activate Controller
+Controller -> Service : delete(id)
+activate Service
+Service -> Entity : deleteById(id)
+activate Entity
+Entity --> Service : void
+deactivate Entity
+Service --> Controller : void
+deactivate Service
+Controller --> Interface : 204 No Content
+deactivate Controller
+Interface --> Manager : Produit retiré de la liste
+deactivate Interface
+
+@enduml

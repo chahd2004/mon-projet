@@ -1,156 +1,60 @@
 <!-- src/app/pages/factures/factures.component.html -->
 <div class="factures-container">
+
   <!-- En-tête -->
   <div class="header-section">
-    <h2>
-      <i class="pi pi-file"></i>
-      Gestion des factures
-    </h2>
-    <button class="add-btn" (click)="nouvelleFacture()">
-      <i class="pi pi-plus-circle"></i> Nouvelle facture
+    <div class="header-left">
+      <h2>
+        <i class="pi pi-file"></i>
+        {{ 'FACTURES.TITLE' | translate }}
+      </h2>
+    </div>
+    <button *ngIf="!isViewer" class="add-btn" (click)="nouvelleFacture()">
+      <i class="pi pi-plus"></i> {{ 'FACTURES.NEW' | translate }}
     </button>
   </div>
 
-  <!-- Statistiques -->
-  <div class="stats-section" *ngIf="!loadingStats">
-    <div class="stats-grid">
-      <div class="stat-card">
-        <div class="stat-icon total">
-          <i class="pi pi-file"></i>
-        </div>
-        <div class="stat-details">
-          <span class="stat-label">Total factures</span>
-          <span class="stat-value">{{ stats.totalFactures || 0 }}</span>
-        </div>
-      </div>
-
-      <div class="stat-card">
-        <div class="stat-icon paye">
-          <i class="pi pi-check-circle"></i>
-        </div>
-        <div class="stat-details">
-          <span class="stat-label">Factures payées</span>
-          <span class="stat-value">{{ stats.facturesPayees || 0 }}</span>
-        </div>
-      </div>
-
-      <div class="stat-card">
-        <div class="stat-icon attente">
-          <i class="pi pi-clock"></i>
-        </div>
-        <div class="stat-details">
-          <span class="stat-label">En attente</span>
-          <span class="stat-value">{{ stats.facturesEnAttente || 0 }}</span>
-        </div>
-      </div>
-
-      <div class="stat-card">
-        <div class="stat-icon montant">
-          <i class="pi pi-money-bill"></i>
-        </div>
-        <div class="stat-details">
-          <span class="stat-label">Chiffre d'affaires</span>
-          <span class="stat-value">{{ stats.chiffreAffaires || 0 | number:'1.3-3' }} TND</span>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Graphique -->
-  <div class="chart-section" *ngIf="chartData">
-    <p-card header="Évolution des factures">
-      <p-chart type="line" [data]="chartData" [options]="chartOptions" style="height: 300px;"></p-chart>
-    </p-card>
-  </div>
-
-  <!-- Filtres -->
+  <!-- Recherche -->
   <div class="filters-section">
-    <div class="filters-grid">
-      <div class="filter-item">
-        <label>Recherche</label>
-        <div class="search-box">
-          <i class="pi pi-search"></i>
-          <input 
-            type="text" 
-            pInputText 
-            placeholder="N° facture, client..." 
-            [(ngModel)]="searchText"
-            (keyup.enter)="onSearch()"
-          >
-          <button *ngIf="searchText" class="clear-search" (click)="resetFilters()">
-            <i class="pi pi-times"></i>
-          </button>
-        </div>
-      </div>
-
-      <div class="filter-item">
-        <label>Statut</label>
-        <p-dropdown 
-          [options]="statuts" 
-          [(ngModel)]="statutFilter" 
-          placeholder="Tous les statuts"
-          [showClear]="true"
-          (onChange)="applyFilters()"
-        >
-          <ng-template let-option pTemplate="item">
-            <span>{{ formatStatut(option) }}</span>
-          </ng-template>
-        </p-dropdown>
-      </div>
-
-      <div class="filter-item">
-        <label>Période du</label>
-        <p-calendar 
-          [(ngModel)]="dateDebut" 
-          dateFormat="dd/mm/yy" 
-          [showIcon]="true"
-          placeholder="Date début"
-          (onSelect)="applyFilters()"
-        ></p-calendar>
-      </div>
-
-      <div class="filter-item">
-        <label>Période au</label>
-        <p-calendar 
-          [(ngModel)]="dateFin" 
-          dateFormat="dd/mm/yy" 
-          [showIcon]="true"
-          placeholder="Date fin"
-          (onSelect)="applyFilters()"
-        ></p-calendar>
-      </div>
-
-      <div class="filter-item filter-actions">
-        <button class="reset-btn" (click)="resetFilters()" pTooltip="Réinitialiser les filtres">
-          <i class="pi pi-filter-slash"></i> Réinitialiser
-        </button>
-      </div>
+    <div class="search-box">
+      <i class="pi pi-search"></i>
+      <input type="text" pInputText [placeholder]="'FACTURES.SEARCH_PLACEHOLDER' | translate" [(ngModel)]="searchText"
+        (keyup.enter)="onSearch()" autocomplete="one-time-code" name="facture_search_query" id="facture_search_query">
+      <button *ngIf="searchText || statutFilter" class="clear-search" (click)="resetFilters()">
+        <i class="pi pi-times"></i>
+      </button>
+    </div>
+    
+    <div class="status-filter" style="min-width: 200px;">
+      <p-dropdown 
+        [options]="statuts" 
+        [(ngModel)]="statutFilter" 
+        (onChange)="applyFilters()" 
+        [placeholder]="'FACTURES.FILTER_STATUS' | translate" 
+        styleClass="w-full">
+        <ng-template pTemplate="selectedItem" let-selectedOption>
+          <div *ngIf="selectedOption">{{ formatStatut(selectedOption) }}</div>
+        </ng-template>
+        <ng-template pTemplate="item" let-option>
+          <div>{{ formatStatut(option) }}</div>
+        </ng-template>
+      </p-dropdown>
     </div>
   </div>
 
-  <!-- Tableau des factures -->
-  <p-card>
-    <p-table 
-      [value]="factures" 
-      [paginator]="true" 
-      [rows]="rowsPerPage"
-      [totalRecords]="totalRecords"
-      [loading]="loading"
-      [lazy]="true"
-      (onPageChange)="onPageChange($event)"
-      responsiveLayout="scroll"
-    >
+  <!-- Tableau -->
+  <p-table [value]="factures" [rows]="rowsPerPage" [totalRecords]="totalRecords" [loading]="loading" [lazy]="true"
+    [paginator]="true" [rowsPerPageOptions]="rowsOptions"
+    (onLazyLoad)="loadFacturesLazy($event)" responsiveLayout="scroll"
+    styleClass="p-datatable-sm p-datatable-striped factures-table">
       <ng-template pTemplate="header">
         <tr>
-          <th>N° Facture</th>
-          <th>Client</th>
-          <th>Date d'émission</th>
-          <th>Échéance</th>
-          <th>Total HT</th>
-          <th>TVA</th>
-          <th>Total TTC</th>
-          <th>Statut</th>
-          <th style="text-align: center;">Actions</th>
+          <th>{{ 'FACTURES.TABLE.NUM' | translate }}</th>
+          <th>{{ 'FACTURES.TABLE.CLIENT' | translate }}</th>
+          <th>{{ 'FACTURES.TABLE.DATE_EMISSION' | translate }}</th>
+          <th>{{ 'FACTURES.TABLE.DATE_ECHEANCE' | translate }}</th>
+          <th>{{ 'FACTURES.TABLE.STATUS' | translate }}</th>
+          <th style="text-align: center; min-width: 80px;">{{ 'FACTURES.TABLE.ACTIONS' | translate }}</th>
         </tr>
       </ng-template>
 
@@ -163,54 +67,110 @@
             </div>
           </td>
           <td>{{ facture.dateEmission | date:'dd/MM/yyyy' }}</td>
-          <td>{{ facture.datePaiement ? (facture.datePaiement | date:'dd/MM/yyyy') : 'Non définie' }}</td>
-          <td class="text-right">{{ facture.totalHT | number:'1.3-3' }} TND</td>
-          <td class="text-right">{{ facture.montantTVA | number:'1.3-3' }} TND</td>
-          <td class="text-right font-bold">{{ facture.totalTTC | number:'1.3-3' }} TND</td>
+          <td>{{ facture.datePaiement ? (facture.datePaiement | date:'dd/MM/yyyy') : ('FACTURES.TABLE.NOT_DEFINED' |
+            translate) }}</td>
           <td>
-            <p-tag 
-              [severity]="getStatutSeverity(facture.statut)" 
-              [value]="formatStatut(facture.statut)"
-            ></p-tag>
+            <p-tag [severity]="getStatutSeverity(facture.statut)"
+              [value]="formatStatut(facture.statut)"></p-tag>
           </td>
           <td>
             <div class="actions-cell">
-              <button class="action-btn view-btn" (click)="voirFacture(facture.id)" pTooltip="Voir détails">
+              <!-- Voir (Tous) -->
+              <button class="icon-btn" (click)="voirFacture(facture.id)"
+                [pTooltip]="'FACTURES.ACTIONS.VIEW' | translate" tooltipPosition="top">
                 <i class="pi pi-eye"></i>
               </button>
-              <button class="action-btn edit-btn" (click)="modifierFacture(facture.id)" pTooltip="Modifier">
-                <i class="pi pi-pencil"></i>
-              </button>
-              <button class="action-btn client-btn" (click)="voirFacturesClient(facture.acheteurId)" pTooltip="Voir achats">
-                <i class="pi pi-users"></i>
-              </button>
-              <button class="action-btn delete-btn" (click)="supprimerFacture(facture.id)" pTooltip="Supprimer">
-                <i class="pi pi-trash"></i>
-              </button>
+
+              <!-- Brouillon: Modifier, Supprimer, Signer -->
+              <ng-container *ngIf="!isViewer && facture.statut === 'DRAFT'">
+                <button class="icon-btn" (click)="modifierFacture(facture.id)"
+                  [pTooltip]="'FACTURES.ACTIONS.EDIT' | translate" tooltipPosition="top">
+                  <i class="pi pi-pencil"></i>
+                </button>
+                <button class="icon-btn" (click)="supprimerFacture(facture.id)"
+                  [pTooltip]="'FACTURES.ACTIONS.DELETE' | translate" tooltipPosition="top">
+                  <i class="pi pi-trash"></i>
+                </button>
+                <button class="icon-btn" (click)="signerFacture(facture.id)"
+                  [pTooltip]="'FACTURES.ACTIONS.SIGN' | translate" tooltipPosition="top">
+                  <i class="pi pi-check"></i>
+                </button>
+              </ng-container>
+
+              <!-- Signée: Émettre, Rejeter, Annuler -->
+              <ng-container *ngIf="!isViewer && facture.statut === 'SIGNED'">
+                <button class="icon-btn" (click)="emettreFacture(facture.id)"
+                  [pTooltip]="'FACTURES.ACTIONS.EMIT' | translate" tooltipPosition="top">
+                  <i class="pi pi-send"></i>
+                </button>
+                <button class="icon-btn" (click)="rejeterFacture(facture.id)"
+                  [pTooltip]="'FACTURES.ACTIONS.REJECT' | translate" tooltipPosition="top">
+                  <i class="pi pi-times"></i>
+                </button>
+                <button class="icon-btn" (click)="annulerFacture(facture.id)"
+                  [pTooltip]="'FACTURES.ACTIONS.CANCEL' | translate" tooltipPosition="top">
+                  <i class="pi pi-ban"></i>
+                </button>
+              </ng-container>
+
+              <!-- Émise: Payer, Rejeter, Annuler -->
+              <ng-container *ngIf="!isViewer && facture.statut === 'SENT'">
+                <button class="icon-btn" (click)="payerFacture(facture.id)"
+                  [pTooltip]="'FACTURES.ACTIONS.PAY' | translate" tooltipPosition="top">
+                  <i class="pi pi-wallet"></i>
+                </button>
+                <button class="icon-btn" (click)="rejeterFacture(facture.id)"
+                  [pTooltip]="'FACTURES.ACTIONS.REJECT' | translate" tooltipPosition="top">
+                  <i class="pi pi-times"></i>
+                </button>
+                <button class="icon-btn" (click)="annulerFacture(facture.id)"
+                  [pTooltip]="'FACTURES.ACTIONS.CANCEL' | translate" tooltipPosition="top">
+                  <i class="pi pi-ban"></i>
+                </button>
+              </ng-container>
+
+              <!-- Rejetée: Retour Brouillon (uniquement si non déposée sur TTN) -->
+              <ng-container *ngIf="!isViewer && facture.statut === 'REJECTED' && (facture.previousStatut === 'SIGNED' || facture.previous_statut === 'SIGNED')">
+                <button class="icon-btn" (click)="retourBrouillon(facture.id)"
+                  [pTooltip]="'FACTURES.ACTIONS.BACK_TO_DRAFT' | translate" tooltipPosition="top">
+                  <i class="pi pi-refresh"></i>
+                </button>
+              </ng-container>
+
+              <!-- Téléchargement XML (Uniquement Signée) -->
+              <ng-container *ngIf="facture.statut === 'SIGNED'">
+                <button class="icon-btn" (click)="telechargerXml(facture.id)"
+                  [pTooltip]="'FACTURES.ACTIONS.DOWNLOAD_XML' | translate" tooltipPosition="top">
+                  <i class="pi pi-download"></i>
+                </button>
+              </ng-container>
             </div>
           </td>
         </tr>
       </ng-template>
 
-      <!-- Message quand aucune facture -->
       <ng-template pTemplate="emptymessage">
         <tr>
-          <td colspan="9" style="text-align: center; padding: 3rem;">
+          <td colspan="6" style="text-align: center; padding: 2rem;">
             <div class="empty-message">
               <i class="pi pi-file" style="font-size: 3rem; color: #94a3b8;"></i>
-              <h3>Aucune facture trouvée</h3>
-              <p>Commencez par créer votre première facture.</p>
-              <button class="add-first-btn" (click)="nouvelleFacture()">
-                <i class="pi pi-plus-circle"></i> Créer une facture
-              </button>
+              <h3>{{ 'FACTURES.EMPTY.TITLE' | translate }}</h3>
+              <p>{{ 'FACTURES.EMPTY.SUBTITLE' | translate }}</p>
             </div>
           </td>
         </tr>
       </ng-template>
     </p-table>
-  </p-card>
 
-  <!-- Toast et confirmation -->
+
+
   <p-toast></p-toast>
   <p-confirmDialog></p-confirmDialog>
+
+  <!-- Popup Signature Électronique -->
+  <p-dialog [(visible)]="showSignatureModal" [modal]="true" [header]="' '" [style]="{width: '500px'}"
+     (onHide)="closeSignatureModal()" styleClass="signature-dialog">
+    <app-signature *ngIf="currentFactureId" [factureId]="currentFactureId" 
+      (onComplete)="closeSignatureModal()"></app-signature>
+  </p-dialog>
 </div>

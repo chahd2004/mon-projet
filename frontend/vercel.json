@@ -1,0 +1,5 @@
+{
+  "buildCommand": "npm install --legacy-peer-deps && npm run build --configuration=production",
+  "outputDirectory": "dist/mon-frontend",
+  "framework": "angular"
+}

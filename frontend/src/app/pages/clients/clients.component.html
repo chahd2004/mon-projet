@@ -1,0 +1,210 @@
+<div class="clients-container">
+
+  <!-- En-tête -->
+  <div class="header-section">
+    <h2>
+      <i class="pi pi-users"></i>
+      Liste des clients
+    </h2>
+    <div class="header-actions">
+      <div class="search-box">
+        <i class="pi pi-search"></i>
+        <input
+          type="text"
+          pInputText
+          placeholder="Rechercher..."
+          [(ngModel)]="searchText"
+          (keyup.enter)="onSearch()"
+        >
+        <button *ngIf="searchText" class="clear-search" (click)="clearSearch()">
+          <i class="pi pi-times"></i>
+        </button>
+      </div>
+      <button class="add-btn" (click)="ajouterClient()">
+        <i class="pi pi-user-plus"></i>
+        Nouveau client
+      </button>
+    </div>
+  </div>
+
+  <!-- Tableau -->
+  <p-card>
+    <p-table
+      [value]="clientsFiltered"
+      [paginator]="true"
+      [rows]="rowsPerPage"
+      [totalRecords]="clientsFiltered.length"
+      [loading]="loading"
+      [lazy]="false"
+      (onPageChange)="onPageChange($event)"
+      responsiveLayout="scroll"
+    >
+      <ng-template pTemplate="header">
+        <tr>
+          <th>Raison Sociale</th>
+          <th>Email</th>
+          <th>Téléphone</th>
+          <th>Adresse</th>
+          <th>Pays</th>
+          <th>Région</th>
+          <th style="text-align: center;">Actions</th>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="body" let-client>
+        <tr>
+          <td class="font-bold">{{ client.raisonSociale }}</td>
+          <td>{{ client.email }}</td>
+          <td>{{ client.telephone }}</td>
+          <td>{{ client.adresseComplete }}</td>
+          <td>{{ client.pays }}</td>
+          <td>{{ client.region }}</td>
+          <td>
+            <div class="actions-cell">
+              <button
+                class="action-btn edit-btn"
+                (click)="modifierClient(client)"
+                pTooltip="Modifier"
+                tooltipPosition="top"
+              >
+                <i class="pi pi-pencil"></i>
+              </button>
+              <button
+                class="action-btn delete-btn"
+                (click)="supprimerClient(client.id)"
+                pTooltip="Supprimer"
+                tooltipPosition="top"
+              >
+                <i class="pi pi-trash"></i>
+              </button>
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="emptymessage">
+  <tr>
+    <td colspan="7" class="empty-message">
+      <i class="pi pi-users"></i>
+      <h3>Aucun client</h3>
+      <p>Commencez par ajouter votre premier client via le bouton <strong>"Nouveau client"</strong>.</p>
+    </td>
+  </tr>
+</ng-template>
+    </p-table>
+  </p-card>
+
+  <!-- DIALOGUE AJOUT / MODIFICATION -->
+  <p-dialog
+    [(visible)]="displayDialog"
+    [header]="dialogMode === 'add' ? 'Nouveau client' : 'Modifier le client'"
+    [style]="{width: '520px'}"
+    [modal]="true"
+    [draggable]="false"
+    [resizable]="false"
+    [closeOnEscape]="true"
+    (onHide)="resetForm()"
+  >
+    <div class="dialog-content">
+
+      <div class="form-group">
+        <label for="raisonSociale">
+          Raison sociale <span class="required">*</span>
+        </label>
+        <input
+          id="raisonSociale"
+          type="text"
+          pInputText
+          [(ngModel)]="clientForm.raisonSociale"
+          placeholder="Nom de l'entreprise"
+          class="client-input"
+          autofocus
+        >
+      </div>
+
+      <div class="form-row">
+        <div class="form-group half">
+          <label for="email">
+            Email <span class="required">*</span>
+          </label>
+          <input
+            id="email"
+            type="email"
+            pInputText
+            [(ngModel)]="clientForm.email"
+            placeholder="exemple@email.com"
+            class="client-input"
+          >
+        </div>
+        <div class="form-group half">
+          <label for="telephone">
+            Téléphone <span class="required">*</span>
+          </label>
+          <input
+            id="telephone"
+            type="text"
+            pInputText
+            [(ngModel)]="clientForm.telephone"
+            placeholder="71 234 567"
+            class="client-input"
+          >
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="adresse">Adresse</label>
+        <input
+          id="adresse"
+          type="text"
+          pInputText
+            [(ngModel)]="clientForm.adresseComplete"
+          placeholder="Rue, ville, code postal"
+          class="client-input"
+        >
+      </div>
+
+      <div class="form-row">
+        <div class="form-group half">
+          <label for="pays">Pays</label>
+          <input
+            id="pays"
+            type="text"
+            pInputText
+            [(ngModel)]="clientForm.pays"
+            placeholder="TUNISIE"
+            class="client-input"
+          >
+        </div>
+        <div class="form-group half">
+          <label for="region">Région</label>
+          <p-dropdown
+            id="region"
+            [options]="regions"
+            [(ngModel)]="clientForm.region"
+            optionLabel="label"
+            optionValue="value"
+            placeholder="Sélectionner"
+            [showClear]="true"
+            [style]="{'width':'100%'}"
+            appendTo="body"
+          ></p-dropdown>
+        </div>
+      </div>
+
+    </div>
+
+    <ng-template pTemplate="footer">
+      <div class="dialog-footer">
+        <button type="button" class="dialog-footer-btn cancel" (click)="displayDialog = false">
+          <i class="pi pi-times"></i> Annuler
+        </button>
+        <button type="button" class="dialog-footer-btn" (click)="sauvegarderClient()" [disabled]="loading">
+          <i class="pi pi-check"></i> {{ dialogMode === 'add' ? 'Ajouter' : 'Enregistrer' }}
+        </button>
+      </div>
+    </ng-template>
+  </p-dialog>
+
+  <p-toast position="top-right"></p-toast>
+  <p-confirmDialog></p-confirmDialog>
+</div>

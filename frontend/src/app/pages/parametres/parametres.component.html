@@ -1,0 +1,284 @@
+<!-- src/app/pages/parametres/parametres.component.html -->
+<div class="parametres-container">
+  <!-- En-tête avec retour -->
+  <div class="header-section">
+    <div class="header-left">
+      <button class="back-btn" (click)="retourDashboard()" pTooltip="Retour au dashboard">
+        <i class="pi pi-arrow-left"></i>
+      </button>
+      <h1>
+        <i class="pi pi-cog"></i>
+        Paramètres
+      </h1>
+    </div>
+    <div class="header-actions">
+      <button pButton label="Annuler" icon="pi pi-times" class="p-button-text" (click)="annulerTout()"></button>
+      <button pButton label="Enregistrer" icon="pi pi-check" class="p-button-success"></button>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <p-tabView>
+    <!-- 1. PROFIL -->
+    <p-tabPanel header="Profil" leftIcon="pi pi-user">
+      <div class="tab-content">
+        <div class="profile-header">
+          <div class="avatar-section">
+            <p-avatar 
+              [image]="userProfile.avatar || ''" 
+              icon="pi pi-user"
+              size="xlarge" 
+              shape="circle"
+              styleClass="profile-avatar"
+            ></p-avatar>
+            <p-fileUpload 
+              mode="basic" 
+              chooseLabel="Changer l'avatar"
+              accept="image/*"
+              maxFileSize="1000000"
+              (onUpload)="onAvatarUpload($event)"
+              chooseIcon="pi pi-cloud-upload"
+              class="avatar-upload"
+            ></p-fileUpload>
+          </div>
+          <div class="profile-info">
+            <h3>{{ userProfile.nom || 'Utilisateur' }} {{ userProfile.prenom }}</h3>
+            <p class="user-email">{{ userProfile.email }}</p>
+            <p class="user-role">{{ userProfile.role }}</p>
+            <p class="user-meta">Membre depuis {{ userProfile.dateCreation }}</p>
+          </div>
+        </div>
+
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Nom</label>
+            <input type="text" pInputText [(ngModel)]="userProfile.nom" class="param-input">
+          </div>
+          <div class="form-group">
+            <label>Prénom</label>
+            <input type="text" pInputText [(ngModel)]="userProfile.prenom" class="param-input">
+          </div>
+          <div class="form-group full-width">
+            <label>Email</label>
+            <input type="email" pInputText [(ngModel)]="userProfile.email" class="param-input" disabled>
+            <small class="field-hint">L'email ne peut pas être modifié</small>
+          </div>
+        </div>
+      </div>
+    </p-tabPanel>
+
+    <!-- 2. SÉCURITÉ -->
+    <p-tabPanel header="Sécurité" leftIcon="pi pi-lock">
+      <div class="tab-content">
+        <h3>Changer le mot de passe</h3>
+        
+        <div class="form-grid">
+          <div class="form-group full-width">
+            <label>Mot de passe actuel</label>
+            <p-password [(ngModel)]="passwordData.ancien" [feedback]="false" [toggleMask]="true" styleClass="password-field"></p-password>
+          </div>
+          <div class="form-group">
+            <label>Nouveau mot de passe</label>
+            <p-password [(ngModel)]="passwordData.nouveau" [toggleMask]="true" styleClass="password-field"></p-password>
+            <small>8 caractères minimum</small>
+          </div>
+          <div class="form-group">
+            <label>Confirmer</label>
+            <p-password [(ngModel)]="passwordData.confirmation" [feedback]="false" [toggleMask]="true" styleClass="password-field"></p-password>
+          </div>
+        </div>
+
+        <button pButton label="Changer le mot de passe" icon="pi pi-lock" class="p-button-outlined" (click)="changerMotDePasse()"></button>
+
+        <p-divider></p-divider>
+
+        <h3>Authentification à deux facteurs (2FA)</h3>
+        <div class="twofa-section">
+          <div class="twofa-info">
+            <i class="pi pi-shield"></i>
+            <div>
+              <p>Renforcez la sécurité de votre compte</p>
+              <small [class.active]="twoFA.active">Statut: {{ twoFA.active ? 'Activé' : 'Désactivé' }}</small>
+            </div>
+          </div>
+          <button 
+            pButton 
+            [label]="twoFA.active ? 'Gérer la 2FA' : 'Activer la 2FA'" 
+            [icon]="twoFA.active ? 'pi pi-cog' : 'pi pi-lock'"
+            [class]="twoFA.active ? 'p-button-outlined' : 'p-button-success'"
+            (click)="activer2FA()">
+          </button>
+        </div>
+
+        <p-divider></p-divider>
+
+        <h3>Appareils connectés</h3>
+        <div class="sessions-list">
+          <div *ngFor="let session of sessions" class="session-item">
+            <div class="session-info">
+              <i class="pi pi-desktop"></i>
+              <div>
+                <span class="session-device">{{ session.device }}</span>
+                <span class="session-location">{{ session.location }}</span>
+              </div>
+            </div>
+            <div class="session-meta">
+              <span class="session-date">Dernière activité: {{ session.lastActive | date:'dd/MM/yyyy HH:mm' }}</span>
+              <span *ngIf="session.current" class="session-badge current">Appareil actuel</span>
+              <button *ngIf="!session.current" class="session-delete" (click)="deconnecterAppareil(session)">
+                <i class="pi pi-times"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </p-tabPanel>
+
+    <!-- 3. SOCIÉTÉ -->
+    <p-tabPanel header="Société" leftIcon="pi pi-building">
+      <div class="tab-content">
+        <h3>Informations légales</h3>
+        
+        <div class="form-grid">
+          <div class="form-group full-width">
+            <label>Raison sociale</label>
+            <input type="text" pInputText [(ngModel)]="societeInfo.raison_sociale" class="param-input">
+          </div>
+          <div class="form-group full-width">
+            <label>Forme juridique</label>
+            <input type="text" pInputText [(ngModel)]="societeInfo.forme_juridique" class="param-input">
+          </div>
+          <div class="form-group full-width">
+            <label>Adresse</label>
+            <input type="text" pInputText [(ngModel)]="societeInfo.adresse" class="param-input">
+          </div>
+          <div class="form-group">
+            <label>Email</label>
+            <input type="email" pInputText [(ngModel)]="societeInfo.email" class="param-input">
+          </div>
+          <div class="form-group">
+            <label>Téléphone</label>
+            <input type="text" pInputText [(ngModel)]="societeInfo.telephone" class="param-input">
+          </div>
+          <div class="form-group">
+            <label>Matricule fiscal</label>
+            <input type="text" pInputText [(ngModel)]="societeInfo.matricule_fiscal" class="param-input">
+          </div>
+          <div class="form-group">
+            <label>Registre de commerce</label>
+            <input type="text" pInputText [(ngModel)]="societeInfo.rc" class="param-input">
+          </div>
+          <div class="form-group">
+            <label>Capital (DT)</label>
+            <input type="text" pInputText [(ngModel)]="societeInfo.capitale" class="param-input">
+          </div>
+        </div>
+
+        <h3>Coordonnées bancaires</h3>
+        <div class="form-grid">
+          <div class="form-group full-width">
+            <label>Banque</label>
+            <input type="text" pInputText [(ngModel)]="societeInfo.banque" class="param-input">
+          </div>
+          <div class="form-group full-width">
+            <label>IBAN</label>
+            <input type="text" pInputText [(ngModel)]="societeInfo.iban" class="param-input">
+          </div>
+        </div>
+      </div>
+    </p-tabPanel>
+
+    <!-- 4. PRÉFÉRENCES -->
+    <p-tabPanel header="Préférences" leftIcon="pi pi-sliders-h">
+      <div class="tab-content">
+        <h3>Préférences générales</h3>
+        
+        <div class="preferences-grid">
+          <div class="pref-item">
+            <label>Langue</label>
+            <p-selectButton [options]="langues" [(ngModel)]="preferences.langue" optionLabel="label" optionValue="value"></p-selectButton>
+          </div>
+
+          <div class="pref-item">
+            <label>Devise</label>
+            <p-selectButton [options]="devises" [(ngModel)]="preferences.devise" optionLabel="label" optionValue="value"></p-selectButton>
+          </div>
+
+          <div class="pref-item">
+            <label>Format de date</label>
+            <p-selectButton [options]="formatsDate" [(ngModel)]="preferences.formatDate" optionLabel="label" optionValue="value"></p-selectButton>
+          </div>
+
+          <div class="pref-item">
+            <label>Thème</label>
+            <p-selectButton [options]="themes" [(ngModel)]="preferences.theme" optionLabel="label" optionValue="value"></p-selectButton>
+          </div>
+        </div>
+
+        <p-divider></p-divider>
+
+        <h3>Notifications</h3>
+        
+        <div class="notifications-grid">
+          <div class="notif-item">
+            <div class="notif-info">
+              <i class="pi pi-envelope"></i>
+              <span>Notifications par email</span>
+            </div>
+            <p-inputSwitch [(ngModel)]="preferences.notifications.email"></p-inputSwitch>
+          </div>
+
+          <div class="notif-item">
+            <div class="notif-info">
+              <i class="pi pi-mobile"></i>
+              <span>Notifications par SMS</span>
+            </div>
+            <p-inputSwitch [(ngModel)]="preferences.notifications.sms"></p-inputSwitch>
+          </div>
+
+          <div class="notif-item">
+            <div class="notif-info">
+              <i class="pi pi-desktop"></i>
+              <span>Notifications desktop</span>
+            </div>
+            <p-inputSwitch [(ngModel)]="preferences.notifications.desktop"></p-inputSwitch>
+          </div>
+
+          <div class="notif-item">
+            <div class="notif-info">
+              <i class="pi pi-megaphone"></i>
+              <span>Offres marketing</span>
+            </div>
+            <p-inputSwitch [(ngModel)]="preferences.notifications.marketing"></p-inputSwitch>
+          </div>
+        </div>
+      </div>
+    </p-tabPanel>
+  </p-tabView>
+
+  <!-- ZONE DE DANGER -->
+  <div class="danger-zone">
+    <div class="danger-header">
+      <i class="pi pi-exclamation-triangle"></i>
+      <h3>⚠️ ZONE DE DANGER ⚠️</h3>
+    </div>
+    
+    <div class="danger-content">
+      <div class="danger-info">
+        <h4>Réinitialiser tous les paramètres</h4>
+        <p>Cette action est irréversible. Toutes vos configurations personnalisées seront perdues :</p>
+        <ul>
+          <li>✓ Profil et préférences utilisateur</li>
+          <li>✓ Paramètres de sécurité (hors mot de passe)</li>
+          <li>✓ Informations société</li>
+          <li>✓ Configuration des notifications</li>
+        </ul>
+      </div>
+      
+      <div class="danger-actions">
+        <button pButton label="Annuler" icon="pi pi-times" class="p-button-text" (click)="cancelReset()"></button>
+        <button pButton label="TOUT RÉINITIALISER" icon="pi pi-refresh" class="p-button-danger" (click)="confirmReset()"></button>
+      </div>
+    </div>
+  </div>
+</div>

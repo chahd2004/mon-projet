@@ -1,0 +1,85 @@
+<!-- src/app/pages/login/login.component.html -->
+<p-toast></p-toast>
+<div class="login-container">
+  <p-card class="login-card">
+
+    <h2>Se connecter</h2>
+    <p class="subtitle">Bienvenue sur votre espace</p>
+
+    <div class="p-fluid">
+
+      <!-- Champ Email -->
+      <div class="p-field">
+        <label for="email">
+          <i class="pi pi-envelope"></i>
+          Email / Numéro de téléphone
+        </label>
+        <span class="p-input-icon-left w-full">
+          <i class="pi pi-user"></i>
+          <input
+            id="email"
+            type="text"
+            pInputText
+            [(ngModel)]="email"
+            placeholder="Entrez votre email ou téléphone"
+          />
+        </span>
+      </div>
+
+      <!-- Champ Mot de passe -->
+      <div class="p-field">
+        <label for="password">
+          <i class="pi pi-lock"></i>
+          Mot de passe
+        </label>
+        <span class="p-input-icon-left w-full">
+          <i class="pi pi-lock"></i>
+          <input
+            id="password"
+            type="password"
+            pInputText
+            [(ngModel)]="password"
+            placeholder="Entrez votre mot de passe"
+          />
+        </span>
+      </div>
+
+      <!-- Ligne "Se souvenir de moi" et "Mot de passe oublié" -->
+      <div class="remember-forgot">
+        <div class="remember-me">
+          <p-checkbox 
+            [(ngModel)]="rememberMe" 
+            [binary]="true" 
+            inputId="rememberMe">
+          </p-checkbox>
+          <label for="rememberMe">Se souvenir de moi</label>
+        </div>
+        <a href="#" class="forgot-password" (click)="forgotPassword($event)">
+          Mot de passe oublié ?
+        </a>
+      </div>
+
+      <!-- Bouton Accéder à mon espace -->
+      <button
+        pButton
+        type="button"
+        [label]="loading ? 'Connexion en cours...' : 'ACCÉDER À MON ESPACE'"
+        class="login-button w-full"
+        (click)="login()"
+        [disabled]="loading">
+      </button>
+
+      <!-- Lien vers l'inscription -->
+      <div class="register-link">
+        <span>Nouveau ici ?</span>
+        <a href="#" (click)="goToRegister($event)">Créer un compte</a>
+      </div>
+
+    </div>
+
+    <ng-template pTemplate="footer">
+      © 2026 Mon Application
+    </ng-template>
+
+  </p-card>
+</div>

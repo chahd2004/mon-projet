@@ -1,0 +1,600 @@
+// src/app/pages/register/register.component.scss
+
+// Réutilisation des variables du login
+$primary: #3b82f6;
+$primary-dark: #2563eb;
+$primary-light: #60a5fa;
+$success: #10b981;
+$warning: #f59e0b;
+$danger: #ef4444;
+$dark: #1e293b;
+$gray-100: #f1f5f9;
+$gray-200: #e2e8f0;
+$gray-300: #cbd5e1;
+$gray-400: #94a3b8;
+$gray-500: #64748b;
+$gray-600: #475569;
+$gray-700: #334155;
+
+// Animation keyframes (identiques au login)
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+  100% { transform: translateY(0px); }
+}
+
+@keyframes pulse {
+  0% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.4); }
+  70% { box-shadow: 0 0 0 10px rgba(59, 130, 246, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0); }
+}
+
+@keyframes shimmer {
+  0% { background-position: -1000px 0; }
+  100% { background-position: 1000px 0; }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// Conteneur principal (identique au login)
+.register-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  position: relative;
+  overflow: hidden;
+
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, $primary, $success, $warning, $primary);
+    background-size: 300% 100%;
+    animation: shimmer 10s infinite linear;
+  }
+
+  &::after {
+    content: '';
+    position: absolute;
+    width: 300px;
+    height: 300px;
+    background: radial-gradient(circle, rgba(59, 130, 246, 0.1) 0%, transparent 70%);
+    border-radius: 50%;
+    top: -150px;
+    right: -150px;
+    animation: float 8s infinite ease-in-out;
+  }
+}
+
+// Carte register (identique au login)
+.register-card {
+  width: 100%;
+  max-width: 520px;
+  padding: 2.8rem;
+  border-radius: 32px;
+  position: relative;
+  z-index: 10;
+
+  background: rgba(255, 255, 255, 0.98);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+
+  box-shadow: 
+    0 30px 60px rgba(0, 0, 0, 0.3),
+    0 10px 20px rgba(0, 0, 0, 0.2),
+    inset 0 1px 1px rgba(255, 255, 255, 0.8);
+
+  border: 1px solid rgba(255, 255, 255, 0.3);
+
+  transform: translateY(0);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 
+      0 40px 70px rgba(0, 0, 0, 0.35),
+      0 15px 30px rgba(0, 0, 0, 0.25),
+      inset 0 1px 1px rgba(255, 255, 255, 0.9);
+  }
+
+  // Logo ou icône décorative (adaptée pour register)
+  &::before {
+    content: '📝';
+    position: absolute;
+    top: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, $primary, $primary-dark);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 30px;
+    box-shadow: 0 10px 20px rgba(37, 99, 235, 0.3);
+    border: 3px solid white;
+    animation: pulse 2s infinite;
+  }
+}
+
+// Titre (identique au login)
+.register-card h2 {
+  text-align: center;
+  font-size: 2.2rem;
+  font-weight: 800;
+  margin: 1rem 0 0.3rem;
+  background: linear-gradient(135deg, $dark 0%, $primary-dark 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: -0.5px;
+}
+
+// Sous-titre (identique au login)
+.subtitle {
+  text-align: center;
+  color: $gray-500;
+  margin-bottom: 2.5rem;
+  font-size: 1rem;
+  font-weight: 400;
+  position: relative;
+  
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: -15px;
+    left: 25%;
+    width: 50%;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, $primary-light, transparent);
+  }
+}
+
+// Grille pour Prénom/Nom
+.grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-bottom: 0;
+
+  .p-field {
+    margin-bottom: 0;
+  }
+}
+
+// Champs formulaire (identiques au login)
+.p-field {
+  margin-bottom: 1.8rem;
+  position: relative;
+
+  label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 0.6rem;
+    color: $gray-700;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    transition: color 0.3s ease;
+
+    i {
+      margin-right: 6px;
+      color: $primary;
+      font-size: 0.9rem;
+    }
+  }
+
+  &:focus-within label {
+    color: $primary;
+  }
+}
+
+// Inputs (identiques au login)
+.p-field input, .p-field select {
+  width: 100%;
+  box-sizing: border-box;
+  border-radius: 12px;
+  background: $gray-100;
+  border: 2px solid transparent;
+  padding: 0.7rem 0.8rem 0.7rem 2.2rem;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+  color: $dark;
+
+  &::placeholder {
+    color: $gray-400;
+    font-weight: 300;
+    font-size: 0.95rem;
+  }
+
+  &:hover {
+    background: white;
+    border-color: $gray-300;
+  }
+
+  &:focus {
+    background: white;
+    border-color: $primary;
+    box-shadow: 0 0 0 4px rgba($primary, 0.1);
+    outline: none;
+    transform: scale(1.02);
+  }
+
+  // Style pour les inputs valides/invalides
+  &.ng-valid.ng-touched {
+    border-color: $success;
+    background: rgba($success, 0.05);
+  }
+
+  &.ng-invalid.ng-touched {
+    border-color: $danger;
+    background: rgba($danger, 0.05);
+  }
+}
+
+// Icônes dans les inputs (identiques au login)
+.p-input-icon-left {
+  position: relative;
+  display: block;
+
+  i {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: $gray-500;
+    font-size: 1.1rem;
+    z-index: 1;
+    transition: color 0.3s ease;
+  }
+
+  &:focus-within i {
+    color: $primary;
+  }
+}
+
+// Groupe Téléphone avec pays
+.phone-group {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+
+  .pays-select {
+    flex: 2;
+    padding: 0.7rem 1rem;
+    border-radius: 12px;
+    background: $gray-100;
+    border: 2px solid transparent;
+    font-size: 0.95rem;
+    color: $dark;
+    cursor: pointer;
+    transition: all 0.3s ease;
+
+    &:hover {
+      background: white;
+      border-color: $gray-300;
+    }
+
+    &:focus {
+      border-color: $primary;
+      outline: none;
+      box-shadow: 0 0 0 4px rgba($primary, 0.1);
+      background: white;
+    }
+  }
+
+  .indicatif {
+    flex: 1;
+    padding: 0.7rem 1rem;
+    border-radius: 12px;
+    background: $gray-100;
+    color: $primary;
+    font-weight: 600;
+    text-align: center;
+    font-size: 1rem;
+    border: 2px solid rgba($primary, 0.2);
+    transition: all 0.3s ease;
+
+    &:hover {
+      border-color: $primary;
+      background: rgba($primary, 0.05);
+    }
+  }
+}
+
+// Hint pour le mot de passe
+.password-hint {
+  display: block;
+  margin-top: 0.5rem;
+  font-size: 0.8rem;
+  color: $gray-500;
+  line-height: 1.4;
+  padding-left: 0.5rem;
+}
+
+.password-error {
+  display: block;
+  margin-top: 0.3rem;
+  font-size: 0.8rem;
+  color: $danger;
+  padding-left: 0.5rem;
+  animation: slideIn 0.3s ease;
+}
+
+// Checkbox des conditions (identique au style PrimeNG)
+.p-field-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 1.5rem 0;
+
+  label {
+    font-size: 0.95rem;
+    color: $gray-700;
+    cursor: pointer;
+  }
+
+  .terms-link {
+    color: $primary;
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.3s ease;
+
+    &:hover {
+      color: $primary-dark;
+      text-decoration: underline;
+    }
+  }
+}
+
+// Conteneur des boutons (identique au login)
+.flex {
+  display: flex;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+// Bouton S'inscrire (style similaire au bouton login)
+.register-button {
+  flex: 1;
+  padding: 1rem;
+  border-radius: 16px;
+  font-size: 1rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+  border: none;
+  background: linear-gradient(135deg, $primary, $primary-dark);
+  color: white;
+  box-shadow: 0 8px 15px rgba($primary-dark, 0.3);
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s ease;
+  }
+
+  &:hover:not(:disabled) {
+    transform: translateY(-3px);
+    box-shadow: 0 15px 25px rgba($primary-dark, 0.4);
+
+    &::before {
+      left: 100%;
+    }
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(-1px);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background: $gray-400;
+    box-shadow: none;
+  }
+}
+
+// Bouton Se connecter (identique au login)
+.login-button {
+  flex: 1;
+  padding: 1rem;
+  border-radius: 16px;
+  font-size: 1rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+  border: none;
+  background: transparent;
+  color: $primary;
+  border: 2px solid rgba($primary, 0.3);
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba($primary, 0.1), rgba($primary-dark, 0.1));
+    border-radius: 14px;
+    z-index: -1;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  &:hover {
+    border-color: $primary;
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px rgba($primary, 0.2);
+
+    &::before {
+      opacity: 1;
+    }
+  }
+
+  &:active {
+    transform: translateY(-1px);
+  }
+}
+
+// Message d'erreur général
+.error-message {
+  background: rgba($danger, 0.1);
+  border: 1px solid rgba($danger, 0.3);
+  border-radius: 12px;
+  padding: 1rem;
+  margin: 1rem 0;
+  color: $danger;
+  font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  animation: slideIn 0.3s ease;
+
+  i {
+    font-size: 1.2rem;
+  }
+}
+
+// Footer de la carte (identique au login)
+:host ::ng-deep .p-card-footer {
+  text-align: center;
+  color: $gray-500;
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid rgba($gray-300, 0.3);
+  font-size: 0.9rem;
+  font-weight: 300;
+  position: relative;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: -1px;
+    left: 25%;
+    width: 50%;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, $primary-light, transparent);
+  }
+}
+
+// Responsive (identique au login)
+@media (max-width: 480px) {
+  .register-card {
+    padding: 2rem;
+    max-width: 90%;
+  }
+
+  .register-card h2 {
+    font-size: 1.8rem;
+  }
+
+  .grid-2 {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .phone-group {
+    flex-direction: column;
+
+    .pays-select, .indicatif {
+      width: 100%;
+    }
+  }
+
+  .flex {
+    flex-direction: column;
+    gap: 0.8rem;
+  }
+
+  .login-button, .register-button {
+    width: 100%;
+  }
+}
+
+// Support du mode sombre du navigateur (IDENTIQUE AU LOGIN)
+@media (prefers-color-scheme: dark) {
+  .register-card {
+    background: rgba(30, 41, 59, 0.98);
+    
+    h2 {
+      background: linear-gradient(135deg, #fff 0%, $primary-light 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+  }
+
+  .p-field label {
+    color: $gray-300;
+  }
+
+  .p-field input, .p-field select {
+    background: $gray-700;
+    color: white;
+    border-color: $gray-600;
+
+    &::placeholder {
+      color: $gray-500;
+    }
+
+    &:hover {
+      background: $gray-600;
+    }
+  }
+
+  .subtitle {
+    color: $gray-400;
+  }
+
+  .password-hint {
+    color: $gray-400;
+  }
+
+  .p-field-checkbox label {
+    color: $gray-300;
+  }
+
+  .indicatif {
+    background: $gray-700 !important;
+    color: $primary-light !important;
+    border-color: $gray-600 !important;
+
+    &:hover {
+      background: $gray-600 !important;
+    }
+  }
+}

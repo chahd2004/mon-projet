@@ -1,0 +1,79 @@
+<!-- src/app/pages/dashboard/dashboard.component.html -->
+<p-toast></p-toast>
+<div class="dashboard-layout">
+  <!-- SIDEBAR GAUCHE (FIXE) -->
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <div class="logo">
+        <i class="pi pi-chart-pie"></i>
+        <span>GESTION</span>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <div class="nav-section">
+        <div class="section-title">GÉNÉRAL</div>
+        <a routerLink="/dashboard" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" class="nav-item">
+          <i class="pi pi-home"></i>
+          <span>Accueil</span>
+        </a>
+        <a routerLink="/dashboard/clients" routerLinkActive="active" class="nav-item">
+          <i class="pi pi-users"></i>
+          <span>Clients</span>
+        </a>
+        <a routerLink="/dashboard/produits" routerLinkActive="active" class="nav-item">
+          <i class="pi pi-box"></i>
+          <span>Produits</span>
+        </a>
+      </div>
+
+      <div class="nav-section">
+        <div class="section-title">FACTURATION</div>
+        <a routerLink="/dashboard/factures" routerLinkActive="active" class="nav-item">
+          <i class="pi pi-file"></i>
+          <span>Factures</span>
+          <span class="nav-badge">{{ totalFactures }}</span>
+        </a>
+        <a routerLink="/dashboard/devise" routerLinkActive="active" class="nav-item">
+          <i class="pi pi-calculator"></i>
+          <span>Devis</span>
+          <span class="nav-badge">0</span>
+        </a>
+        <a routerLink="/dashboard/avoirs" routerLinkActive="active" class="nav-item">
+          <i class="pi pi-credit-card"></i>
+          <span>Avoirs</span>
+          <span class="nav-badge">0</span>
+        </a>
+      </div>
+
+      <div class="nav-section">
+        <div class="section-title">PARAMÈTRES</div>
+        <a routerLink="/dashboard/parametres" routerLinkActive="active" class="nav-item">
+          <i class="pi pi-cog"></i>
+          <span>Paramètres</span>
+        </a>
+        <a class="nav-item" (click)="logout()">
+          <i class="pi pi-sign-out"></i>
+          <span>Déconnexion</span>
+        </a>
+      </div>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="user-info">
+        <div class="user-icon">
+          <i class="pi pi-user"></i>
+        </div>
+        <div class="user-details">
+          <span class="user-name">Admin</span>
+          <span class="user-role">Administrateur</span>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- CONTENU PRINCIPAL DROIT (CHANGE SELON LA ROUTE) -->
+  <main class="main-content">
+    <router-outlet></router-outlet>
+  </main>
+</div>

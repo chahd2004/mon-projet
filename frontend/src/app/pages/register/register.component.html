@@ -1,0 +1,153 @@
+<!-- src/app/pages/register/register.component.html -->
+<p-toast></p-toast>
+<div class="register-container">
+  <p-card class="register-card">
+
+    <h2>Créer un compte</h2>
+    <p class="subtitle">Inscrivez-vous pour commencer</p>
+
+    <div class="p-fluid">
+
+      <!-- Ligne Prénom et Nom -->
+      <div class="p-field grid-2">
+        <div class="p-field">
+          <label for="prenom">Prénom</label>
+          <span class="p-input-icon-left w-full">
+            <i class="pi pi-user"></i>
+            <input
+              id="prenom"
+              type="text"
+              pInputText
+              [(ngModel)]="prenom"
+              placeholder="Votre prénom"
+            />
+          </span>
+        </div>
+
+        <div class="p-field">
+          <label for="nom">Nom</label>
+          <span class="p-input-icon-left w-full">
+            <i class="pi pi-user"></i>
+            <input
+              id="nom"
+              type="text"
+              pInputText
+              [(ngModel)]="nom"
+              placeholder="Votre nom"
+            />
+          </span>
+        </div>
+      </div>
+
+      <!-- Pays et Indicatif Téléphonique -->
+      <div class="p-field">
+        <label for="pays">Pays</label>
+        <div class="phone-group">
+          <select id="pays" class="pays-select" [(ngModel)]="pays">
+            <option value="TN" selected>Tunisie 🇹🇳</option>
+            <option value="FR">France 🇫🇷</option>
+            <option value="DZ">Algérie 🇩🇿</option>
+            <option value="MA">Maroc 🇲🇦</option>
+            <option value="LY">Libye 🇱🇾</option>
+          </select>
+          <span class="indicatif">+216</span>
+        </div>
+      </div>
+
+      <!-- Email -->
+      <div class="p-field">
+        <label for="email">Email</label>
+        <span class="p-input-icon-left w-full">
+          <i class="pi pi-envelope"></i>
+          <input
+            id="email"
+            type="email"
+            pInputText
+            [(ngModel)]="email"
+            placeholder="votre@email.com"
+          />
+        </span>
+      </div>
+
+      <!-- Mot de passe -->
+      <div class="p-field">
+        <label for="password">Mot de passe</label>
+        <span class="p-input-icon-left w-full">
+          <i class="pi pi-lock"></i>
+          <input
+            id="password"
+            type="password"
+            pInputText
+            [(ngModel)]="password"
+            placeholder="Créez un mot de passe"
+          />
+        </span>
+        <small class="password-hint">
+          Utilisez 8 caractères ou plus avec un mélange de lettres, de chiffres et de symboles.
+        </small>
+        <small class="password-error" *ngIf="passwordError">
+          {{ passwordError }}
+        </small>
+      </div>
+
+      <!-- Code partenaire -->
+      <div class="p-field">
+        <label for="codePartenaire">Code partenaire (optionnel)</label>
+        <span class="p-input-icon-left w-full">
+          <i class="pi pi-tag"></i>
+          <input
+            id="codePartenaire"
+            type="text"
+            pInputText
+            [(ngModel)]="codePartenaire"
+            placeholder="Code partenaire"
+          />
+        </span>
+      </div>
+
+      <!-- Checkbox Conditions -->
+      <div class="p-field-checkbox">
+        <p-checkbox 
+          [(ngModel)]="acceptConditions" 
+          [binary]="true" 
+          inputId="conditions">
+        </p-checkbox>
+        <label for="conditions">
+          J'accepte les <a href="#" class="terms-link">conditions d'utilisation</a>
+        </label>
+      </div>
+
+      <!-- Message d'erreur général -->
+      <div class="error-message" *ngIf="errorMessage">
+        <i class="pi pi-exclamation-triangle"></i>
+        {{ errorMessage }}
+      </div>
+
+      <!-- Boutons -->
+      <div class="flex">
+        <button
+          pButton
+          type="button"
+          [label]="loading ? 'Inscription en cours...' : 'S\'inscrire'"
+          class="register-button"
+          (click)="register()"
+          [disabled]="!acceptConditions || loading">
+        </button>
+
+        <button
+          pButton
+          type="button"
+          label="Se connecter"
+          class="login-button"
+          (click)="goToLogin()">
+        </button>
+      </div>
+
+    </div>
+
+    <ng-template pTemplate="footer">
+      © 2026 Mon Application
+    </ng-template>
+
+  </p-card>
+</div>

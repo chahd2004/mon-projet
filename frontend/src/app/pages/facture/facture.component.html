@@ -1,0 +1,397 @@
+<!-- src/app/pages/facture/facture.component.html -->
+
+<!-- LOADING SPINNER -->
+<div *ngIf="isLoading" class="loading-spinner">
+  <div class="spinner-container">
+    <i class="pi pi-spin pi-spinner" style="font-size: 3rem"></i>
+    <p>Chargement de la facture...</p>
+  </div>
+</div>
+
+<!-- CONTENU PRINCIPAL -->
+<div *ngIf="!isLoading && facture" class="facture-container">
+  
+  <!-- BOUTONS DE NAVIGATION -->
+  <div class="navigation">
+    <button pButton type="button" icon="pi pi-arrow-left" label="Retour à la liste" 
+            (click)="retourListe()" class="p-button-secondary btn-retour"></button>
+    <button *ngIf="isNewFacture" pButton type="button" icon="pi pi-save" label="Sauvegarder" 
+            (click)="sauvegarderFacture()" class="p-button-success btn-sauvegarder"></button>
+  </div>
+
+  <!-- EN-TÊTE AVEC LOGO - CHAMPS ÉDITABLES -->
+  <div class="header">
+    <div class="logo-section">
+      <div class="logo">
+        <div class="logo-icon">
+          <i class="pi pi-file-pdf"></i>
+        </div>
+        <!-- Mode consultation vs édition -->
+        <div *ngIf="!isNewFacture" class="company-name">{{ facture.vendeurNom || 'Société' }}</div>
+        <input *ngIf="isNewFacture" type="text" pInputText [(ngModel)]="facture.vendeurNom" 
+               placeholder="Raison sociale" class="company-input">
+      </div>
+      <div class="slogan">Solutions professionnelles</div>
+    </div>
+    
+    <!-- INFORMATIONS SOCIÉTÉ -->
+    <div class="company-info">
+      <div class="info-card">
+        <!-- Adresse -->
+        <div class="info-row">
+          <span class="label"><i class="pi pi-map-marker"></i> Adresse :</span>
+          <span class="value">Non renseignée</span>
+        </div>
+        <div class="info-row arabic">
+          <span class="label">العنوان</span>
+        </div>
+        
+        <!-- Téléphone -->
+        <div class="info-row">
+          <span class="label"><i class="pi pi-phone"></i> Téléphone :</span>
+          <span class="value">Non renseigné</span>
+          <span class="arabic-label">رقم الهاتف</span>
+        </div>
+        
+        <!-- Code / RC -->
+        <div class="info-row">
+          <span class="label"><i class="pi pi-print"></i> Code / RC :</span>
+          <span *ngIf="!isNewFacture" class="value">{{ referencePaiement || 'Non renseigné' }}</span>
+          <input *ngIf="isNewFacture" type="text" pInputText [(ngModel)]="referencePaiement" 
+                 placeholder="Code / Registre de commerce" class="info-input">
+          <span class="arabic-label">رقم السجل التجاري</span>
+        </div>
+        
+        <!-- Email -->
+        <div class="info-row">
+          <span class="label"><i class="pi pi-envelope"></i> Email :</span>
+          <span class="value">Non renseigné</span>
+          <span class="arabic-label">البريد الإلكتروني</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TITRE ET NUMÉRO -->
+  <div class="title-section">
+    <div class="facture-title">
+      <h2>FACTURE</h2>
+      <div class="facture-number">
+        <ng-container *ngIf="!isNewFacture">
+          N° <span>{{ facture.numFact || 'Non généré' }}</span>
+        </ng-container>
+        <div *ngIf="isNewFacture" class="number-input">
+          <span class="label">N°</span>
+          <input type="text" pInputText [(ngModel)]="facture.numFact" 
+                 placeholder="Numéro facture">
+        </div>
+      </div>
+      <div class="arabic-title">فاتورة رقم</div>
+    </div>
+    <div class="date-section">
+      <div class="date-card">
+        <div class="date-row">
+          <span class="label">Date d'émission</span>
+          <span class="value">{{ facture.dateEmission | date:'dd/MM/yyyy':'UTC' }}</span>
+        </div>
+        <div class="date-row arabic">
+          <span class="label">التاريـــــــخ</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PÉRIODE ET RÉFÉRENCE -->
+  <ng-container *ngIf="facture.periode_du && facture.periode_au; else periodEmpty" >
+    <div class="period-section">
+      <div class="period-card">
+        <div class="period-row">
+          <span class="label"><i class="pi pi-calendar"></i> Période :</span>
+          <span class="value">du {{ facture.periode_du }}</span>
+          <span class="label">au</span>
+          <span class="value">{{ facture.periode_au }}</span>
+        </div>
+        <div class="reference-row" *ngIf="facture.reference_unique">
+          <span class="label"><i class="pi pi-tag"></i> Référence Unique :</span>
+          <span class="value">{{ facture.reference_unique }}</span>
+        </div>
+      </div>
+      <div class="arabic-label">المدة - المرجع الوحيد</div>
+    </div>
+  </ng-container>
+  
+  <!-- Période vide -->
+  <ng-template #periodEmpty>
+    <div class="period-section empty">
+      <p>Période non définie</p>
+    </div>
+  </ng-template>
+
+  <!-- SECTION TTN -->
+  <ng-container *ngIf="facture.reference_ttn; else ttnEmpty">
+    <div class="ttn-reference">
+      <div class="ttn-card">
+        <i class="pi pi-file"></i>
+        <p>Copie de la facture électronique enregistrée chez TTN sous la référence :</p>
+        <p class="reference-number">{{ facture.reference_ttn }}</p>
+      </div>
+    </div>
+  </ng-container>
+  
+  <!-- TTN vide -->
+  <ng-template #ttnEmpty>
+    <div class="ttn-reference empty">
+      <p>Référence TTN non disponible</p>
+    </div>
+  </ng-template>
+
+  <!-- INFORMATIONS CLIENT / ACHETEUR -->
+  <div class="client-section">
+    <h3><i class="pi pi-user"></i> ACHETEUR</h3>
+    <div class="client-card">
+      <div class="client-info">
+        <div class="info-grid">
+          <div class="info-item" *ngIf="isNewFacture">
+            <span class="label">Sélectionner l'acheteur (client) :</span>
+            <p-dropdown
+              [options]="clients"
+              [(ngModel)]="selectedAcheteurId"
+              optionLabel="raisonSociale"
+              optionValue="id"
+              placeholder="Choisir un client"
+              [style]="{'width':'100%'}"
+              appendTo="body"
+            ></p-dropdown>
+          </div>
+          <div class="info-item">
+            <span class="label">Raison sociale :</span>
+            <span *ngIf="!isNewFacture" class="value">{{ facture.acheteurNom || 'Non renseigné' }}</span>
+            <span *ngIf="isNewFacture" class="value">{{ selectedAcheteurRaisonSociale }}</span>
+          </div>
+          <div class="info-item">
+            <span class="label">Adresse :</span>
+            <span class="value">Non renseignée</span>
+          </div>
+          <div class="info-item">
+            <span class="label">Email :</span>
+            <span class="value">Non renseigné</span>
+          </div>
+          <div class="info-item">
+            <span class="label">Téléphone :</span>
+            <span class="value">Non renseigné</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FORMULAIRE POUR AJOUTER UNE LIGNE (produit + quantité) -->
+  <div class="line-form-section" *ngIf="isNewFacture">
+    <h4><i class="pi pi-plus-circle"></i> Ajouter une ligne</h4>
+    <div class="line-form">
+      <div class="form-row">
+        <div class="form-group large">
+          <label>Produit</label>
+          <p-dropdown
+            [options]="produits"
+            [(ngModel)]="nouvelleLigne.produitId"
+            optionLabel="designation"
+            optionValue="id"
+            placeholder="Sélectionner un produit"
+            [style]="{'width':'100%'}"
+            appendTo="body"
+          ></p-dropdown>
+        </div>
+        <div class="form-group">
+          <label>Quantité</label>
+          <p-inputNumber [(ngModel)]="nouvelleLigne.quantite" [min]="1" [style]="{'width':'100%'}"></p-inputNumber>
+        </div>
+        <div class="form-group">
+          <button pButton type="button" icon="pi pi-plus" label="Ajouter" (click)="ajouterLigne()"
+                  [disabled]="!nouvelleLigne.produitId || nouvelleLigne.quantite < 1"
+                  class="p-button-success"></button>
+        </div>
+      </div>
+      <div class="form-hint" *ngIf="isNewFacture">
+        <i class="pi pi-info-circle"></i>
+        Sélectionnez l'acheteur ci-dessus, puis ajoutez des lignes (produit + quantité)
+      </div>
+    </div>
+  </div>
+
+  <!-- TABLEAU DES LIGNES DE FACTURE -->
+  <div class="table-container" *ngIf="lignesFacture.length > 0">
+    <h4>Lignes de facture</h4>
+    <table class="facture-table">
+      <thead>
+        <tr>
+          <th>Désignation</th>
+          <th>Quantité</th>
+          <th style="text-align: center;" *ngIf="isNewFacture">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let ligne of lignesFacture; let i = index" [class.odd]="i % 2 === 1">
+          <td class="designation">{{ ligne.produitDesignation || 'Produit #' + ligne.produitId }}</td>
+          <td class="text-right">{{ ligne.quantite | number:'1.3-3' }}</td>
+          <td *ngIf="isNewFacture">
+            <button pButton type="button" icon="pi pi-trash" class="p-button-danger p-button-sm" (click)="supprimerLigne(i)" pTooltip="Supprimer"></button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- MESSAGE SI AUCUNE LIGNE -->
+  <div class="no-lines" *ngIf="lignesFacture.length === 0 && !isNewFacture">
+    <i class="pi pi-file"></i>
+    <p>Aucune ligne de facture</p>
+  </div>
+
+  <!-- INFORMATIONS SOCIÉTÉ (bas de page) -->
+  <div class="company-details">
+    <div class="details-card">
+      <i class="pi pi-building"></i>
+      <span>{{ facture.vendeurNom || 'Société' }} - SA au capital de : 200.000 DTV - Matricule fiscal : 750230XAM001 - RC : B11 260100</span>
+    </div>
+  </div>
+
+  <!-- TABLEAU DES TOTAUX -->
+  <div class="totaux-section">
+    <div class="totaux-grid">
+      
+      <!-- Détail TVA -->
+      <div class="totaux-card" *ngIf="facture.totalHT > 0">
+        <h4>Détail de la TVA</h4>
+        <table class="totaux-detail">
+          <tr>
+            <td>Taux (%)</td>
+            <td class="text-right">{{ tvaParDefaut | number:'1.2-2' }}%</td>
+          </tr>
+          <tr>
+            <td>Base HT</td>
+            <td class="text-right">{{ facture.totalHT | number:'1.3-3' }} TND</td>
+          </tr>
+          <tr>
+            <td>Montant TVA</td>
+            <td class="text-right">{{ facture.montantTVA | number:'1.3-3' }} TND</td>
+          </tr>
+        </table>
+      </div>
+
+      <!-- Total général -->
+      <div class="totaux-card total-general">
+        <h4>Total général</h4>
+        <table class="totaux-general">
+          <tr>
+            <td>Total H.T.</td>
+            <td class="text-right">{{ facture.totalHT | number:'1.3-3' }} TND</td>
+          </tr>
+          <tr *ngIf="facture.montantTVA > 0">
+            <td>Montant TVA</td>
+            <td class="text-right">{{ facture.montantTVA | number:'1.3-3' }} TND</td>
+          </tr>
+          <tr>
+            <td>Droit de Timbre</td>
+            <td class="text-right">{{ droitTimbre | number:'1.3-3' }} TND</td>
+          </tr>
+          <tr class="total-ttc">
+            <td><strong>Total T.T.C</strong></td>
+            <td class="text-right"><strong>{{ facture.totalTTC | number:'1.3-3' }} TND</strong></td>
+          </tr>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- MONTANT EN LETTRES -->
+  <ng-container *ngIf="facture.montantEnLettres; else lettresEmpty">
+    <div class="montant-lettres">
+      <div class="lettres-card">
+        <i class="pi pi-pencil"></i>
+        <p>Arrête la présente facture à la somme de :</p>
+        <p class="montant">{{ facture.montantEnLettres }}</p>
+      </div>
+    </div>
+  </ng-container>
+  
+  <!-- Montant en lettres vide -->
+  <ng-template #lettresEmpty>
+    <div class="montant-lettres empty">
+      <p>Montant en lettres non disponible</p>
+    </div>
+  </ng-template>
+
+  <!-- SECTION POSTE -->
+  <div class="poste-section" *ngIf="facture.totalTTC > 0">
+    <div class="poste-header">
+      <div class="poste-arabic">البريد</div>
+      <div class="poste-french">Poste Tunisienne</div>
+    </div>
+    
+    <div class="poste-content">
+      <div class="coupon-section">
+        <div class="coupon-gauche">
+          <div class="coupon-title">جذر بطاقة إيداع بحساب جاري</div>
+          <div class="coupon-title">Coupon de Versement CCP</div>
+        </div>
+        <div class="coupon-droit">
+          <div class="coupon-title">بطاقة إيداع بحساب جاري</div>
+          <div class="coupon-title">Bulletin de Versement CCP</div>
+        </div>
+      </div>
+
+      <div class="paiement-details">
+        <table class="paiement-table">
+          <thead>
+            <tr>
+              <th>N° d'émission<br>رقم الإصدار</th>
+              <th>Code<br>م.</th>
+              <th>Montant<br>المبلغ</th>
+              <th>Référence<br>المرجع</th>
+              <th>Clés<br>المفاتيح</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="text-center">{{ couponEmission || '-' }}</td>
+              <td class="text-center">1</td>
+              <td class="text-right">{{ facture.totalTTC | number:'1.3-3' }} TND</td>
+              <td class="text-center">{{ referencePaiement || '-' }}</td>
+              <td class="text-center">{{ cle || '-' }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- PIED DE PAGE -->
+  <div class="footer">
+    <div class="footer-left">
+      <span>Facture N° {{ facture.numFact || 'Non généré' }}</span>
+      <span>Date {{ facture.dateEmission | date:'dd/MM/yyyy' }}</span>
+    </div>
+    <div class="footer-right">
+      <span class="statut-badge" [ngClass]="'statut-' + (facture.statut || '').toLowerCase()">
+        {{ facture.statut || 'BROUILLON' }}
+      </span>
+    </div>
+  </div>
+
+  <!-- BOUTON D'IMPRESSION -->
+  <div class="print-button-container">
+    <button pButton type="button" label="Imprimer la facture" icon="pi pi-print" 
+            (click)="imprimerFacture()" class="p-button-help btn-print"></button>
+  </div>
+</div>
+
+<!-- FACTURE NON TROUVÉE -->
+<div *ngIf="!isLoading && !facture" class="error-message">
+  <div class="error-card">
+    <i class="pi pi-exclamation-triangle"></i>
+    <h3>Facture non trouvée</h3>
+    <p>La facture que vous recherchez n'existe pas ou a été supprimée.</p>
+    <button pButton type="button" label="Retour à la liste" (click)="retourListe()" class="p-button-primary"></button>
+  </div>
+</div>

@@ -1,0 +1,15 @@
+# Node
+frontend/node_modules/
+frontend/dist/
+frontend/.angular/
+
+# Java
+backend/target/
+
+# Docker
+.env
+
+# OS
+.DS_Store
+Thumbs.db
+backend/src/main/resources/application.properties

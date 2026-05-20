@@ -1,0 +1,476 @@
+// src/app/pages/factures/factures.component.scss
+$primary-blue: #3b82f6;
+$dark-blue: #1e293b;
+$success: #10b981;
+$warning: #f59e0b;
+$danger: #ef4444;
+$info: #3b82f6;
+
+.factures-container {
+  padding: 2rem;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+}
+
+// En-tête
+.header-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+
+  h2 {
+    color: $dark-blue;
+    font-weight: 700;
+    font-size: 2rem;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+
+    i {
+      color: $primary-blue;
+    }
+  }
+
+  .add-btn {
+    background: $success;
+    color: white;
+    border: none;
+    padding: 0.8rem 1.8rem;
+    border-radius: 12px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0 4px 12px rgba($success, 0.3);
+
+    i {
+      font-size: 1.2rem;
+    }
+
+    &:hover {
+      background: #0d9668;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 15px rgba($success, 0.4);
+    }
+  }
+}
+
+// Statistiques
+.stats-section {
+  margin-bottom: 2rem;
+
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.5rem;
+
+    .stat-card {
+      background: white;
+      border-radius: 15px;
+      padding: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+      transition: transform 0.2s;
+
+      &:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+      }
+
+      .stat-icon {
+        width: 50px;
+        height: 50px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+
+        &.total {
+          background: rgba($primary-blue, 0.1);
+          color: $primary-blue;
+        }
+
+        &.paye {
+          background: rgba($success, 0.1);
+          color: $success;
+        }
+
+        &.attente {
+          background: rgba($warning, 0.1);
+          color: $warning;
+        }
+
+        &.montant {
+          background: rgba($danger, 0.1);
+          color: $danger;
+        }
+      }
+
+      .stat-details {
+        .stat-label {
+          display: block;
+          font-size: 0.85rem;
+          color: #64748b;
+          margin-bottom: 0.3rem;
+        }
+
+        .stat-value {
+          display: block;
+          font-size: 1.3rem;
+          font-weight: 700;
+          color: $dark-blue;
+        }
+      }
+    }
+  }
+}
+
+// Graphique
+.chart-section {
+  margin-bottom: 2rem;
+
+  ::ng-deep .p-card {
+    border-radius: 15px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+
+    .p-card-title {
+      color: $dark-blue;
+      font-weight: 600;
+    }
+  }
+}
+
+// Filtres
+.filters-section {
+  background: white;
+  border-radius: 15px;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+
+  .filters-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr auto;
+    gap: 1rem;
+    align-items: flex-end;
+
+    .filter-item {
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+
+      label {
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: $dark-blue;
+      }
+
+      .search-box {
+        position: relative;
+        display: flex;
+        align-items: center;
+
+        i.pi-search {
+          position: absolute;
+          left: 1rem;
+          color: #94a3b8;
+          font-size: 1rem;
+        }
+
+        input {
+          padding-left: 2.5rem;
+          padding-right: 2.5rem;
+          width: 100%;
+          height: 42px;
+          border-radius: 8px;
+          border: 1px solid #e2e8f0;
+          
+          &:focus {
+            border-color: $primary-blue;
+            box-shadow: 0 0 0 3px rgba($primary-blue, 0.1);
+          }
+        }
+
+        .clear-search {
+          position: absolute;
+          right: 1rem;
+          background: none;
+          border: none;
+          color: #94a3b8;
+          cursor: pointer;
+          
+          &:hover {
+            color: $danger;
+          }
+        }
+      }
+
+      &.filter-actions {
+        .reset-btn {
+          height: 42px;
+          padding: 0 1.5rem;
+          border: 1px solid #e2e8f0;
+          background: white;
+          border-radius: 8px;
+          color: #64748b;
+          font-weight: 500;
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          cursor: pointer;
+          transition: all 0.2s;
+
+          &:hover {
+            background: #f8fafc;
+            color: $dark-blue;
+            border-color: $dark-blue;
+          }
+        }
+      }
+    }
+  }
+}
+
+// Tableau
+::ng-deep .p-card {
+  border-radius: 20px;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+  
+  .p-card-body { 
+    padding: 0; 
+  }
+}
+
+::ng-deep .p-datatable {
+  .p-datatable-thead > tr > th {
+    background: $dark-blue;
+    color: white;
+    padding: 1rem;
+    font-size: 0.85rem;
+    border: none;
+    font-weight: 600;
+  }
+
+  .p-datatable-tbody > tr {
+    background: white;
+    
+    td {
+      padding: 1rem;
+      border-bottom: 1px solid #f1f5f9;
+      color: #334155;
+
+      &.text-right {
+        text-align: right;
+      }
+
+      &.font-bold {
+        font-weight: 600;
+        color: $dark-blue;
+      }
+    }
+
+    .client-info {
+      display: flex;
+      flex-direction: column;
+
+      .client-name {
+        font-weight: 600;
+        color: $dark-blue;
+      }
+
+      .client-email {
+        font-size: 0.85rem;
+        color: #64748b;
+      }
+    }
+
+    &:hover {
+      background: #f8fafc;
+    }
+  }
+}
+
+// Actions
+.actions-cell {
+  display: flex;
+  gap: 0.3rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.action-btn {
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  color: white;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+
+  i {
+    font-size: 0.9rem;
+  }
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  }
+
+  &.view-btn {
+    background: $primary-blue;
+    &:hover { background: #2563eb; }
+  }
+
+  &.edit-btn {
+    background: $warning;
+    &:hover { background: #d97706; }
+  }
+
+  &.pdf-btn {
+    background: #dc2626;
+    &:hover { background: #b91c1c; }
+  }
+
+  &.email-btn {
+    background: #6366f1;
+    &:hover { background: #4f46e5; }
+  }
+
+  &.client-btn {
+    background: #8b5cf6;
+    &:hover { background: #7c3aed; }
+  }
+
+  &.pay-btn {
+    background: $success;
+    &:hover { background: #0d9668; }
+  }
+
+  &.cancel-btn {
+    background: $warning;
+    &:hover { background: #d97706; }
+  }
+
+  &.delete-btn {
+    background: $danger;
+    &:hover { background: #dc2626; }
+  }
+}
+
+// Message vide
+.empty-message {
+  text-align: center;
+  padding: 2rem;
+
+  i {
+    color: #94a3b8;
+    margin-bottom: 1rem;
+  }
+
+  h3 {
+    color: $dark-blue;
+    margin: 0.5rem 0;
+  }
+
+  p {
+    color: #64748b;
+    margin-bottom: 1.5rem;
+  }
+
+  .add-first-btn {
+    background: $primary-blue;
+    color: white;
+    border: none;
+    padding: 0.8rem 1.8rem;
+    border-radius: 10px;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    transition: all 0.2s;
+
+    &:hover {
+      background: #2563eb;
+      transform: scale(1.05);
+    }
+  }
+}
+
+// Pagination
+::ng-deep .p-paginator {
+  background: white;
+  padding: 1rem;
+  border-top: 1px solid #f1f5f9;
+  
+  .p-paginator-page.p-highlight {
+    background: $primary-blue;
+    color: white;
+    border-radius: 8px;
+  }
+}
+
+// Responsive
+@media (max-width: 1200px) {
+  .stats-section .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .filters-section .filters-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .factures-container {
+    padding: 1rem;
+  }
+
+  .header-section {
+    flex-direction: column;
+    gap: 1rem;
+    
+    h2 {
+      font-size: 1.5rem;
+    }
+    
+    .add-btn {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+
+  .stats-section .stats-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .filters-section .filters-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .actions-cell {
+    gap: 0.2rem;
+  }
+
+  .action-btn {
+    width: 28px;
+    height: 28px;
+    
+    i {
+      font-size: 0.8rem;
+    }
+  }
+}

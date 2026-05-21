@@ -42,6 +42,19 @@
           },
           "configurations": {
             "production": {
+"fileReplacements": [
+    {
+      "replace": "src/environments/environment.ts",
+      "with": "src/environments/environment.prod.ts"
+    }
+  ],
+  "budgets": [
+Sauvegardez puis poussez :
+powershellcd C:\Users\chahd\mon-projet
+git add .
+git commit -m "add fileReplacements angular.json"
+git push origin main
+Vercel redéploie → cette fois environment.prod.ts sera utilisé ! 🚀
               "budgets": [
                 {
                   "type": "initial",

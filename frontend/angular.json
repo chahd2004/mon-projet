@@ -20,17 +20,10 @@
             "outputPath": "dist/mon-frontend",
             "index": "src/index.html",
             "browser": "src/main.ts",
-            "polyfills": [
-              "zone.js"
-            ],
+            "polyfills": ["zone.js"],
             "tsConfig": "tsconfig.app.json",
             "inlineStyleLanguage": "scss",
-            "assets": [
-              {
-                "glob": "**/*",
-                "input": "public"
-              }
-            ],
+            "assets": [{"glob": "**/*", "input": "public"}],
             "styles": [
               "node_modules/primeng/resources/themes/lara-light-blue/theme.css",
               "node_modules/primeng/resources/primeng.min.css",
@@ -42,19 +35,12 @@
           },
           "configurations": {
             "production": {
-"fileReplacements": [
-    {
-      "replace": "src/environments/environment.ts",
-      "with": "src/environments/environment.prod.ts"
-    }
-  ],
-  "budgets": [
-Sauvegardez puis poussez :
-powershellcd C:\Users\chahd\mon-projet
-git add .
-git commit -m "add fileReplacements angular.json"
-git push origin main
-Vercel redéploie → cette fois environment.prod.ts sera utilisé ! 🚀
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.prod.ts"
+                }
+              ],
               "budgets": [
                 {
                   "type": "initial",
@@ -98,18 +84,10 @@ Vercel redéploie → cette fois environment.prod.ts sera utilisé ! 🚀
         "test": {
           "builder": "@angular-devkit/build-angular:karma",
           "options": {
-            "polyfills": [
-              "zone.js",
-              "zone.js/testing"
-            ],
+            "polyfills": ["zone.js", "zone.js/testing"],
             "tsConfig": "tsconfig.spec.json",
             "inlineStyleLanguage": "scss",
-            "assets": [
-              {
-                "glob": "**/*",
-                "input": "public"
-              }
-            ],
+            "assets": [{"glob": "**/*", "input": "public"}],
             "styles": [
               "node_modules/primeng/resources/themes/lara-light-blue/theme.css",
               "node_modules/primeng/resources/primeng.min.css",

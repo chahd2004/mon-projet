@@ -43,7 +43,7 @@ public CorsConfigurationSource corsConfigurationSource() {
             "http://localhost:4200",
             "http://10.220.130.21:4200",
             "https://mon-projet-sigma-bay.vercel.app",
-            "https://mon-projet-gjmjs91dv-chahd.vercel.app"
+            "https://mon-projet-gjmjs91dv-chahd.vercel.app",
             "https://mon-projet-o3t601ara-chahd.vercel.app"
     ));
     config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));

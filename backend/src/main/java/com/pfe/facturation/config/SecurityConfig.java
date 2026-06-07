@@ -42,7 +42,9 @@ public class SecurityConfig {
         config.setAllowedOriginPatterns(List.of(
                 "http://localhost:4200",
                 "http://10.220.130.21:4200",
-                "https://*.vercel.app"
+                "https://*.vercel.app",
+                "https://*.ngrok-free.app",
+                "https://*.ngrok-free.dev"
         ));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
         config.setAllowedHeaders(List.of("*"));
@@ -62,32 +64,18 @@ public class SecurityConfig {
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
                 .authorizeHttpRequests(auth -> auth
-                        // ===== ROUTES PUBLIQUES =====
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/api/public/**").permitAll()
                         .requestMatchers("/api/test/**").permitAll()
                         .requestMatchers("/api/chat/**").authenticated()
-
-                        // ===== ROUTES PROTÉGÉES PAR RÔLE =====
-                        // SUPER_ADMIN uniquement
                         .requestMatchers("/api/super-admin/**").hasAuthority("ROLE_SUPER_ADMIN")
-
-                        // ENTREPRISE_ADMIN uniquement : gestion collaborateurs
                         .requestMatchers("/api/entreprise-admin/collaborateurs/**").hasAuthority("ROLE_ENTREPRISE_ADMIN")
-
-                        // ENTREPRISE_ADMIN + ENTREPRISE_MANAGER : tout le reste
                         .requestMatchers("/api/entreprise-admin/**").hasAnyAuthority("ROLE_ENTREPRISE_ADMIN", "ROLE_ENTREPRISE_MANAGER")
-
-                        // ENTREPRISE_VIEWER (lecture seule)
                         .requestMatchers("/api/viewer/**").hasAnyAuthority("ROLE_ENTREPRISE_VIEWER", "ROLE_ENTREPRISE_ADMIN", "ROLE_ENTREPRISE_MANAGER")
-
-                        // ===== ROUTES SPÉCIFIQUES =====
                         .requestMatchers("/api/factures/**").authenticated()
                         .requestMatchers("/api/produits/**").authenticated()
                         .requestMatchers("/api/clients/**").authenticated()
                         .requestMatchers("/api/emetteurs/**").authenticated()
-
-                        // Toutes les autres routes nécessitent une authentification
                         .anyRequest().authenticated()
                 )
                 .authenticationProvider(authenticationProvider())
